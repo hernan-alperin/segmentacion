@@ -10,9 +10,7 @@ def segMaker(seq,n=n,m=m):
 		while i < len(seq) and sum(s) < n:		# get upto sgm len lower bound
 			s.append(seq[i])
 			i = i+1
-		temp=[]
 		while i < len(seq) and n <= sum(s) <= m:	# while feasible
-			temp= s
 			heads.append((i, s[:]))		# add candidates to explore
 			s.append(seq[i])
 			i = i+1
@@ -40,5 +38,5 @@ cases = [
 	]
 
 for case in cases:
-	print '-- --'
-	print case, ' => ', segMaker(case)
+	print ('-- --') 
+	print (case, ' => ', segMaker(case))
