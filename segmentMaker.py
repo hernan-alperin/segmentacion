@@ -1,3 +1,7 @@
+#!/usr/bin/python
+
+import sys
+
 n, m = 5, 8
 
 def segMaker(seq,n=n,m=m):
@@ -17,6 +21,9 @@ def segMaker(seq,n=n,m=m):
 
 # sort heads with heuristic
 		temp = []
+		if len(sys.argv) >= 2:
+			if sys.argv[1] == 'reverse': 
+				heads.reverse()
 		while heads:
 			i, candidate = heads.pop()
 			tail = seq[i:]
@@ -33,8 +40,9 @@ cases = [
 	[2,3,3,4,1,1,3],
 	[2,3,4,1,1,3],
 	[2,4,1,1,3],
-	[1,3,1,2,2,2,2,1,3,2,1,2,3,1,2,3,4,1,1,4,1,1,2,3,1,3 ],
+	[1,3,1,2,2,2,2,1,3,2,1,2,3,1,3,4,2,4,3,4,5,1,1,4,4,4,1,1,2,3,1,3 ],
 	[4,5,4,5,4],
+	[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 	]
 
 for case in cases:
