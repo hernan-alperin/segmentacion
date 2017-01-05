@@ -28,8 +28,9 @@ cases = [
 	[4,5,4,5,4],
 	]
 
+n, m = 5, 8
 for case in cases:
-	print case, segMaker(case)
+	print case, segMaker(case,n,m)
 
 
 
