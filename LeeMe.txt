@@ -1,0 +1,24 @@
+Mapeando el censo2010 con FOSS4G
+
+ mi presentación no fue con diapos, sino dinámica.
+
+1. empieza mostrando http://www.sig.indec.gov.ar/censo2010/
+
+2. usando notepad.exe se muestra foss4gba.txt que resume 3 slides ppt.
+
+3. se hacen unas consultas en http://www.sig.indec.gov.ar/censo2010/
+
+4. se muestra con paint.exe  foss4gba.jpg hecho a mano alzada con el esquema del sistema.
+
+5. se desarrolla ese esquema en el pizarrón.
+
+6. se mostran los desarrollos web que estamos haciendo sobre:
+  los Códigos de Entidades Geoestadísticas del indec, (aún no es público), y 
+  el portal de mapa educativo (http://demo.mapaeducativo.edu.ar/MapaPortal/index.html)
+  ambos hechos con las nuevas herramientas Html5 y svg
+
+7. se muestra mi entorno de trabajo ide.JPG 
+  una terminal PuTTY (negra) con classes PHP en vim con sintaxis resaltada.
+
+
+- Hernán Alperin
