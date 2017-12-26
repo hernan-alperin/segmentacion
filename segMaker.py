@@ -5,9 +5,11 @@ def segMaker(seq,n,m):
         return [sum(seq)]   # base case returns the segment length
     else:
         i, s, heads = 0, 0, []              # init variables
+        # crear una lista de ramas ya exploradas
         while i < len(seq) and s < n:       # get upto sgm len lower bound
             i, s = i+1, s+seq[i]
         while i < len(seq) and n <= s <= m: # while feasible
+            # chequear que el candidato no haya sido ya explorado
             heads.append((i, [s]))          # add candidates to explore
             i, s = i+1, s+seq[i]
         # call a function to sort heads with heuristic
