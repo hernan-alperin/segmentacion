@@ -1,6 +1,9 @@
+
+_Res煤men de Presentaci贸n 2013_
+
 Mapeando el censo2010 con FOSS4G
 
- mi presentaci髇 no fue con diapos, sino din醡ica.
+ mi presentaci贸n no fue con diapos, sino din谩mica.
 
 1. empieza mostrando http://www.sig.indec.gov.ar/censo2010/
 
@@ -10,10 +13,10 @@ Mapeando el censo2010 con FOSS4G
 
 4. se muestra con paint.exe  foss4gba.jpg hecho a mano alzada con el esquema del sistema.
 
-5. se desarrolla ese esquema en el pizarr髇.
+5. se desarrolla ese esquema en el pizarr贸n.
 
 6. se mostran los desarrollos web que estamos haciendo sobre:
-  los C骴igos de Entidades Geoestad韘ticas del indec, (a鷑 no es p鷅lico), y 
+  los C贸digos de Entidades Geoestad铆sticas del indec, (a煤n no es p煤blico), y 
   el portal de mapa educativo (http://demo.mapaeducativo.edu.ar/MapaPortal/index.html)
   ambos hechos con las nuevas herramientas Html5 y svg
 
@@ -21,4 +24,4 @@ Mapeando el censo2010 con FOSS4G
   una terminal PuTTY (negra) con classes PHP en vim con sintaxis resaltada.
 
 
-- Hern醤 Alperin
+- Hern谩n Alperin
