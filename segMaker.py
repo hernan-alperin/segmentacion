@@ -1,3 +1,7 @@
+"""
+deprecado
+algoritmo base que fue usado en presentación del método en varias conferencias
+"""
 def segMaker(seq,n,m):
     if sum(seq) < n:        # too short
         return None         # base case returns not segmentable
