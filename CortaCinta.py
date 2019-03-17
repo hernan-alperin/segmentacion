@@ -1,5 +1,5 @@
 """
-tiyulo: corta cinta.py
+tiyulo: CortaCinta.py
 descripcion: algoritmo recursivo para cortar 
 una cinta (listado de un solo lado) 
 en segmentos de entre menos y mas viviendas
