@@ -1,0 +1,12 @@
+listado: tabla de direcciones, timbre, viviendas con los siguientes campos:
+depto, frac, radio, calle_id, mza_id, lado_id, calle_nom, num, cuerpo, piso, apartamento 
+
+cinta: [int, (int*, int)]
+nodo : int
+lado: [nodo, cinta, nodo] o {'esq_desde', cinta, esq_hasta}
+manzana: lado+ secuencia de nodos conectados por lados ...
+recorrido: lado*
+recorrido válido: ultimo nodo lado_i = primer nodo_(i+1)
+circuito: ultimo nodo lado_n = primer nodo lado_0
+
+
