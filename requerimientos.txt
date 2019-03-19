@@ -1,0 +1,31 @@
+Especificaciones 
+
+Listado a segmentar
+
+tabla listado
+cada registro debe contener (al menos) los siguientes campos
+	id
+	depto
+	frac
+	radio
+	mnza
+	lado
+	cod_calle
+	numero
+	cuerpo (distintas torres, monoblecs con el mismo direccion)
+	piso
+	apt (timbre o departamento dentro del piso)
+
+Topología del radio censal
+
+tabla	adyacencias_manzanas
+campos
+	mza, mnza_ady
+
+tabla adyacencia lados
+	mza, lado, lado_d, mza_v, lado_v, mza_c, lado_c
+
+tabla lados_nodos
+	nodo_i, mza, lado, nodo_f
+	(*) dirigido siguiendo las agujas del reloj = hombro derecho, dentro de mza
+
