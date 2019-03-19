@@ -12,7 +12,7 @@ cada registro debe contener (al menos) los siguientes campos
 	lado
 	cod_calle
 	numero
-	cuerpo (distintas torres, monoblecs con el mismo direccion)
+	cuerpo (distintas torres, monoblocks con el mismo direccion)
 	piso
 	apt (timbre o departamento dentro del piso)
 
