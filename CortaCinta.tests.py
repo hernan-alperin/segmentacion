@@ -13,5 +13,5 @@ cintas = [
 n, m = 2, 3
 
 for cinta in cintas:
-  print (cinta, CortaCinta(cinta, n, m))
+  print (cinta, ':', CortaCinta(cinta, n, m))
   
