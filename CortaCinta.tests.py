@@ -1,3 +1,5 @@
+from CortaCinta import CortaCinta
+
 cintas = [
 [],
 [1],
