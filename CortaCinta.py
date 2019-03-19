@@ -55,5 +55,4 @@ def CortaCinta(cinta, menos, mas):
             if sgms:
                 # no es vacía, no es None, hay al menos un corte factible de la cinta
                 candidate.extend(sgms)
-                
-    return candidate
+                return candidate
