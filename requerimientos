@@ -17,7 +17,8 @@ cada registro debe contener (al menos) los siguientes campos
 	apt (timbre o departamento dentro del piso)
 
 Topología del radio censal
-(todos los campos de las siguientes tablas son de tipo integer)
+1. todos los campos de las siguientes tablas son de tipo integer
+2. el par mza, lado identifica a un lado 
 
 tabla	adyacencias_manzanas
 campos
