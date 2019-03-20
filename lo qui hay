@@ -1,0 +1,47 @@
+metaconsultas 
+
+======================================================
+Actualmente:
+
+censo2020=# \d segmentacion.listados 
+ shape  | text                  |           |          | 
+ id     | integer               |           |          | 
+ prov   | integer               |           |          | 
+ depto  | integer               |           |          | 
+ codloc | integer               |           |          | 
+ frac   | integer               |           |          | 
+ radio  | integer               |           |          | 
+ mza    | integer               |           |          | 
+ lado   | integer               |           |          | 
+ nombre | character varying(48) |           |          | 
+ numero | double precision      |           |          | 
+ piso   | text                  |           |          | 
+ conteo | bigint                |           |          | 
+ cuerpo | text                  |           |          | 
+ ccalle | integer               |           |          | 
+
+censo2020=# \d segmentacion.conteos
+ prov   | integer |           |          | 
+ depto  | integer |           |          | 
+ frac   | integer |           |          | 
+ radio  | integer |           |          | 
+ mza    | integer |           |          | 
+ lado   | integer |           |          | 
+ conteo | bigint  |           |          | 
+ codloc | integer |           |          | 
+ shape  | text    |           |          | 
+
+censo2020=# \d segmentacion.adyacencias (*)
+ shape    | text    |           |          | 
+ prov     | integer |           |          | 
+ depto    | integer |           |          | 
+ codloc   | integer |           |          | 
+ frac     | integer |           |          | 
+ radio    | integer |           |          | 
+ mza      | integer |           |          | 
+ lado     | integer |           |          | 
+ mza_ady  | integer |           |          | 
+ lado_ady | integer |           |          | 
+
+notar que el las adyacencias de lado de esta tabla mo se distinguen dvc
+doblar, volver, cruzar
