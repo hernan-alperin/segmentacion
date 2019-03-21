@@ -36,8 +36,10 @@ segms(1, 65) :=
 18 + segms(18, 65) U
 23 + segms(23, 65)
 
+
 sea d la cantidad deseada de viviendas por segmento
 
+pseutruchoalgoritmo
 si n <= d:
   segms(1, n) := [ n ]
 else:
@@ -52,11 +54,18 @@ else:
 la lista contiene números consecutivos en principio de 1 a k
 durente la recursión se van cortando las cabezas
 de tamaño d si se puede, o
-del máximo menor y minimo mayor que d posibles
+del máximo menor (infimo, bajo) y minimo mayor (supremo, arriba) que d posibles
 y se exploran las 2 soluciones
-
-
+lista va quedándose con colas de [bajo + 1 .. k] y [arriba + 1 .. k]
 
 segmentos(lista, d):
-  if 
+  if count(lista) <= d:
+    return [(lista[0:], count(lista))]
+  else: 
+    if CanCutAt(lista[0]):  // no estoy dentro de un piso
+      return segmentos(d, lista[d:]).append(d, lista[d:])
+    else: // no puedo cortar
+      push 
+    
+    
 
