@@ -61,11 +61,16 @@ lista va quedándose con colas de [bajo + 1 .. k] y [arriba + 1 .. k]
 segmentos(lista, d):
   if count(lista) <= d:
     return [(lista[0:], count(lista))]
-  else: 
-    if CanCutAt(lista[0]):  // no estoy dentro de un piso
-      return segmentos(d, lista[d:]).append(d, lista[d:])
+  else:
+    if CanCutAt(lista[d]):  // no estoy dentro de un piso
+      return segmentos(d + 1, lista[(d + 1):]).push(d, lista[d:])
     else: // no puedo cortar
-      push 
-    
-    
+      bajo = infimo_corta(lista)
+      arriba = supremo_corta(lista)
+      return segmentos(bajo + 1, lista[(bajo + 1):])
+             .extend(segmentos(arriba + 1, lista[(arriba + 1):]))
+
+
+
+
 
