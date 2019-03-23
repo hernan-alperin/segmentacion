@@ -1,0 +1,10 @@
+Hacer a mano:
+
+- createdb comuna11
+- vi dump.sql para hacer un drop table antes del begin para evitar error
+- psql comuna11
+- create extension postgis
+- psql -f dump.sql comuna11
+
+
+
