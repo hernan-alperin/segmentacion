@@ -49,12 +49,14 @@ from lineas
 
 
 select mzad, ladod, mzai, ladoi from lineas;
-      mzad       | ladod |      mzai       | ladoi
+/*
+mzad       | ladod |      mzai       | ladoi
 -----------------+-------+-----------------+-------
  020770100101003 |     3 | 020770100101002 |     1
  020840102201005 |     0 | 020770100101004 |     1
  020770100101002 |     2 | 020770100101007 |     4
  020770100101200 |     0 | 020770100101002 |     3
+*/
 
 
 -- armando los lados para cada manzana
