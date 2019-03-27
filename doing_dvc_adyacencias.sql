@@ -1,424 +1,252 @@
----
-y aqui dejo volviendome loco ordenando adyacentes por numero de viviendas...
-no se si vale la pena o pasar eso al algoritmo de python (!)
+-- título: doing_dvc_adyacencias.sql
+-- descripción:
+--
+-- Se hace ahora con consultas sql
+-- y Armando un Grafo G(v,e,t)
+-- donde 
+-- v representan a lados de manzana
+-- e = (v_i, v_j)
+-- t el tipo de acción del censista {doblar, volver, cruzar}
+-- 
+-- table grafo_adyacencias_lados
+--
+-- trabaja sobre el ejemplo de la comuna11
+-- todo: generalizar a otros deptos
+--
+-- autor: -h
+-- fecha creación: 2019-03-25 Ma
 
----
-Mi 2017-01-04
+/*
+la tabla lineas contiene los ejes del shape e0211lin enviado por mail por Manu
+mar 19/3, 10:38
+*/
 
-todo: setear srid en coberturas (22185)
-/home/halpe/segmentador/ecapiarc/ecapi (chequear que el 22185 es el que corresponde!)
-[halpe@leon ecapi]$ shp2pgsql -cI -s 22185 ecapipunF5 segmenta.ecapipun | psql
-[halpe@leon ecapi]$ shp2pgsql -cI -s 22185 ecapipolF5 segmenta.ecapipol | psql
-[halpe@leon ecapi]$ shp2pgsql -cI -s 22185 ecapilinF5 segmenta.ecapilin | psql
+drop table if exists calles;
+select distinct ST_Geometrytype(geom) from lineas;
 
-[halpe@leon segmentador]$ python segmentCountRange.py 41 32 40
-41 32 40 None
-[halpe@leon segmentador]$ python segmentCountRange.py 200 32 40
-200 32 40 (5, 6)
-[halpe@leon segmentador]$ python segmentCountRange.py 159 32 40
-159 32 40 (4, 4)
-
-
------
-Ma 2017-01-24
-
-diferencias en comuna 11 entre fac||radio de etiquetas ecapipun y ecapipol (F5)
-
-conteo por lado
-
-select comunas as depto, frac_comun as frac, radio_comu as radio, mza_comuna as manzana, clado as lado, count(*) as viviendas
-from segmenta.comuna11
-group by comunas, frac_comun, radio_comu, mza_comuna, clado
-order by comunas, frac_comun, radio_comu, mza_comuna, clado
+create table ejes_de_calle as
+select fnode_ as vertice_i, tnode_ as vertice_j,
+    ST_StartPoint(geom_eje) as geom_i, ST_EndPoint(geom_eje) as geom_j,
+    geom_eje
+from lineas
 ;
+CREATE INDEX lado_start_idx ON ejes_de_calle USING GIST (geom_i);
+CREATE INDEX lado_end_idx ON ejes_de_calle USING GIST (geom_j);
 
-create view segmenta.comuna11_vivs_x_mnza as
-select comunas as depto, frac_comun as frac, radio_comu as radio, mza_comuna as manzana, count(*) as viviendas
-from segmenta.comuna11
-group by comunas, frac_comun, radio_comu, mza_comuna
-order by comunas, frac_comun, radio_comu, mza_comuna
-;
-
-alter table segmenta.ecapipol add column viviendas integer;
-update segmenta.ecapipol
-set viviendas = comuna11_vivs_x_mnza.viviendas
-from segmenta.comuna11_vivs_x_mnza
-where ecapipol.depto::integer = comuna11_vivs_x_mnza.depto::integer
-and ecapipol.frac::integer = comuna11_vivs_x_mnza.frac::integer
-and ecapipol.radio::integer = comuna11_vivs_x_mnza.radio::integer
-and ecapipol.mza::integer = comuna11_vivs_x_mnza.manzana::integer
-;
-
-cargar nueva coberturas con etiquetas corregidas 
-y ladoizq y ladoder en ecaplin
-
-
-[halpe@leon ecapi]$ shp2pgsql -dI -s 22185 ecapipunF5 segmenta.ecapipun | psql
-[halpe@leon ecapi]$ shp2pgsql -dI -s 22185 ecapilinF5 segmenta.ecapilin | psql
-
-select comunas as depto, frac_comun as frac, radio_comu as radio, mza_comuna as manzana, clado as lado, count(*) as viviendas, mzai
-from segmenta.comuna11
-join segmenta.ecapilin
-on comunas::integer = substr(mzai,3,3)::integer
-and frac_comun::integer = substr(mzai,6,2)::integer
-and radio_comu::integer = substr(mzai,8,2)::integer
-and mza_comuna::integer = substr(mzai,10,3)::integer
-group by comunas, frac_comun, radio_comu, mza_comuna, clado, mzai
-order by comunas, frac_comun, radio_comu, mza_comuna, clado
-;
-
-create table segmenta.manzanas_lados as
-
+select vertice_i, vertice_j, ST_AsText(geom_i), ST_AsText(geom_j), ST_AsText(geom_eje)
+from ejes_de_calle;
+/*
+ vertice_i | vertice_j |         st_astext          |         st_astext          |                                                                                st_astext
+-----------+-----------+----------------------------+----------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      3800 |      3697 | POINT(5636287 6172526)     | POINT(5636228.5 6172606.5) | LINESTRING(5636287 6172526,5636228.5 6172606.5)
+      3813 |      3680 | POINT(5636483.5 6172515.5) | POINT(5636410.5 6172615.5) | LINESTRING(5636483.5 6172515.5,5636410.5 6172615.5)
+      3800 |      3929 | POINT(5636287 6172526)     | POINT(5636156.5 6172437.5) | LINESTRING(5636287 6172526,5636156.5 6172437.5)
+      3697 |      3929 | POINT(5636228.5 6172606.5) | POINT(5636156.5 6172437.5) | LINESTRING(5636228.5 6172606.5,5636221.5 6172597,5636156.5 6172437.5)
+      3614 |      3929 | POINT(5636209 6172675)     | POINT(5636156.5 6172437.5) | LINESTRING(5636209 6172675,5636209.5 6172647,5636204 6172625.5,5636189 6172576,5636164.5 6172498. 5,5636157 6172463,5636156.5 6172437.5)
+      3933 |      3813 | POINT(5636542 6172434)     | POINT(5636483.5 6172515.5) | LINESTRING(5636542 6172434,5636493 6172502,5636483.5 6172515.5)
+      3813 |      3945 | POINT(5636483.5 6172515.5) | POINT(5636359 6172425.5)   | LINESTRING(5636483.5 6172515.5,5636359 6172425.5)
+      3945 |      3800 | POINT(5636359 6172425.5)   | POINT(5636287 6172526)     | LINESTRING(5636359 6172425.5,5636349 6172440,5636287 6172526)
+      3655 |      4011 | POINT(5636171.5 6172637)   | POINT(5636044 6172385.5)   | LINESTRING(5636171.5 6172637,5636162 6172620,5636133.5 6172574,5636112.5 6172540,5636097 6172508. 5,5636077 6172465,5636058.5 6172420,5636044 6172385.5)       4020 |      3655 | POINT(5636067 6172377.5)   | POINT(5636171.5 6172637)   | LINESTRING(5636067 6172377.5,5636089 6172432.5,5636156 6172599,5636171.5 6172637)
 ...
+*/
 
-create index ecapipun_mza_idx on segmenta.ecapipun (depto, frac, radio, mza);
-create index ecapilin_mzai_idx on segmenta.ecapilin (mzai);
-create index ecapilin_mzad_idx on segmenta.ecapilin (mzad);
+-- armando los lados para cada manzana
 
-select count(*)
-from segmenta.ecapilin
-join segmenta.ecapipun
-on '02'||ecapipun.depto||ecapipun.frac||ecapipun.radio||ecapipun.mza = mzai
-or '02'||ecapipun.depto||ecapipun.frac||ecapipun.radio||ecapipun.mza = mzad
-;
-
-select count(*) from segmenta.ecapilin;
-select count(*) from segmenta.ecapipun;
-
-select count(*) from (
-    select distinct '02'||ecapipun.depto||ecapipun.frac||ecapipun.radio||ecapipun.mza
-    from segmenta.ecapipun) as foo
-;
-
-select '02'||ecapipun.depto||ecapipun.frac||ecapipun.radio||ecapipun.mza as manzana_repetida, count(*)
-from segmenta.ecapipun
-group by '02'||ecapipun.depto||ecapipun.frac||ecapipun.radio||ecapipun.mza
-having count(*) > 1
-order by count(*) desc
-;
-
-hay poligonos de etiquetas con codigo de manzana repetidos
- manzana_repetida | count
-------------------+-------
- 020090301132     |    14
- 020081207200     |    12
- 020071905507     |    11
- 020090401200     |    10
- 020081008075     |    10
- 020081008567     |    10
- 020090804200     |    10
- 020071904504     |     9
- 020081008596     |     9
- 020120104203     |     9
- 020121901505     |     9
- 020120101201     |     9
- 020090803201     |     9
-
-with repes as (
-    select '02'||ecapipun.depto||ecapipun.frac||ecapipun.radio||ecapipun.mza as manzana_repetida, count(*)
-    from segmenta.ecapipun
-    group by '02'||ecapipun.depto||ecapipun.frac||ecapipun.radio||ecapipun.mza
-    having count(*) > 1
-    )
-select sum(count)
-from repes
-;
-
-drop view segmenta.ecapiejes_reales cascade;
-create view segmenta.ecapiejes_reales as
-select *
-from segmenta.ecapilin
-where ladoi != 0 and ladod != 0
-;
-
-drop view segmenta.codigos_manzanas;
-create view segmenta.codigos_manzanas as
-select distinct '02'||ecapipun.depto||ecapipun.frac||ecapipun.radio||ecapipun.mza as manzana
-from segmenta.ecapipun
-;
-
-
-select count(*) from segmenta.ecapiejes_reales;
-select count(*)
-from segmenta.ecapiejes_reales
-join segmenta.codigos_manzanas
-on manzana = mzai
-or manzana = mzad
-;
-
----
-2017-01-27
-
-lados
-
-create view segmenta.lados as
-select mzai as mza, ladoi as lado
-from segmenta.ecapiejes_reales
-where ladoi != 0
-union
-select mzad, ladod
-from segmenta.ecapiejes_reales
-where ladod != 0
-;
-
-
-select count(*)
-from (
-    select distinct 
---gid
---ecapi_
-ecapi_id
-    from segmenta.ecapiejes_reales
-    ) as foo
-;
-
-
-drop view segmenta.lados_adjacentes_v;
-create view segmenta.lados_adjacentes_v as
-select * from (
-    select a.mzai as mza, a.ladoi as lado, v.mzad as v_mza, v.ladod as v_lado
-    from segmenta.ecapiejes_reales a
-    join segmenta.ecapiejes_reales v
-    on v.ecapi_id = a.ecapi_id and substr(a.mzai,1,9) = substr(v.mzad,1,9)
+drop table if exists cuadras;
+create table cuadras
+as with lados_de_manzana as (-- mza como PPDDDLLLFFRRMMMselect mzad as mza, ladod as lado, avg(anchomed) as anchomed,
+    select mzad as mza, ladod as lado, avg(anchomed) as anchomed,
+        tipo, codigo, nombre as calle,
+        min(desded) as desde, max(hastad) as hasta,
+        ST_LineMerge(ST_Union(geom)) as geom_lado -- ST_Union por ser MultiLineString
+    from lineas
+    where mzad is not Null and mzad != '' and ladod != 0
+    and substr(mzad,1,8) = '02077010' -- en la comuna
+    group by mzad, ladod, tipo, codigo, nombre
     union
-    select a.mzad as mza, a.ladod as lado, v.mzai as v_mza, v.ladoi as v_lado
-    from segmenta.ecapiejes_reales a
-    join segmenta.ecapiejes_reales v
-    on v.ecapi_id = a.ecapi_id and substr(a.mzai,1,9) = substr(v.mzad,1,9)
-    ) as adjacent_v
-where lado != 0 and mza != v_mza
-and substr(mza,1,9) = '020110409'
-order by mza, lado
-;
-
-select * from segmenta.lados_adjacentes_v;
-
-drop view segmenta.lados_adjacentes_d;
-create view segmenta.lados_adjacentes_d as
-with max_lado as (
-    select mza, max(lado)
-    from segmenta.lados
-    where substr(mza,1,9) = '020110409'
-    group by mza
+    select mzai as mza, ladoi as lado, avg(anchomed) as anchomed,
+        tipo, codigo, nombre as calle,
+        max(hastai) as desde, min(desdei) as hasta,
+        ST_LineMerge(ST_Union(ST_Reverse(geom))) as geom_lado
+    from lineas
+    where mzai is not Null and mzai != '' and ladoi != 0
+    and substr(mzai,1,8) = '02077010'
+    group by mzai, ladoi, tipo, codigo, nombre
+    order by mza, lado--, tipo, codigo, calle
     )
-select mza, lado, case when lado < max then lado + 1 else 1 end as d_lado
-from segmenta.lados
-natural join max_lado
+select * from lados_de_manzana
 ;
 
-select * from segmenta.lados_adjacentes_d
-order by mza;
-
-drop view segmenta.lados_adjacentes_c cascade; 
-create view segmenta.lados_adjacentes_c as
-select d.mza, d.lado, v.mza as c_mza, c.d_lado as c_lado
-from segmenta.lados_adjacentes_d d
-join segmenta.lados_adjacentes_v v
-on d_lado = v_lado
-and v_mza = d.mza
-join segmenta.lados_adjacentes_d c
-on c.lado = v.lado
-and c.mza = v.mza
-order by d.mza, d.lado
+select mza, lado
+from cuadras
 ;
 
-select * from segmenta.lados_adjacentes_c
-order by mza, lado
+/*
+       mza       | lado
+-----------------+------
+ 020770100101001 |    1
+ 020770100101001 |    2
+ 020770100101001 |    3
+ 020770100101002 |    1
+ 020770100101002 |    2
+ 020770100101002 |    3
+ 020770100101003 |    1
+ 020770100101003 |    2
+ 020770100101003 |    3
+ 020770100101003 |    4
+*/
+
+-- ver si hay cuadras cortadas
+select ST_GeometryType(geom_lado), count(*)
+from cuadras
+group by ST_GeometryType(geom_lado)
+;
+/*
+  st_geometrytype   | count
+--------------------+-------
+ ST_LineString      |  4831
+ ST_MultiLineString |     3
+(2 filas)
+*/
+                              
+-- ver cuáles son 
+select mza, lado, tipo, codigo, calle, desde, hasta
+from cuadras
+where ST_GeometryType(geom_lado) = 'ST_MultiLineString'
 ;
 
-drop view segmenta.lados_adjacentes_dvc;
-create view segmenta.lados_adjacentes_dvc as
-select *
-from segmenta.lados_adjacentes_d
-natural full join segmenta.lados_adjacentes_v
-natural full join segmenta.lados_adjacentes_c
-;
+/*
+       mza       | lado | tipo  | codigo |      calle      | desde | hasta
+-----------------+------+-------+--------+-----------------+-------+-------
+ 020770100103028 |    3 | AV    |   4005 | AV JOSE FAGNANO |     0 |  3599
+ 020770100111091 |    4 | CALLE |   4880 | GUTENBERG       |     0 |     0
+ 020770101301005 |    3 | AV    |   6915 | AV NAZCA        |     0 |  3093
+(3 filas)
+*/
 
-select * from segmenta.lados_adjacentes_dvc
-order by mza, lado
-;
-
-
-select mza, count(*)
-from segmenta.lados_adjacentes_dvc
-where v_mza is not Null
-or c_mza is not Null 
-group by mza
-order by count(*)
-;
-
-drop view segmenta.mzas_adjacentes;
-create view segmenta.mzas_adjacentes as
-select mza, v_mza as mza_adj
-from segmenta.lados_adjacentes_v
-;
-
-select * from segmenta.mzas_adjacentes;
-
-
-create view segmenta.comuna11_vivs_x_lado as
-select comunas as depto, frac_comun as frac, radio_comu as radio, mza_comuna as manzana, clado as lado, count(*) as viviendas
-from segmenta.comuna11
-group by comunas, frac_comun, radio_comu, mza_comuna, clado
-order by comunas, frac_comun, radio_comu, mza_comuna, clado
-;
-
-select * from segmenta.comuna11_vivs_x_lado;
-
-----
-2017-01-31
-
-copy (
-    select dvc.*, viviendas
-    from segmenta.comuna11_vivs_x_lado vivs
-    join segmenta.lados_adjacentes_dvc dvc
-    on depto::integer = substr(dvc.mza,3,3)::integer
-    and frac::integer = substr(dvc.mza,6,2)::integer
-    and radio::integer = substr(dvc.mza,8,2)::integer
-    and manzana::integer = substr(dvc.mza,10,3)::integer
-    and vivs.lado::integer = dvc.lado::integer
-) to stdout With CSV header DELIMITER ','
-;
-
-
-
-----
-2017-02-07
-
-----
-2017-02-08
-
-drop view segmenta.comuna2_vivs_x_mnza;
-create view segmenta.comuna2_vivs_x_mnza as
-select comunas as depto, frac_comun as frac, radio_comu as radio, mza_comuna as manzana, count(*) as viviendas
-from segmenta.comuna2
-group by comunas, frac_comun, radio_comu, mza_comuna
-order by comunas, frac_comun, radio_comu, mza_comuna
-;
-
-update segmenta.ecapipol
-set viviendas = comuna2_vivs_x_mnza.viviendas
-from segmenta.comuna2_vivs_x_mnza
-where ecapipol.depto::integer = comuna2_vivs_x_mnza.depto::integer
-and ecapipol.frac::integer = comuna2_vivs_x_mnza.frac::integer
-and ecapipol.radio::integer = comuna2_vivs_x_mnza.radio::integer
-and ecapipol.mza::integer = comuna2_vivs_x_mnza.manzana::integer
-;
-
-drop view segmenta.comuna6_vivs_x_mnza;
-create view segmenta.comuna6_vivs_x_mnza as
-select comunas as depto, frac_comun as frac, radio_comu as radio, mza_comuna as manzana, count(*) as viviendas
-from segmenta.comuna6
-group by comunas, frac_comun, radio_comu, mza_comuna
-order by comunas, frac_comun, radio_comu, mza_comuna
-;
-
-update segmenta.ecapipol
-set viviendas = comuna6_vivs_x_mnza.viviendas
-from segmenta.comuna6_vivs_x_mnza
-where ecapipol.depto::integer = comuna6_vivs_x_mnza.depto::integer
-and ecapipol.frac::integer = comuna6_vivs_x_mnza.frac::integer
-and ecapipol.radio::integer = comuna6_vivs_x_mnza.radio::integer
-and ecapipol.mza::integer = comuna6_vivs_x_mnza.manzana::integer
-;
-
-
-halpe=# select depto,frac,radio,mza,viviendas from segmenta.ecapipol where viviendas is not Null order by depto,frac,radio,mza;
- depto | frac | radio | mza | viviendas
--------+------+-------+-----+-----------
- 002   | 12   | 04    | 006 |      1051
- 006   | 06   | 02    | 003 |       975
- 006   | 06   | 06    | 002 |        29
- 006   | 06   | 07    | 008 |        17
- 006   | 06   | 09    | 011 |         1
- 011   | 04   | 09    | 060 |        28
- 011   | 04   | 09    | 061 |        13
- 011   | 04   | 09    | 066 |         2
- 011   | 04   | 09    | 067 |        16
- 011   | 04   | 09    | 068 |        52
- 011   | 04   | 09    | 069 |        40
- 011   | 04   | 09    | 070 |        23
- 011   | 04   | 09    | 079 |         4
- 011   | 04   | 09    | 080 |        14
- 011   | 04   | 09    | 081 |       159
- 011   | 04   | 09    | 083 |        33
- 011   | 04   | 09    | 084 |        58
-
-
-create view segmenta.comuna2_vivs_x_lado as
-select comunas as depto, frac_comun as frac, radio_comu as radio, mza_comuna as manzana, clado as lado, count(*) as viviendas
-from segmenta.comuna2
-group by comunas, frac_comun, radio_comu, mza_comuna, clado
-order by comunas, frac_comun, radio_comu, mza_comuna, clado
-;
-select * from segmenta.comuna2_vivs_x_lado;
-
-create view segmenta.comuna6_vivs_x_lado as
-select comunas as depto, frac_comun as frac, radio_comu as radio, mza_comuna as manzana, clado as lado, count(*) as viviendas
-from segmenta.comuna6
-group by comunas, frac_comun, radio_comu, mza_comuna, clado
-order by comunas, frac_comun, radio_comu, mza_comuna, clado
-;
-select * from segmenta.comuna6_vivs_x_lado;
-
-
------
-2017-02-17
-
-halpe=# select distinct st_numgeometries(geom) from segmenta.ecapipun;
- st_numgeometries
-------------------
-                1
-(1 fila)
-
-halpe=# select distinct st_numgeometries(geom) from segmenta.ecapilin;
- st_numgeometries
-------------------
-                1
-(1 fila)
-
-extraer elemento de multielement
-y juntar manzanas con lados
-
---drop index segmenta.ecapipun_mzai;
-create index ecapilin_mzai on segmenta.ecapilin (mzai);
-create index ecapilin_mzad on segmenta.ecapilin (mzad);
-create index ecapipun_mza on segmenta.ecapipun (prov, depto, frac, radio, mza);
-
-drop table segmenta.ecapi_lado_mza;
-create table segmenta.ecapi_lado_mza as
-with lado_manzana as (
-    select distinct ST_CollectionHomogenize(ecapipun.geom) as punto, ST_CollectionHomogenize(ecapilin.geom) as linea
-        , case when mzai = prov||depto||frac||radio||mza then mzai when mzad = prov||depto||frac||radio||mza then mzad else Null end as mza
-        , case when mzai = prov||depto||frac||radio||mza then ladoi when mzad = prov||depto||frac||radio||mza then ladod else Null end as lado
-    from segmenta.ecapilin
-    join segmenta.ecapipun
-    on (
-        mzai = prov||depto||frac||radio||mza
-        or 
-        mzad = prov||depto||frac||radio||mza
-        )
-    and mzai is not Null and mzad is not Null and mza::integer != 0
-)
-select mza, lado_manzana.lado, ST_Union(ST_MakePolygon(ST_AddPoint(ST_AddPoint(linea,punto,-1), ST_StartPoint(linea)))), viviendas
-from lado_manzana
-left join segmenta.comuna11_vivs_x_lado as vivs
-    on depto::integer = substr(mza,3,3)::integer
-    and frac::integer = substr(mza,6,2)::integer
-    and radio::integer = substr(mza,8,2)::integer
-    and manzana::integer = substr(mza,10,3)::integer
-    and vivs.lado::integer = lado_manzana.lado::integer 
+-- poníendole los puntos geográfico de inicio y fin a las cuadras
+drop table lados_manzanas;
+create table lados_manzanas as
+select substr(mza,9,2)::integer as frac, substr(mza,11,2)::integer as radio,
+    substr(mza,13,3)::integer as mza, lado, codigo, calle, desde, hasta,
+    ST_StartPoint(geom_lado) as geom_i, ST_EndPoint(geom_lado) as geom_j
+from cuadras
+-- ver qué hacer con estos...
+where ST_GeometryType(geom_lado) != 'ST_MultiLineString'
 --
-where substr(mza,1,9) = '020110409'
---
-group by mza, lado_manzana.lado, viviendas
+order by substr(mza,9,2)::integer, substr(mza,11,2)::integer, substr(mza,13,3)::integer, lado
 ;
 
+CREATE INDEX cuadra_start_idx ON lados_manzanas USING GIST (geom_i);
+CREATE INDEX cuadra_end_idx ON lados_manzanas USING GIST (geom_j);
 
+---- Creación de los lados (vertices del Grafo de Adyacencias, bifurcaciones de recorridos)
+\timing
+drop table if exists lados_info;
+create table lados_info as
+select row_number() over () as id, frac, radio, mza, lado,
+    codigo, calle, desde, hasta, vertice_i, vertice_j
+from ejes_de_calle c
+join lados_manzanas l
+on c.geom_i = l.geom_i and c.geom_j = l.geom_j
+or c.geom_i = l.geom_j and c.geom_j = l.geom_i
+order by frac, radio, mza, lado, calle
+;
 
+select * from lados_info;
+/*
+  id  | frac | radio | mza | lado | codigo |             calle             | desde | hasta | vertice_i | vertice_j
+------+------+-------+-----+------+--------+-------------------------------+-------+-------+-----------+-----------
+    1 |    1 |     1 |   1 |    1 |   1805 | CAMPANA                       |  5700 |  5602 |      3586 |      3478
+    2 |    1 |     1 |   1 |    2 |   5670 | LARSEN                        |  3301 |  3399 |      3586 |      3697
+    3 |    1 |     1 |   1 |    3 |   7430 | AV GRL PAZ                    |  5900 |  5792 |      3478 |      3697
+    4 |    1 |     1 |   2 |    1 |   5930 | LLAVALLOL                     |  5600 |  5502 |      3800 |      3697
+    5 |    1 |     1 |   2 |    2 |   2375 | COCHRANE                      |  3401 |  3499 |      3800 |      3929
+    6 |    1 |     1 |   2 |    3 |   7430 | AV GRL PAZ                    |  6000 |  5902 |      3697 |      3929
+    7 |    1 |     1 |   3 |    1 |   1805 | CAMPANA                       |  5600 |  5502 |      3680 |      3586
+    8 |    1 |     1 |   3 |    2 |   2375 | COCHRANE                      |  3301 |  3399 |      3680 |      3800
+...
+*/
 
+-----------------------------------------------------------
+---- Grafo de adyacencias
 
-------------------
-2017-04
+create table grafo_adyacencias_lados (
+lado_id integer,
+lado_ady integer,
+tipo_ady text
+);
+
+create view doblar as
+with max_lado as (
+    select frac, radio, mza, max(lado)
+    from lados_info
+    group by frac, radio, mza
+    ),
+    doblar as (
+    select id as de_id, frac, radio,
+        mza, lado as de_lado,
+        case when lado < max then lado + 1 else 1 end as lado
+    from max_lado
+    natural join lados_info
+    where lado != '0'
+    ),
+    doblando as (
+    select *
+    from doblar
+    join lados_info
+    using (frac, radio, mza, lado)
+    )
+select frac, radio, mza, de_lado, lado as a_lado, de_id, id as a_id
+    , calle, desde, hasta
+from doblando
+order by frac, radio, mza, de_lado, a_lado, de_id, a_id
+;
+
+select * from doblar;
+
+/*
+ frac | radio | mza | de_lado | a_lado | de_id | a_id |             calle             | desde | hasta
+------+-------+-----+---------+--------+-------+------+-------------------------------+-------+-------
+    1 |     1 |   1 |       1 |      2 |     1 |    2 | LARSEN                        |  3301 |  3399
+    1 |     1 |   1 |       2 |      3 |     2 |    3 | AV GRL PAZ                    |  5900 |  5792
+    1 |     1 |   1 |       3 |      1 |     3 |    1 | CAMPANA                       |  5700 |  5602
+    1 |     1 |   2 |       1 |      2 |     4 |    5 | COCHRANE                      |  3401 |  3499
+    1 |     1 |   2 |       2 |      3 |     5 |    6 | AV GRL PAZ                    |  6000 |  5902
+    1 |     1 |   2 |       3 |      1 |     6 |    4 | LLAVALLOL                     |  5600 |  5502
+    1 |     1 |   3 |       1 |      2 |     7 |    8 | COCHRANE                      |  3301 |  3399
+    1 |     1 |   3 |       2 |      3 |     8 |    9 | LLAVALLOL                     |  5501 |  5599
+    1 |     1 |   3 |       3 |      4 |     9 |   10 | LARSEN                        |  3400 |  3302
+    1 |     1 |   3 |       4 |      1 |    10 |    7 | CAMPANA                       |  5600 |  5502
+...
+*/
+
+insert into grafo_adyacencias_lados
+select de_id as lado_id, a_id as lado_ady, 'doblar'
+from doblar
+;
+
+-- ver que onda
+select * from grafo_adyacencias_lados;
+/*
+ lado_id | lado_ady | tipo_ady
+---------+----------+----------
+       1 |        2 | doblar
+       2 |        3 | doblar
+       3 |        1 | doblar
+       4 |        5 | doblar
+       5 |        6 | doblar
+       6 |        4 | doblar
+       7 |        8 | doblar
+       8 |        9 | doblar
+       9 |       10 | doblar
+      10 |        7 | doblar
+      11 |       12 | doblar
+      12 |       13 | doblar
+      13 |       14 | doblar
+      14 |       11 | doblar
+...
+*/
+
 
 
