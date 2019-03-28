@@ -153,5 +153,43 @@ select * from grafo_adyacencias_lados limit 10;
 
 
 -------------------------------------------------------------------
+-------------------------------------------------------------------
+--  creando grafo de adyacencias entre manzanas
+--  para calcular los lados de cruzar y volver
+-------------------------------------------------------------------
 
+----- adyacencias
+
+drop view codigo_manzanas_adyacentes;
+create view codigo_manzanas_adyacentes as
+select mzad as mza_i, mzai as mza_j
+from e0211lin
+where substr(mzad,1,12) = substr(mzai,1,12) -- mismo PPDDDLLLFFRR
+and mzad is not Null and mzad != '' and ladod != 0
+and mzai is not Null and mzai != '' and ladod != 0
+union -- hacer simétrica
+select mzai, mzad
+from e0211lin
+where substr(mzad,1,12) = substr(mzai,1,12) -- mismo PPDDDLLLFFRR
+and mzad is not Null and mzad != '' and ladod != 0
+and mzai is not Null and mzai != '' and ladod != 0
+;
+
+select * from codigo_manzanas_adyacentes order by mza_i, mza_j limit 10;
+/*
+      mza_i      |      mza_j
+-----------------+-----------------
+ 020770100101001 | 020770100101003
+ 020770100101002 | 020770100101003
+ 020770100101002 | 020770100101007
+ 020770100101003 | 020770100101001
+ 020770100101003 | 020770100101002
+ 020770100101003 | 020770100101004
+ 020770100101004 | 020770100101003
+ 020770100101004 | 020770100101005
+ 020770100101004 | 020770100101007
+ 020770100101005 | 020770100101004
+(10 filas)
+*/
+-- es simétrica
                      
