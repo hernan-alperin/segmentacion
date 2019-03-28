@@ -193,3 +193,71 @@ select * from codigo_manzanas_adyacentes order by mza_i, mza_j limit 10;
 */
 -- es simétrica
                      
+---------------------------------------------------
+--- volver, fin(lado_i) = inicio(lado_j) y mza_i ady mza_j y la intersección es 1 linea
+
+drop view if exists lado_de_enfrente_para_volver;
+create view lado_de_enfrente_para_volver as
+select i.mza as mza_i, i.lado as lado_i,
+    j.mza as mza_j, j.lado as lado_j
+from lados_de_manzana i
+join lados_de_manzana j
+on i.nodo_j_geom = j.nodo_i_geom -- el lado_i termina donde el lado_j empieza
+-- los lados van de nodo_i a nodo_j
+join codigo_manzanas_adyacentes a
+on i.mza = a.mza_i and j.mza = a.mza_j -- las manzanas son adyacentes
+where ST_Dimension(ST_Intersection(i.lado_geom,j.lado_geom)) = 1
+order by mza_i, mza_j, lado_i, lado_j
+;
+
+select * from lado_de_enfrente_para_volver limit 10;
+/*
+      mza_i      | lado_i |      mza_j      | lado_j
+-----------------+--------+-----------------+--------
+ 020770100101001 |      2 | 020770100101003 |      4
+ 020770100101002 |      1 | 020770100101003 |      3
+ 020770100101002 |      2 | 020770100101007 |      4
+ 020770100101003 |      4 | 020770100101001 |      2
+ 020770100101003 |      3 | 020770100101002 |      1
+ 020770100101003 |      2 | 020770100101004 |      4
+ 020770100101004 |      4 | 020770100101003 |      2
+ 020770100101004 |      2 | 020770100101005 |      4
+ 020770100101004 |      3 | 020770100101007 |      1
+ 020770100101005 |      4 | 020770100101004 |      2
+(10 filas)
+*/
+
+---------------------------------------------------
+--- cruzar, fin(lado_i) = inicio(lado_j) y mza_i ady mza_j y la intersección es 1 punto
+
+drop view if exists lado_para_cruzar;
+create view lado_para_cruzar as
+select i.mza as mza_i, i.lado as lado_i,
+    j.mza as mza_j, j.lado as lado_j
+from lados_de_manzana i
+join lados_de_manzana j
+on i.nodo_j_geom = j.nodo_i_geom -- el lado_i termina donde el lado_j empieza
+-- los lados van de nodo_i a nodo_j
+join codigo_manzanas_adyacentes a
+on i.mza = a.mza_i and j.mza = a.mza_j -- las manzanas son adyacentes
+where ST_Dimension(ST_Intersection(i.lado_geom,j.lado_geom)) = 0
+order by mza_i, mza_j, lado_i, lado_j
+;
+
+select * from lado_para_cruzar limit 10;
+/*
+      mza_i      | lado_i |      mza_j      | lado_j
+-----------------+--------+-----------------+--------
+ 020770100101001 |      1 | 020770100101003 |      1
+ 020770100101002 |      3 | 020770100101003 |      4
+ 020770100101002 |      1 | 020770100101007 |      1
+ 020770100101003 |      3 | 020770100101001 |      3
+ 020770100101003 |      2 | 020770100101002 |      2
+ 020770100101003 |      1 | 020770100101004 |      1
+ 020770100101004 |      3 | 020770100101003 |      3
+ 020770100101004 |      1 | 020770100101005 |      1
+ 020770100101004 |      2 | 020770100101007 |      2
+ 020770100101005 |      3 | 020770100101004 |      3
+(10 filas)
+*/
+
