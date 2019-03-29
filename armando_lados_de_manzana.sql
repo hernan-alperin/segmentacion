@@ -261,3 +261,85 @@ select * from lado_para_cruzar limit 10;
 (10 filas)
 */
 
+
+-- buscar ids de lados para_volver
+drop view if exists para_volver;
+create view para_volver as
+select de.mza as de_mza, de.lado as de_lado,
+    a.mza as a_mza, a.lado as a_lado,
+    de.id as de_id, a.id as a_id
+from lados_de_manzana de
+join lado_de_enfrente_para_volver
+on de.mza = mza_i and de.lado = lado_i
+join lados_de_manzana a
+on a.mza = mza_j and a.lado = lado_j
+order by de.mza, de.lado, a.mza, a.lado
+;
+
+select * from para_volver limit 10;
+
+/*
+     de_mza      | de_lado |      a_mza      | a_lado | de_id | a_id
+-----------------+---------+-----------------+--------+-------+------
+ 020770100101001 |       2 | 020770100101003 |      4 |     2 |   10
+ 020770100101002 |       1 | 020770100101003 |      3 |     4 |    9
+ 020770100101002 |       2 | 020770100101007 |      4 |     5 |   22
+ 020770100101003 |       2 | 020770100101004 |      4 |     8 |   14
+ 020770100101003 |       3 | 020770100101002 |      1 |     9 |    4
+ 020770100101003 |       4 | 020770100101001 |      2 |    10 |    2
+ 020770100101004 |       2 | 020770100101005 |      4 |    12 |   18
+ 020770100101004 |       3 | 020770100101007 |      1 |    13 |   19
+ 020770100101004 |       4 | 020770100101003 |      2 |    14 |    8
+ 020770100101005 |       4 | 020770100101004 |      2 |    18 |   12
+(10 filas)
+*/
+
+
+insert into grafo_adyacencias_lados
+select de_id as lado_id, a_id as lado_ady, 'volver'
+from para_volver
+;
+
+
+--buscar ids de lados para_cruzar
+drop view if exists para_cruzar;
+create view para_cruzar as
+select de.mza as de_mza, de.lado as de_lado,
+    a.mza as a_mza, a.lado as a_lado,
+    de.id as de_id, a.id as a_id
+from lados_de_manzana de
+join lado_para_cruzar
+on de.mza = mza_i and de.lado = lado_i
+join lados_de_manzana a
+on a.mza = mza_j and a.lado = lado_j
+order by de.mza, de.lado, a.mza, a.lado
+;
+
+select * from para_cruzar limit 10;
+
+/*
+     de_mza      | de_lado |      a_mza      | a_lado | de_id | a_id
+-----------------+---------+-----------------+--------+-------+------
+ 020770100101001 |       1 | 020770100101003 |      1 |     1 |    7
+ 020770100101002 |       1 | 020770100101007 |      1 |     4 |   19
+ 020770100101002 |       3 | 020770100101003 |      4 |     6 |   10
+ 020770100101003 |       1 | 020770100101004 |      1 |     7 |   11
+ 020770100101003 |       2 | 020770100101002 |      2 |     8 |    5
+ 020770100101003 |       3 | 020770100101001 |      3 |     9 |    3
+ 020770100101004 |       1 | 020770100101005 |      1 |    11 |   15
+ 020770100101004 |       2 | 020770100101007 |      2 |    12 |   20
+ 020770100101004 |       3 | 020770100101003 |      3 |    13 |    9
+ 020770100101005 |       3 | 020770100101004 |      3 |    17 |   13
+(10 filas)
+*/
+
+insert into grafo_adyacencias_lados
+select de_id as lado_id, a_id as lado_ady, 'cruzar'
+from para_cruzar
+;
+
+--------------------------------------------------------------
+--todo hacer tabla de acciones 1: doblar, 2: volver, 3: cruzar
+
+
+                                  
