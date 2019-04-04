@@ -105,6 +105,7 @@ select * from listado where piso is not Null limit 10;
 (10 filas)
 
 */
+alter table listado owner to segmentador;
 
 
 
