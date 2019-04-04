@@ -71,13 +71,39 @@ ALTER FUNCTION load_csv_file(text, text, integer)
   OWNER TO postgres;
 /*
 se invoca
-select load_csv_file('myTable','C:/MyPath/MyFile.csv',24)
--- con el número de columnas
+select load_csv_file('myTable','C:/MyPath/MyFile.csv',n)
+-- siendo n el número de columnas
 
 para averiguarlo usar awk, ejemplo
-[halpe@leon algortimo-chubut]$ awk -F'\t' '{ print NF-1 }' segmento.csv | uniq
-32
-halpe=# select load_csv_file('ejemplo_segmento_chubut','/tmp/segmento.csv',33);
+[halpe@sigdesa4 segmentador]$ awk -F',' '{ print NF-1 }' /tmp/caba-11.csv | uniq
+9
+o -F'\t' según cual sea el separador de campos del csv... debería ser comas... :-P
+comuna11=# 
+
+*/
+select load_csv_file('listado','/tmp/caba-11.csv',10);
+/*
+load_csv_file
+---------------
+
+(1 fila)
+*/
+select * from listado where piso is not Null limit 10;
+/*
+ depto | frac | radio | mnza | lado |   nombre    | numero | cuerpo | piso | count
+-------+------+-------+------+------+-------------+--------+--------+------+-------
+ 11    | 1    | 1     | 1    | 2    | LARSEN      | 3355   |        | 1    | 1
+ 11    | 1    | 1     | 1    | 3    | AV GRAL PAZ | 5866   |        | 1    | 1
+ 11    | 1    | 1     | 1    | 3    | AV GRAL PAZ | 5804   |        | 1    | 1
+ 11    | 1    | 1     | 2    | 2    | COCHRANE    | 3403   |        | 1    | 1
+ 11    | 1    | 1     | 2    | 2    | COCHRANE    | 3405   |        | 1    | 1
+ 11    | 1    | 1     | 2    | 2    | COCHRANE    | 3439   |        | 1    | 1
+ 11    | 1    | 1     | 2    | 3    | AV GRAL PAZ | 5938   |        | PB   | 1
+ 11    | 1    | 1     | 2    | 3    | AV GRAL PAZ | 5936   |        | PB   | 1
+ 11    | 1    | 1     | 2    | 3    | AV GRAL PAZ | 5932   |        | 1    | 1
+ 11    | 1    | 1     | 3    | 1    | CAMPANA     | 5552   |        | 3    | 1
+(10 filas)
+
 */
 
 
