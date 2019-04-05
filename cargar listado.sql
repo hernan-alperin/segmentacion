@@ -105,7 +105,28 @@ select * from listado where piso is not Null limit 10;
 (10 filas)
 
 */
+
+alter table listado add column segmento_mza integer;
+alter table listado add column id serial;
 alter table listado owner to segmentador;
+
+select * from listado where piso is not Null limit 10;
+/*
+ depto | frac | radio | mnza | lado |   nombre    | numero | cuerpo | piso | count | segmento_mza | id
+-------+------+-------+------+------+-------------+--------+--------+------+-------+--------------+----
+ 11    | 1    | 1     | 1    | 2    | LARSEN      | 3355   |        | 1    | 1     |              | 14
+ 11    | 1    | 1     | 1    | 3    | AV GRAL PAZ | 5866   |        | 1    | 1     |              | 28
+ 11    | 1    | 1     | 1    | 3    | AV GRAL PAZ | 5804   |        | 1    | 1     |              | 39
+ 11    | 1    | 1     | 2    | 2    | COCHRANE    | 3403   |        | 1    | 1     |              | 47
+ 11    | 1    | 1     | 2    | 2    | COCHRANE    | 3405   |        | 1    | 1     |              | 48
+ 11    | 1    | 1     | 2    | 2    | COCHRANE    | 3439   |        | 1    | 1     |              | 55
+ 11    | 1    | 1     | 2    | 3    | AV GRAL PAZ | 5938   |        | PB   | 1     |              | 66
+ 11    | 1    | 1     | 2    | 3    | AV GRAL PAZ | 5936   |        | PB   | 1     |              | 67
+ 11    | 1    | 1     | 2    | 3    | AV GRAL PAZ | 5932   |        | 1    | 1     |              | 68
+ 11    | 1    | 1     | 3    | 1    | CAMPANA     | 5552   |        | 3    | 1     |              | 75
+(10 rows)
+
+*/
 
 
 
