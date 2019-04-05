@@ -47,11 +47,16 @@ with posibles as (
     and count(*) not between 24 and 33
     order by comunas, frac_comun, radio_comu::integer, mza_comuna::integer
     )
-select comunas, frac_comun, radio_comu, mza_comuna, cnombre, hn, hp, hd, row_number() 
+select comunas, frac_comun, radio_comu, mza_comuna, clado, cnombre, hn, hp, hd, row_number() 
     over (
         partition by comunas, frac_comun, radio_comu::integer, mza_comuna::integer
         order by comunas, frac_comun, radio_comu::integer, mza_comuna::integer, 
-            clado, hn, cnombre, 
+            clado, 
+            case 
+                when hn::integer % 2 = 1 then hn::integer
+                else -hn::integer   
+            end, 
+            cnombre, 
             -- cuerpo, !!!! FALTA ESTE DATO Y ES IMPRESCINDIBLE EN TORRES Y CONJUNTOS DE MONOBLOCKS
             hp
         )
