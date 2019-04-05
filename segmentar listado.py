@@ -10,11 +10,11 @@
 import sys
 import psycopg2
 
-TablaListado = sys.argv[1]
+TablaListado = 'listado'
 # cotas de semgmentos
 Minimo, Maximo = 17, 23
-if len(sys.argv) > 4:
-    Minimo, Maximo = int(sys.argv[3]), int(sys.argv[4])
+if len(sys.argv) > 3:
+    Minimo, Maximo = int(sys.argv[1]), int(sys.argv[2])
 
 SQLConnect = psycopg2.connect(
     database = comuna11,
@@ -26,13 +26,37 @@ SQLConnect = psycopg2.connect(
 """
 algunos select para ir probando...
 
-select depto, frac, radio, mnza, count(*)
+select comunas, frac_comun, radio_comu, mza_comuna, count(*)
 from listado
 -- factible TODO: revisar para caso deferente de Minimo, Maximo = 17, 23
-group by depto, frac, radio, mnza
+group by comunas, frac_comun, radio_comu, mza_comuna
 having count(*) >= 17
 and count(*) not between 24 and 33
-order by depto, frac, radio, mnza
+order by comunas, frac_comun, radio_comu, mza_comuna
+;
+
+# TODO: son tipo char, no integer, hacer ::integer de todos los campos pertinentes
+# comunas, frac_comun, radio_comu, mza_comuna, clado, hn (con CASE...), hp tabién CASE x PB -> 0
+
+with posibles as (
+    select comunas, frac_comun, radio_comu, mza_comuna
+    from listado
+    -- factible TODO: revisar para caso deferente de Minimo, Maximo = 17, 23
+    group by comunas, frac_comun, radio_comu, mza_comuna
+    having count(*) >= 17
+    and count(*) not between 24 and 33
+    order by comunas, frac_comun, radio_comu::integer, mza_comuna::integer
+    )
+select comunas, frac_comun, radio_comu, mza_comuna, cnombre, hn, hp, hd, row_number() 
+    over (
+        partition by comunas, frac_comun, radio_comu::integer, mza_comuna::integer
+        order by comunas, frac_comun, radio_comu::integer, mza_comuna::integer, 
+            clado, hn, cnombre, 
+            -- cuerpo, !!!! FALTA ESTE DATO Y ES IMPRESCINDIBLE EN TORRES Y CONJUNTOS DE MONOBLOCKS
+            hp
+        )
+from listado
+where (comunas, frac_comun, radio_comu, mza_comuna) in (select * from posibles)
 ;
 
 """
