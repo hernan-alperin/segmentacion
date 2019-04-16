@@ -12,6 +12,9 @@ la tabla contiene el listado enviado por mail por Manu
 comuna11.dbf mar 19/3, 10:38
 */
 /* proceso manual:
+
+Opcion 1)
+
 pasar el .dbf a .csv usando una planilla de cálculo
 poner en /tmp para que sea visible para postgresl
 import un .csv con header de columnas
@@ -133,5 +136,14 @@ select * from listado where hp is not Null limit 10;
 (10 filas)
 */
 
+/*
 
+Opción 2)
+
+a) draguear el Comuna11.dbf a el area capas de QGIS,
+b) abrir una conexión a la DB comuna11
+c) draguear la capa del área capas a tabla de la conexi´on.
+en este caso la tabla conserva el nombre del .dbf
+
+*/
 
