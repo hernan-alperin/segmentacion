@@ -12,6 +12,9 @@ la tabla contiene el listado enviado por mail por Manu
 comuna11.dbf mar 19/3, 10:38
 */
 /* proceso manual:
+
+Opcion 1)
+
 pasar el .dbf a .csv usando una planilla de cálculo
 poner en /tmp para que sea visible para postgresl
 import un .csv con header de columnas
@@ -75,37 +78,72 @@ select load_csv_file('myTable','C:/MyPath/MyFile.csv',n)
 -- siendo n el número de columnas
 
 para averiguarlo usar awk, ejemplo
-[halpe@sigdesa4 segmentador]$ awk -F',' '{ print NF-1 }' /tmp/caba-11.csv | uniq
-9
+[halpe@sigdesa4 segmentador]$ awk -F',' '{ print NF-1 }' /tmp/comuna11.csv | uniq
+13
 o -F'\t' según cual sea el separador de campos del csv... debería ser comas... :-P
 comuna11=# 
 
 */
-select load_csv_file('listado','/tmp/caba-11.csv',10);
+select load_csv_file('listado','/tmp/comuna11.csv',14);
 /*
 load_csv_file
 ---------------
 
 (1 fila)
 */
-select * from listado where piso is not Null limit 10;
-/*
- depto | frac | radio | mnza | lado |   nombre    | numero | cuerpo | piso | count
--------+------+-------+------+------+-------------+--------+--------+------+-------
- 11    | 1    | 1     | 1    | 2    | LARSEN      | 3355   |        | 1    | 1
- 11    | 1    | 1     | 1    | 3    | AV GRAL PAZ | 5866   |        | 1    | 1
- 11    | 1    | 1     | 1    | 3    | AV GRAL PAZ | 5804   |        | 1    | 1
- 11    | 1    | 1     | 2    | 2    | COCHRANE    | 3403   |        | 1    | 1
- 11    | 1    | 1     | 2    | 2    | COCHRANE    | 3405   |        | 1    | 1
- 11    | 1    | 1     | 2    | 2    | COCHRANE    | 3439   |        | 1    | 1
- 11    | 1    | 1     | 2    | 3    | AV GRAL PAZ | 5938   |        | PB   | 1
- 11    | 1    | 1     | 2    | 3    | AV GRAL PAZ | 5936   |        | PB   | 1
- 11    | 1    | 1     | 2    | 3    | AV GRAL PAZ | 5932   |        | 1    | 1
- 11    | 1    | 1     | 3    | 1    | CAMPANA     | 5552   |        | 3    | 1
-(10 filas)
+\d listado
 
+/*
+         Tabla «public.listado»
+   Columna    |  Tipo   | Modificadores
+--------------+---------+---------------
+ id           | text    |
+ comunas      | text    |
+ idbarrio     | text    |
+ frac_comun   | text    |
+ radio_comu   | text    |
+ mza_comuna   | text    |
+ clado        | text    |
+ ccodigo      | text    |
+ cnombre      | text    |
+ hn           | text    |
+ h4           | text    |
+ hp           | text    |
+ hd           | text    |
+ nomencla_2   | text    |
+ segmento_mza | integer |
 */
+
+alter table listado add column segmento_mza integer;
+alter table listado add column id serial;
 alter table listado owner to segmentador;
 
+select * from listado where hp is not Null limit 10;
 
+/*
+  id   | comunas | idbarrio | frac_comun | radio_comu | mza_comuna | clado | ccodigo |   cnombre   |  hn  | h4 | hp | hd |  nomencla_2   | segmento_mza
+-------+---------+----------+------------+------------+------------+-------+---------+-------------+------+----+----+----+---------------+--------------
+ 58883 | 11      | 35       | 8          | 1          | 1          | 1     | 8710    | SAN NICOLAS | 3076 | 4  | 8  |    | 2011350801001 |
+ 58884 | 11      | 35       | 8          | 1          | 1          | 1     | 8710    | SAN NICOLAS | 3076 | 4  | 7  |    | 2011350801001 |
+ 58885 | 11      | 35       | 8          | 1          | 1          | 1     | 8710    | SAN NICOLAS | 3076 | 4  | 7  |    | 2011350801001 |
+ 58886 | 11      | 35       | 8          | 1          | 1          | 1     | 8710    | SAN NICOLAS | 3076 | 4  | 7  |    | 2011350801001 |
+ 58887 | 11      | 35       | 8          | 1          | 1          | 1     | 8710    | SAN NICOLAS | 3076 | 4  | 6  |    | 2011350801001 |
+ 58888 | 11      | 35       | 8          | 1          | 1          | 1     | 8710    | SAN NICOLAS | 3076 | 4  | 6  |    | 2011350801001 |
+ 58889 | 11      | 35       | 8          | 1          | 1          | 1     | 8710    | SAN NICOLAS | 3076 | 4  | 6  |    | 2011350801001 |
+ 58890 | 11      | 35       | 8          | 1          | 1          | 1     | 8710    | SAN NICOLAS | 3076 | 4  | 5  |    | 2011350801001 |
+ 58891 | 11      | 35       | 8          | 1          | 1          | 1     | 8710    | SAN NICOLAS | 3076 | 4  | 5  |    | 2011350801001 |
+ 58892 | 11      | 35       | 8          | 1          | 1          | 1     | 8710    | SAN NICOLAS | 3076 | 4  | 5  |    | 2011350801001 |
+(10 filas)
+*/
+
+/*
+
+Opción 2)
+
+a) draguear el Comuna11.dbf a el area capas de QGIS,
+b) abrir una conexión a la DB comuna11
+c) draguear la capa del área capas a tabla de la conexi´on.
+en este caso la tabla conserva el nombre del .dbf
+
+*/
 
