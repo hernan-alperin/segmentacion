@@ -7,8 +7,11 @@ fecha: 2019-04-18 Ju
 */
 
 --- usando windows para ayudar a calcular cortes
+
+-----------------------------------------------------
+-- segamnatndo cortando a deseado unando rank
 drop view segmentando_facil;
-create or replace view segmentando_facil as 
+create or replace view segmentando_greedy as 
 with deseado as (
         select 40 as deseado
     ),
@@ -17,8 +20,8 @@ with deseado as (
         from comuna11
         group by frac_comun, radio_comu::integer, mza_comuna::integer, clado, hn, hp
     ),    
-    abriendo_pisos as (
-        select frac_comun, radio_comu::integer, mza_comuna::integer, clado, hn, hp, hd,
+    pisos_abiertos as (
+        select frac_comun, radio_comu::integer, mza_comuna::integer, clado, hn, hp, hd, min_id,
             row_number() over w as row, rank() over w as rank
         from pisos_enteros
         natural join comuna11
@@ -29,21 +32,21 @@ with deseado as (
             -- rankea por piso (ordena hn como corresponde pares descendiendo)
         )
     )
+select frac_comun, radio_comu, mza_comuna, clado, hn, hp, hd, ceil(rank/deseado) + 1 as sgm_mza
+from deseado, pisos_abiertos
+order by frac_comun, radio_comu::integer, mza_comuna::integer, clado, min_id
+;
+-- sgm_mza indica el número de segamnto dentro de a manza independiente
+---------------------------------
 
-select * from abriendo_pisos;
----- testeando esto debería separa por pisos
-    
-    ,
-    sumados as (
-    select frac_comun, radio_comu::integer, mza_comuna::integer, count(*) as cant
-    from comuna11
-    group by comunas, frac_comun, radio_comu::integer, mza_comuna::integer
-    )
-select frac_comun, radio_comu, mza_comuna, clado, hn, hp, ceil(rank/deseado) + 1 as segmento_manzana
-from deseado, separados
-left join sumados
-using(frac_comun, radio_comu, mza_comuna)
-order by frac_comun, radio_comu::integer, mza_comuna::integer, clado, id
+
+
+select frac_comun, radio_comu::integer, mza_comuna::integer, sgm_mza, count(*) as cant_viv_sgm
+from segmentando_greedy
+group by frac_comun, radio_comu::integer, mza_comuna::integer, sgm_mza
+order by frac_comun, radio_comu::integer, mza_comuna::integer, sgm_mza
 ;
 
----------------------------------
+
+
+
