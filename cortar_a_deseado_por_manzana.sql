@@ -40,11 +40,13 @@ order by frac_comun, radio_comu::integer, mza_comuna::integer, clado, min_id
 ---------------------------------
 
 
-
+---- algunas estadśticas
+--- post evaluaciones
+--- vivendas por segmento
 select frac_comun, radio_comu::integer, mza_comuna::integer, sgm_mza, count(*) as cant_viv_sgm
 from segmentando_greedy
 group by frac_comun, radio_comu::integer, mza_comuna::integer, sgm_mza
-order by frac_comun, radio_comu::integer, mza_comuna::integer, sgm_mza
+order by count(*) desc, sgm_mza desc, frac_comun, radio_comu::integer, mza_comuna::integer
 ;
 
 
