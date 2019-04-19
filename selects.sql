@@ -1,3 +1,13 @@
+/*
+titulo: 
+descripción:
+autor: -h
+fecha: 2019-04-18 Ju
+*/
+
+
+
+
 --- usando windows para ayudar a calcular cortes
 drop view segmentando_facil;
 create or replace view segmentando_facil as 
