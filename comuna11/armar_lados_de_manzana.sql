@@ -1,5 +1,7 @@
 -- título: doing_dvc_adyacencias.sql
--- descripción:
+-- descripción: genera los lado agregando ejes de calles
+-- y pequeños pedazos
+-- agraga en arrays si tipos, codigos o calles cambian en ese lado
 --
 -- trabaja sobre el ejemplo de la comuna11
 -- todo: generalizar a otros deptos
