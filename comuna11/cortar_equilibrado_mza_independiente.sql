@@ -48,10 +48,10 @@ with deseado as (
            ceil(count(*)/deseado) as max,
            greatest(1, floor(count(*)/deseado)) as min
     from comuna11, deseado
-    group by comunas, frac_comun, radio_comu::integer, mza_comuna::integer, deseado
+    group by frac_comun, radio_comu::integer, mza_comuna::integer, deseado
     ),
     deseado_manzana as (
-    select comunas, frac_comun, radio_comu::integer, mza_comuna::integer, vivs,
+    select frac_comun, radio_comu::integer, mza_comuna::integer, vivs,
         case when abs(vivs/max - deseado) < abs(vivs/min - deseado) then max
         else min end as seg_x_mza
     from casos, deseado
@@ -74,19 +74,21 @@ with deseado as (
         )
     ),
     sumados as (
-    select frac_comun, radio_comu::integer, mza_comuna::integer, count(*) as cant
-    from comuna11
-    group by comunas, frac_comun, radio_comu::integer, mza_comuna::integer
+        select frac_comun, radio_comu::integer, mza_comuna::integer, count(*) as cant
+        from comuna11
+        group by frac_comun, radio_comu::integer, mza_comuna::integer
     )
 select frac_comun, radio_comu, mza_comuna, clado, hn, hp, hd,
     floor((rank - 1)*seg_x_mza/vivs) + 1 as segmento, rank
 from deseado_manzana
-join separados
+join pisos_abiertos
 using(frac_comun, radio_comu, mza_comuna)
-left join sumados
+join sumados
 using(frac_comun, radio_comu, mza_comuna)
-order by frac_comun, radio_comu::integer, mza_comuna::integer, clado,
+order by frac_comun, radio_comu::integer, mza_comuna::integer, clado, min_id, hn, hp, hd,
     floor((rank - 1)*seg_x_mza/vivs) + 1, rank
 ;
 
+
+---- hay cosas raras de pisos sin departamentos hp, con hd nulo
 
