@@ -72,7 +72,7 @@ with deseado as (
             order by frac_comun, radio_comu::integer, mza_comuna::integer, clado, min_id, hp
             -- rankea por piso (ordena hn como corresponde pares descendiendo)
         )
-    )
+    ),
     sumados as (
     select frac_comun, radio_comu::integer, mza_comuna::integer, count(*) as cant
     from comuna11
