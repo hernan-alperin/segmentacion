@@ -5,9 +5,18 @@ autor: -h
 fecha: 2019-04-18 Ju
 */
 
-                                                                    
-                                                                      
+create index frac_radio_mza_ix on comuna11 (frac_comun, radio_comu, mza_comuna);
 
+select l_1.frac_comun, l_1.radio_comu, 
+	l_1.mza_comuna, l_1.clado as l_1, 
+	l_2.mza_comuna, l_2.clado as l_2, tipo_ady
+from comuna11 l_1
+join comuna11 l_2
+using (frac_comun, radio_comu)
+join grafo_adyacencias_lados g
+on (l_1.id = g.lado_id and l_2.id = g.lado_ady)
+;                          
+---- esto se cuelga: TODO ver porqué
 -------------------------------------------------------
                                                                       
 --DROP table if exists listado_georef_segmentado cascade;
