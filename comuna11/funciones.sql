@@ -5,7 +5,10 @@ autor: -h
 fecha: 2019-04-28 Do
 */
 
-create or replace function manzana(frac, radio, mza) 
+create or replace function manzana(
+    frac integer, 
+    radio integer, 
+    mza integer) 
 -- obtiene subllistado con solo la manzana del listado
 -- solo el lado, hn, hp y id
 returns table (
@@ -14,13 +17,29 @@ returns table (
   hn integer, 
   hp integer) 
 as $$
-select * 
+select id, clado, hn, hp
 from comuna11
-where frac_comun = #1
-and radio_comu = #2
-and mza_comuna = #3
+where frac_comun = $1
+and radio_comu = $2
+and mza_comuna = $3
 $$
-languaje sql
+language sql
+;
+
+create or replace function max_lado(
+    frac integer, 
+    radio integer, 
+    mza integer)
+-- obtiene el numero del lado masgrnd (sume secuencial)
+returns integer
+as $$
+select max(clado)  
+from comuna11
+where frac_comun = $1
+and radio_comu = $2
+and mza_comuna = $3
+$$
+language sql
 ;
 
 
