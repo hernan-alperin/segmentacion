@@ -28,7 +28,7 @@ with deseado as (
         window w as (
             partition by frac_comun, radio_comu::integer, mza_comuna::integer
             -- separa las manzanas
-            ORDER BY frac_comun, radio_comu::integer, mza_comuna::integer, clado, min_id, hp
+            order by frac_comun, radio_comu::integer, mza_comuna::integer, clado, min_id, hp
             -- rankea por piso (ordena hn como corresponde pares descendiendo)
         )
     )
