@@ -107,6 +107,7 @@ costo_segmentacion
 Duración: 2592,502 ms
 
 create index sgm_idx on comuna11 (sgm);
+                          
  costo_segmentacion
 --------------------
                  37
@@ -117,9 +118,15 @@ Duración: 681,010 ms
      
 select costo_segmentacion(frac_comun::integer, radio_comu::integer, 40)
 from comuna11
+;
                           
 se cuelga...
 mucho tiempo de ejecucion
 ;
 
 */
+
+create index mza_idx on comuna11 (mza_comuna);
+create index lado_idx on comuna11 (mza_comuna, clado);
+                          
+                          
