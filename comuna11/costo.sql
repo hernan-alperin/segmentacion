@@ -99,5 +99,27 @@ language sql
    
 /*
 select costo_segmentacion(1, 1, 40);
+costo_segmentacion
+--------------------
+                 37
+(1 fila)
+
+Duración: 2592,502 ms
+
+create index sgm_idx on comuna11 (sgm);
+ costo_segmentacion
+--------------------
+                 37
+(1 fila)
+
+Duración: 681,010 ms
+-----
+     
+select costo_segmentacion(frac_comun::integer, radio_comu::integer, 40)
+from comuna11
+                          
+se cuelga...
+mucho tiempo de ejecucion
+;
 
 */
