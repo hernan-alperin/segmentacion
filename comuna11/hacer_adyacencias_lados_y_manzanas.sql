@@ -248,6 +248,26 @@ select * from grafo_adyacencias_lados;
 ...
 */
 
+create or replace view adyacencias_lados as 
+select d.frac, d.radio, d.mza, d.lado, 
+h.mza, h.lado, 
+lado_id, lado_ady, tipo_ady
+from lados_info d
+join grafo_adyacencias_lados g
+on d.id = lado_id
+join lados_info h
+on h.id = lado_ady
+where tipo_ady != 'doblar'
+;
+
+
+
+create table grafo_adyacencias_manzanas (
+mza_id integer,
+mza_ady integer
+);
+
+
 
 
 
