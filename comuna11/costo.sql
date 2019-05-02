@@ -40,6 +40,8 @@ order by frac_comun, radio_comu, mza_comuna
 ;
 */
 
+
+alter table comuna11 add column sgm integer;
  
 
 drop function costo_segmento;
@@ -81,4 +83,21 @@ order by frac_comun::integer, radio_comu::integer, sgm
 
 */
 
+drop function costo_segmentacion;
+create or replace function costo_segmentacion(
+    frac integer,
+    radio integer,
+    deseado integer)
+returns float as $$
+select max(costo_segmento($1, $2, sgm, $3))
+from comuna11
+where (frac_comun, radio_comu) = ($1, $2)
+group by frac_comun, radio_comu
+$$
+language sql
+;
+   
+/*
+select costo_segmentacion(1, 1, 40);
 
+*/
