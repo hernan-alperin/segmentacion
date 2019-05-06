@@ -21,34 +21,6 @@ la tabla lineas contiene los ejes del shape e0211lin enviado por mail por Manu
 mar 19/3, 10:38
 */
 
-drop table if exists calles;
-select distinct ST_Geometrytype(geom) from lineas;
-
-create table ejes_de_calle as
-select fnode_ as vertice_i, tnode_ as vertice_j,
-    ST_StartPoint(geom_eje) as geom_i, ST_EndPoint(geom_eje) as geom_j,
-    geom_eje
-from lineas
-;
-CREATE INDEX lado_start_idx ON ejes_de_calle USING GIST (geom_i);
-CREATE INDEX lado_end_idx ON ejes_de_calle USING GIST (geom_j);
-
-select vertice_i, vertice_j, ST_AsText(geom_i), ST_AsText(geom_j), ST_AsText(geom_eje)
-from ejes_de_calle;
-/*
- vertice_i | vertice_j |         st_astext          |         st_astext          |                                                                                st_astext
------------+-----------+----------------------------+----------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-      3800 |      3697 | POINT(5636287 6172526)     | POINT(5636228.5 6172606.5) | LINESTRING(5636287 6172526,5636228.5 6172606.5)
-      3813 |      3680 | POINT(5636483.5 6172515.5) | POINT(5636410.5 6172615.5) | LINESTRING(5636483.5 6172515.5,5636410.5 6172615.5)
-      3800 |      3929 | POINT(5636287 6172526)     | POINT(5636156.5 6172437.5) | LINESTRING(5636287 6172526,5636156.5 6172437.5)
-      3697 |      3929 | POINT(5636228.5 6172606.5) | POINT(5636156.5 6172437.5) | LINESTRING(5636228.5 6172606.5,5636221.5 6172597,5636156.5 6172437.5)
-      3614 |      3929 | POINT(5636209 6172675)     | POINT(5636156.5 6172437.5) | LINESTRING(5636209 6172675,5636209.5 6172647,5636204 6172625.5,5636189 6172576,5636164.5 6172498. 5,5636157 6172463,5636156.5 6172437.5)
-      3933 |      3813 | POINT(5636542 6172434)     | POINT(5636483.5 6172515.5) | LINESTRING(5636542 6172434,5636493 6172502,5636483.5 6172515.5)
-      3813 |      3945 | POINT(5636483.5 6172515.5) | POINT(5636359 6172425.5)   | LINESTRING(5636483.5 6172515.5,5636359 6172425.5)
-      3945 |      3800 | POINT(5636359 6172425.5)   | POINT(5636287 6172526)     | LINESTRING(5636359 6172425.5,5636349 6172440,5636287 6172526)
-      3655 |      4011 | POINT(5636171.5 6172637)   | POINT(5636044 6172385.5)   | LINESTRING(5636171.5 6172637,5636162 6172620,5636133.5 6172574,5636112.5 6172540,5636097 6172508. 5,5636077 6172465,5636058.5 6172420,5636044 6172385.5)       4020 |      3655 | POINT(5636067 6172377.5)   | POINT(5636171.5 6172637)   | LINESTRING(5636067 6172377.5,5636089 6172432.5,5636156 6172599,5636171.5 6172637)
-...
-*/
 
 -----------------------------------------------------------
 ---- Grafo de adyacencias
