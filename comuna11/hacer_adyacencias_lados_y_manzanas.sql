@@ -312,7 +312,9 @@ from para_cruzar
 ;
 
 --------------------------------------------------------------
---todo hacer tabla de acciones 1: doblar, 2: volver, 3: cruzar
+--TODO: hacer tabla de acciones 1: doblar, 2: volver, 3: cruzar
+
+                                   
 
 
 
