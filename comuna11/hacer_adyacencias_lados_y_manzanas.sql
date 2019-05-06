@@ -50,184 +50,64 @@ from ejes_de_calle;
 ...
 */
 
--- armando los lados para cada manzana
-
-drop table if exists cuadras;
-create table cuadras
-as with lados_de_manzana as (-- mza como PPDDDLLLFFRRMMMselect mzad as mza, ladod as lado, avg(anchomed) as anchomed,
-    select mzad as mza, ladod as lado, avg(anchomed) as anchomed,
-        tipo, codigo, nombre as calle,
-        min(desded) as desde, max(hastad) as hasta,
-        ST_LineMerge(ST_Union(geom)) as geom_lado -- ST_Union por ser MultiLineString
-    from lineas
-    where mzad is not Null and mzad != '' and ladod != 0
-    and substr(mzad,1,8) = '02077010' -- en la comuna
-    group by mzad, ladod, tipo, codigo, nombre
-    union
-    select mzai as mza, ladoi as lado, avg(anchomed) as anchomed,
-        tipo, codigo, nombre as calle,
-        max(hastai) as desde, min(desdei) as hasta,
-        ST_LineMerge(ST_Union(ST_Reverse(geom))) as geom_lado
-    from lineas
-    where mzai is not Null and mzai != '' and ladoi != 0
-    and substr(mzai,1,8) = '02077010'
-    group by mzai, ladoi, tipo, codigo, nombre
-    order by mza, lado--, tipo, codigo, calle
-    )
-select * from lados_de_manzana
-;
-
-select mza, lado
-from cuadras
-;
-
-/*
-       mza       | lado
------------------+------
- 020770100101001 |    1
- 020770100101001 |    2
- 020770100101001 |    3
- 020770100101002 |    1
- 020770100101002 |    2
- 020770100101002 |    3
- 020770100101003 |    1
- 020770100101003 |    2
- 020770100101003 |    3
- 020770100101003 |    4
-*/
-
--- ver si hay cuadras cortadas
-select ST_GeometryType(geom_lado), count(*)
-from cuadras
-group by ST_GeometryType(geom_lado)
-;
-/*
-  st_geometrytype   | count
---------------------+-------
- ST_LineString      |  4831
- ST_MultiLineString |     3
-(2 filas)
-*/
-                              
--- ver cuáles son 
-select mza, lado, tipo, codigo, calle, desde, hasta
-from cuadras
-where ST_GeometryType(geom_lado) = 'ST_MultiLineString'
-;
-
-/*
-       mza       | lado | tipo  | codigo |      calle      | desde | hasta
------------------+------+-------+--------+-----------------+-------+-------
- 020770100103028 |    3 | AV    |   4005 | AV JOSE FAGNANO |     0 |  3599
- 020770100111091 |    4 | CALLE |   4880 | GUTENBERG       |     0 |     0
- 020770101301005 |    3 | AV    |   6915 | AV NAZCA        |     0 |  3093
-(3 filas)
-*/
-
--- poníendole los puntos geográfico de inicio y fin a las cuadras
-drop table lados_manzanas;
-create table lados_manzanas as
-select substr(mza,9,2)::integer as frac, substr(mza,11,2)::integer as radio,
-    substr(mza,13,3)::integer as mza, lado, codigo, calle, desde, hasta,
-    ST_StartPoint(geom_lado) as geom_i, ST_EndPoint(geom_lado) as geom_j
-from cuadras
--- ver qué hacer con estos...
-where ST_GeometryType(geom_lado) != 'ST_MultiLineString'
---
-order by substr(mza,9,2)::integer, substr(mza,11,2)::integer, substr(mza,13,3)::integer, lado
-;
-
-CREATE INDEX cuadra_start_idx ON lados_manzanas USING GIST (geom_i);
-CREATE INDEX cuadra_end_idx ON lados_manzanas USING GIST (geom_j);
-
----- Creación de los lados (vertices del Grafo de Adyacencias, bifurcaciones de recorridos)
-\timing
-drop table if exists lados_info;
-create table lados_info as
-select row_number() over () as id, frac, radio, mza, lado,
-    codigo, calle, desde, hasta, vertice_i, vertice_j
-from ejes_de_calle c
-join lados_manzanas l
-on c.geom_i = l.geom_i and c.geom_j = l.geom_j
-or c.geom_i = l.geom_j and c.geom_j = l.geom_i
-order by frac, radio, mza, lado, calle
-;
-
-select * from lados_info;
-/*
-  id  | frac | radio | mza | lado | codigo |             calle             | desde | hasta | vertice_i | vertice_j
-------+------+-------+-----+------+--------+-------------------------------+-------+-------+-----------+-----------
-    1 |    1 |     1 |   1 |    1 |   1805 | CAMPANA                       |  5700 |  5602 |      3586 |      3478
-    2 |    1 |     1 |   1 |    2 |   5670 | LARSEN                        |  3301 |  3399 |      3586 |      3697
-    3 |    1 |     1 |   1 |    3 |   7430 | AV GRL PAZ                    |  5900 |  5792 |      3478 |      3697
-    4 |    1 |     1 |   2 |    1 |   5930 | LLAVALLOL                     |  5600 |  5502 |      3800 |      3697
-    5 |    1 |     1 |   2 |    2 |   2375 | COCHRANE                      |  3401 |  3499 |      3800 |      3929
-    6 |    1 |     1 |   2 |    3 |   7430 | AV GRL PAZ                    |  6000 |  5902 |      3697 |      3929
-    7 |    1 |     1 |   3 |    1 |   1805 | CAMPANA                       |  5600 |  5502 |      3680 |      3586
-    8 |    1 |     1 |   3 |    2 |   2375 | COCHRANE                      |  3301 |  3399 |      3680 |      3800
-...
-*/
-
 -----------------------------------------------------------
 ---- Grafo de adyacencias
-
+drop table if exists grafo_adyacencias_lados;
 create table grafo_adyacencias_lados (
 lado_id integer,
 lado_ady integer,
 tipo_ady text
 );
 
+---- doblar
+drop view if exists doblar;
 create view doblar as
 with max_lado as (
-    select frac, radio, mza, max(lado)
-    from lados_info
-    group by frac, radio, mza
+    select mza, max(lado)
+    from lados_de_manzana
+    group by mza
     ),
     doblar as (
-    select id as de_id, frac, radio,
-        mza, lado as de_lado,
+    select id as de_id, mza, lado as de_lado,
         case when lado < max then lado + 1 else 1 end as lado
+        -- lado el lado que dobla de la misma mza
     from max_lado
-    natural join lados_info
+    join lados_de_manzana
+    using (mza)
     where lado != '0'
-    ),
-    doblando as (
-    select *
-    from doblar
-    join lados_info
-    using (frac, radio, mza, lado)
     )
-select frac, radio, mza, de_lado, lado as a_lado, de_id, id as a_id
-    , calle, desde, hasta
-from doblando
-order by frac, radio, mza, de_lado, a_lado, de_id, a_id
+select de.mza, de_lado, lado as a_lado, de_id, a.id as a_id
+from doblar de
+join lados_de_manzana a
+using(mza, lado)
+order by mza, de_lado, a_lado, de_id, a_id
 ;
 
-select * from doblar;
-
+select * from doblar limit 10;
 /*
- frac | radio | mza | de_lado | a_lado | de_id | a_id |             calle             | desde | hasta
-------+-------+-----+---------+--------+-------+------+-------------------------------+-------+-------
-    1 |     1 |   1 |       1 |      2 |     1 |    2 | LARSEN                        |  3301 |  3399
-    1 |     1 |   1 |       2 |      3 |     2 |    3 | AV GRL PAZ                    |  5900 |  5792
-    1 |     1 |   1 |       3 |      1 |     3 |    1 | CAMPANA                       |  5700 |  5602
-    1 |     1 |   2 |       1 |      2 |     4 |    5 | COCHRANE                      |  3401 |  3499
-    1 |     1 |   2 |       2 |      3 |     5 |    6 | AV GRL PAZ                    |  6000 |  5902
-    1 |     1 |   2 |       3 |      1 |     6 |    4 | LLAVALLOL                     |  5600 |  5502
-    1 |     1 |   3 |       1 |      2 |     7 |    8 | COCHRANE                      |  3301 |  3399
-    1 |     1 |   3 |       2 |      3 |     8 |    9 | LLAVALLOL                     |  5501 |  5599
-    1 |     1 |   3 |       3 |      4 |     9 |   10 | LARSEN                        |  3400 |  3302
-    1 |     1 |   3 |       4 |      1 |    10 |    7 | CAMPANA                       |  5600 |  5502
-...
+       mza       | de_lado | a_lado | de_id | a_id
+-----------------+---------+--------+-------+------
+ 020770100101001 |       1 |      2 |     1 |    2
+ 020770100101001 |       2 |      3 |     2 |    3
+ 020770100101001 |       3 |      1 |     3 |    1
+ 020770100101002 |       1 |      2 |     4 |    5
+ 020770100101002 |       2 |      3 |     5 |    6
+ 020770100101002 |       3 |      1 |     6 |    4
+ 020770100101003 |       1 |      2 |     7 |    8
+ 020770100101003 |       2 |      3 |     8 |    9
+ 020770100101003 |       3 |      4 |     9 |   10
+ 020770100101003 |       4 |      1 |    10 |    7
+(10 filas)
 */
 
+
+delete grafo_adyacencias_lados;
 insert into grafo_adyacencias_lados
 select de_id as lado_id, a_id as lado_ady, 'doblar'
 from doblar
 ;
 
--- ver que onda
-select * from grafo_adyacencias_lados;
+select * from grafo_adyacencias_lados limit 10;
 /*
  lado_id | lado_ady | tipo_ady
 ---------+----------+----------
@@ -241,32 +121,198 @@ select * from grafo_adyacencias_lados;
        8 |        9 | doblar
        9 |       10 | doblar
       10 |        7 | doblar
-      11 |       12 | doblar
-      12 |       13 | doblar
-      13 |       14 | doblar
-      14 |       11 | doblar
-...
+(10 filas)
 */
 
-create or replace view adyacencias_lados as 
-select d.frac, d.radio, d.mza, d.lado, 
-h.mza, h.lado, 
-lado_id, lado_ady, tipo_ady
-from lados_info d
-join grafo_adyacencias_lados g
-on d.id = lado_id
-join lados_info h
-on h.id = lado_ady
-where tipo_ady != 'doblar'
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+--  creando grafo de adyacencias entre manzanas
+--  para calcular los lados de cruzar y volver
+-------------------------------------------------------------------
+
+----- adyacencias
+
+drop view codigo_manzanas_adyacentes;
+create view codigo_manzanas_adyacentes as
+select mzad as mza_i, mzai as mza_j
+from e0211lin
+where substr(mzad,1,12) = substr(mzai,1,12) -- mismo PPDDDLLLFFRR
+and mzad is not Null and mzad != '' and ladod != 0
+and mzai is not Null and mzai != '' and ladod != 0
+union -- hacer simétrica
+select mzai, mzad
+from e0211lin
+where substr(mzad,1,12) = substr(mzai,1,12) -- mismo PPDDDLLLFFRR
+and mzad is not Null and mzad != '' and ladod != 0
+and mzai is not Null and mzai != '' and ladod != 0
+;
+
+select * from codigo_manzanas_adyacentes order by mza_i, mza_j limit 10;
+/*
+      mza_i      |      mza_j
+-----------------+-----------------
+ 020770100101001 | 020770100101003
+ 020770100101002 | 020770100101003
+ 020770100101002 | 020770100101007
+ 020770100101003 | 020770100101001
+ 020770100101003 | 020770100101002
+ 020770100101003 | 020770100101004
+ 020770100101004 | 020770100101003
+ 020770100101004 | 020770100101005
+ 020770100101004 | 020770100101007
+ 020770100101005 | 020770100101004
+(10 filas)
+*/
+-- es simétrica
+                     
+---------------------------------------------------
+--- volver, fin(lado_i) = inicio(lado_j) y mza_i ady mza_j y la intersección es 1 linea
+
+drop view if exists lado_de_enfrente_para_volver;
+create view lado_de_enfrente_para_volver as
+select i.mza as mza_i, i.lado as lado_i,
+    j.mza as mza_j, j.lado as lado_j
+from lados_de_manzana i
+join lados_de_manzana j
+on i.nodo_j_geom = j.nodo_i_geom -- el lado_i termina donde el lado_j empieza
+-- los lados van de nodo_i a nodo_j
+join codigo_manzanas_adyacentes a
+on i.mza = a.mza_i and j.mza = a.mza_j -- las manzanas son adyacentes
+where ST_Dimension(ST_Intersection(i.lado_geom,j.lado_geom)) = 1
+order by mza_i, mza_j, lado_i, lado_j
+;
+
+select * from lado_de_enfrente_para_volver limit 10;
+/*
+      mza_i      | lado_i |      mza_j      | lado_j
+-----------------+--------+-----------------+--------
+ 020770100101001 |      2 | 020770100101003 |      4
+ 020770100101002 |      1 | 020770100101003 |      3
+ 020770100101002 |      2 | 020770100101007 |      4
+ 020770100101003 |      4 | 020770100101001 |      2
+ 020770100101003 |      3 | 020770100101002 |      1
+ 020770100101003 |      2 | 020770100101004 |      4
+ 020770100101004 |      4 | 020770100101003 |      2
+ 020770100101004 |      2 | 020770100101005 |      4
+ 020770100101004 |      3 | 020770100101007 |      1
+ 020770100101005 |      4 | 020770100101004 |      2
+(10 filas)
+*/
+
+---------------------------------------------------
+--- cruzar, fin(lado_i) = inicio(lado_j) y mza_i ady mza_j y la intersección es 1 punto
+
+drop view if exists lado_para_cruzar;
+create view lado_para_cruzar as
+select i.mza as mza_i, i.lado as lado_i,
+    j.mza as mza_j, j.lado as lado_j
+from lados_de_manzana i
+join lados_de_manzana j
+on i.nodo_j_geom = j.nodo_i_geom -- el lado_i termina donde el lado_j empieza
+-- los lados van de nodo_i a nodo_j
+join codigo_manzanas_adyacentes a
+on i.mza = a.mza_i and j.mza = a.mza_j -- las manzanas son adyacentes
+where ST_Dimension(ST_Intersection(i.lado_geom,j.lado_geom)) = 0
+order by mza_i, mza_j, lado_i, lado_j
+;
+
+select * from lado_para_cruzar limit 10;
+/*
+      mza_i      | lado_i |      mza_j      | lado_j
+-----------------+--------+-----------------+--------
+ 020770100101001 |      1 | 020770100101003 |      1
+ 020770100101002 |      3 | 020770100101003 |      4
+ 020770100101002 |      1 | 020770100101007 |      1
+ 020770100101003 |      3 | 020770100101001 |      3
+ 020770100101003 |      2 | 020770100101002 |      2
+ 020770100101003 |      1 | 020770100101004 |      1
+ 020770100101004 |      3 | 020770100101003 |      3
+ 020770100101004 |      1 | 020770100101005 |      1
+ 020770100101004 |      2 | 020770100101007 |      2
+ 020770100101005 |      3 | 020770100101004 |      3
+(10 filas)
+*/
+
+
+-- buscar ids de lados para_volver
+drop view if exists para_volver;
+create view para_volver as
+select de.mza as de_mza, de.lado as de_lado,
+    a.mza as a_mza, a.lado as a_lado,
+    de.id as de_id, a.id as a_id
+from lados_de_manzana de
+join lado_de_enfrente_para_volver
+on de.mza = mza_i and de.lado = lado_i
+join lados_de_manzana a
+on a.mza = mza_j and a.lado = lado_j
+order by de.mza, de.lado, a.mza, a.lado
+;
+
+select * from para_volver limit 10;
+
+/*
+     de_mza      | de_lado |      a_mza      | a_lado | de_id | a_id
+-----------------+---------+-----------------+--------+-------+------
+ 020770100101001 |       2 | 020770100101003 |      4 |     2 |   10
+ 020770100101002 |       1 | 020770100101003 |      3 |     4 |    9
+ 020770100101002 |       2 | 020770100101007 |      4 |     5 |   22
+ 020770100101003 |       2 | 020770100101004 |      4 |     8 |   14
+ 020770100101003 |       3 | 020770100101002 |      1 |     9 |    4
+ 020770100101003 |       4 | 020770100101001 |      2 |    10 |    2
+ 020770100101004 |       2 | 020770100101005 |      4 |    12 |   18
+ 020770100101004 |       3 | 020770100101007 |      1 |    13 |   19
+ 020770100101004 |       4 | 020770100101003 |      2 |    14 |    8
+ 020770100101005 |       4 | 020770100101004 |      2 |    18 |   12
+(10 filas)
+*/
+
+
+insert into grafo_adyacencias_lados
+select de_id as lado_id, a_id as lado_ady, 'volver'
+from para_volver
 ;
 
 
+--buscar ids de lados para_cruzar
+drop view if exists para_cruzar;
+create view para_cruzar as
+select de.mza as de_mza, de.lado as de_lado,
+    a.mza as a_mza, a.lado as a_lado,
+    de.id as de_id, a.id as a_id
+from lados_de_manzana de
+join lado_para_cruzar
+on de.mza = mza_i and de.lado = lado_i
+join lados_de_manzana a
+on a.mza = mza_j and a.lado = lado_j
+order by de.mza, de.lado, a.mza, a.lado
+;
 
-create table grafo_adyacencias_manzanas (
-mza_id integer,
-mza_ady integer
-);
+select * from para_cruzar limit 10;
 
+/*
+     de_mza      | de_lado |      a_mza      | a_lado | de_id | a_id
+-----------------+---------+-----------------+--------+-------+------
+ 020770100101001 |       1 | 020770100101003 |      1 |     1 |    7
+ 020770100101002 |       1 | 020770100101007 |      1 |     4 |   19
+ 020770100101002 |       3 | 020770100101003 |      4 |     6 |   10
+ 020770100101003 |       1 | 020770100101004 |      1 |     7 |   11
+ 020770100101003 |       2 | 020770100101002 |      2 |     8 |    5
+ 020770100101003 |       3 | 020770100101001 |      3 |     9 |    3
+ 020770100101004 |       1 | 020770100101005 |      1 |    11 |   15
+ 020770100101004 |       2 | 020770100101007 |      2 |    12 |   20
+ 020770100101004 |       3 | 020770100101003 |      3 |    13 |    9
+ 020770100101005 |       3 | 020770100101004 |      3 |    17 |   13
+(10 filas)
+*/
+
+insert into grafo_adyacencias_lados
+select de_id as lado_id, a_id as lado_ady, 'cruzar'
+from para_cruzar
+;
+
+--------------------------------------------------------------
+--todo hacer tabla de acciones 1: doblar, 2: volver, 3: cruzar
 
 
 
