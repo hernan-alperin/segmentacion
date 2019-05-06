@@ -114,8 +114,12 @@ language sql
 ;
 
 /*
-select * from opciones_para_lado('020770100101001',1);
-
+select * from opciones_para_lado(1,1,1,1);
+ lado_id | frac | radio | mza | lado | ady_id | mza_ady | lado_ady | tipo_ady
+---------+------+-------+-----+------+--------+---------+----------+----------
+       1 |    1 |     1 |   1 |    1 |      2 |       1 |        2 | doblar
+       1 |    1 |     1 |   1 |    1 |      7 |       3 |        1 | cruzar
+(2 filas)
 
 */
 
