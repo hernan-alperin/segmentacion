@@ -1,0 +1,284 @@
+#
+# optimización
+#
+
+# fin de definiciones
+
+
+import psycopg2
+import operator
+import time
+
+#_table = '0339'  # San Javier
+#_prov = 54
+#_depto = 105 # ahora vienen en arg
+
+conn = psycopg2.connect(
+            database = "censo2020",
+            user = "segmentador",
+            password = "rodatnemges",
+            host = "172.26.67.239",
+            port = "5432")
+
+# obtener prov, depto, frac que estan en segmentacion.conteos
+cur = conn.cursor()
+sql = ("select distinct prov::integer, depto::integer, frac::integer, radio::integer"
+       " from segmentacion.conteos"
+       " order by prov::integer, depto::integer, frac::integer, radio::integer;")
+cur.execute(sql)
+radios = cur.fetchall()
+#print _prov, _depto
+#print radios
+
+def sql_where_pdfr(prov, depto, frac, radio):
+    return ("\nwhere prov::integer = " + str(prov)
+            + "\n and depto::integer = " + str(depto)
+            + "\n and frac::integer = " + str(frac)
+            + "\n and radio::integer = " + str(radio))
+
+def sql_where_PPDDDLLLMMM(prov, depto, frac, radio, cpte, side):
+    if type(cpte) is int:
+        mza = cpte
+    elif type(cpte) is tuple:
+        (mza, lado) = cpte
+    where_mza = ("\nwhere substr(mza" + side + ",1,2)::integer = " + str(prov)
+            + "\n and substr(mza" + side + ",3,3)::integer = " + str(depto)
+            + "\n and substr(mza" + side + ",9,2)::integer = " + str(frac)
+            + "\n and substr(mza" + side + ",11,2)::integer = " + str(radio)
+            + "\n and substr(mza" + side + ",13,3)::integer = " + str(mza)
+            )
+    if type(cpte) is tuple:
+            where_mza = (where_mza
+                + "\n and lado" + side + "::integer = " + str(lado))
+    return where_mza
+
+for prov, depto, frac, radio in radios:
+  if (radio and not(prov == 58 and depto == 49 and radio == 1)): # junín de los andes (sacar radio 1 que es un lio)
+    if (radio and prov == _prov and depto == _depto): # las del _table
+        print
+        print "radio: "
+        print prov, depto, frac, radio
+        cur = conn.cursor()
+        sql = ("select mza, sum(conteo)::int from segmentacion.conteos"
+            + sql_where_pdfr(prov, depto, frac, radio)
+            + "\ngroup by mza;")
+        cur.execute(sql)
+        conteos_mzas = cur.fetchall()
+        manzanas = [mza for mza, conteo in conteos_mzas]
+
+#        print >> sys.stderr, "conteos_mzas"
+#        print >> sys.stderr, conteos_mzas
+
+        sql = ("select mza, lado, sum(conteo)::int from segmentacion.conteos"
+            + sql_where_pdfr(prov, depto, frac, radio)
+            + "\ngroup by mza, lado;")
+        cur.execute(sql)
+        result = cur.fetchall()
+        conteos_lados = [((mza, lado), conteo) for mza, lado, conteo in result]
+        lados = [(mza, lado) for mza, lado, conteo in result]
+
+#        print >> sys.stderr, "conteos_lados"
+#        print >> sys.stderr, conteos_lados
+
+
+        sql = ("select mza, max(lado) from segmentacion.conteos"
+            + sql_where_pdfr(prov, depto, frac, radio)
+            + "\ngroup by mza;")
+        cur.execute(sql)
+        mza_ultimo_lado = cur.fetchall()
+
+        sql = ("select mza, mza_ady from segmentacion.adyacencias"
+            + sql_where_pdfr(prov, depto, frac, radio)
+            + "\n and mza != mza_ady"
+            + "\ngroup by mza, mza_ady;")
+        cur.execute(sql)
+        adyacencias_mzas_mzas = cur.fetchall()
+
+        sql = ("select mza, mza_ady, lado_ady from segmentacion.adyacencias"
+            + sql_where_pdfr(prov, depto, frac, radio)
+            + "\n and mza != mza_ady"
+            + ";")
+        cur.execute(sql)
+        result = cur.fetchall()
+        adyacencias_mzas_lados = [(mza, (mza_ady, lado_ady)) for mza, mza_ady, lado_ady in result]
+
+        sql = ("select mza, lado, mza_ady from segmentacion.adyacencias"
+            + sql_where_pdfr(prov, depto, frac, radio)
+            + "\n and mza != mza_ady"
+            + ";")
+        cur.execute(sql)
+        result = cur.fetchall()
+        adyacencias_lados_mzas= [((mza, lado), mza_ady) for mza, lado, mza_ady in result]
+
+        sql = ("select mza, lado, mza_ady, lado_ady from segmentacion.adyacencias"
+            + sql_where_pdfr(prov, depto, frac, radio)
+            + "\n and mza != mza_ady"
+            + ";")
+        cur.execute(sql)
+        result = cur.fetchall()
+        lados_enfrentados = [((mza, lado), (mza_ady, lado_ady)) for mza, lado, mza_ady, lado_ady in result]
+
+        lados_contiguos = []
+        for mza, lado in lados:
+            ultimo_lado = next(ultimo for mza, ultimo in mza_ultimo_lado)
+            if lado == 1:
+                lados_contiguos.append(((mza, lado),(mza, ultimo_lado)))
+                lados_contiguos.append(((mza, lado),(mza, lado + 1)))
+            elif lado == ultimo_lado:
+                lados_contiguos.append(((mza, lado),(mza, lado - 1)))
+                lados_contiguos.append(((mza, lado),(mza, 1)))
+            else:
+                lados_contiguos.append(((mza, lado),(mza, lado - 1)))
+                lados_contiguos.append(((mza, lado),(mza, lado + 1)))
+
+        conteos = conteos_mzas
+        adyacencias = adyacencias_mzas_mzas
+
+        conteos_excedidos = [(manzana, conteo) for (manzana, conteo) in conteos_mzas
+                            if conteo > cantidad_de_viviendas_maxima_deseada_por_segmento]
+        mzas_excedidas = [mza for mza, conteo in conteos_excedidos]
+
+        componentes = [mza for mza in manzanas if mza not in mzas_excedidas]
+        conteos = [(mza, conteo) for (mza, conteo) in conteos if mza not in mzas_excedidas]
+        adyacencias = [(mza, mza_ady) for (mza, mza_ady) in adyacencias
+                        if mza not in mzas_excedidas and mza_ady not in mzas_excedidas]
+        # se eliminana manzanas excedidas
+
+        componentes.extend([(mza, lado) for (mza, lado) in lados if mza in mzas_excedidas])
+        conteos.extend([((mza, lado), conteo) for ((mza, lado), conteo) in conteos_lados
+                        if mza in mzas_excedidas])
+        adyacencias.extend([((mza, lado), mza_ady) for (mza, lado), mza_ady in adyacencias_lados_mzas
+                        if mza in mzas_excedidas and mza_ady not in mzas_excedidas])
+        adyacencias.extend([(mza, (mza_ady, lado_ady))
+                        for mza, (mza_ady, lado_ady) in adyacencias_mzas_lados
+                        if mza not in mzas_excedidas and mza_ady in mzas_excedidas])
+        adyacencias.extend([((mza, lado), (mza_ady, lado_ady))
+                        for (mza, lado), (mza_ady, lado_ady) in lados_enfrentados
+                        if mza in mzas_excedidas and mza_ady in mzas_excedidas])
+        adyacencias.extend([((mza, lado), (mza_ady, lado_ady))
+                        for (mza, lado), (mza_ady, lado_ady) in lados_contiguos])
+        # se agregan los lados correspondientes a esas manzanas
+
+#        print >> sys.stderr, "componentes"
+#        print >> sys.stderr, componentes
+
+#---- hasta acá
+
+        if adyacencias:
+            start = time.time()
+#            print adyacencias
+
+            # crea los dictionary
+            componentes_en_adyacencias = list(set([cpte for cpte, cpte_ady in adyacencias]))
+            todos_los_componentes = list(set(componentes + componentes_en_adyacencias))
+
+            # print "no están en listado", manzanas_sin_viviendas
+            # hay que ponerle 0 viviendas
+            viviendas = dict()
+            for cpte in componentes:
+                viviendas[cpte] = 0
+            for cpte, conteo in conteos:
+                viviendas[cpte] = int(conteo)
+
+            componentes_no_en_adyacencias = list(set(todos_los_componentes) - set(componentes_en_adyacencias))
+            # print "no están en cobertura", manzanas_no_en_adyacencias
+            # hay que ponerle nula la lista de adyacencias
+            adyacentes = dict()
+            for cpte in todos_los_componentes:
+                adyacentes[cpte] = list([])
+            for cpte, adyacente in adyacencias:
+                adyacentes[cpte] = adyacentes[cpte] + [adyacente]
+#            for manzana in sorted(adyacentes.iterkeys()):
+#                print manzana, adyacentes[manzana]
+
+            # optimización
+
+            ##############################
+            # soluciones iniciales
+            soluciones_iniciales = []
+            # iniciando de un extremo de la red de segmentaciones: segmento único igual a todo el radio
+            todos_juntos = [componentes]
+            soluciones_iniciales.append(todos_juntos)
+            # iniciando del otro extremo de la red de segmentaciones: un segmento por manzana
+            todos_separados = [[cpte] for cpte in componentes]
+            soluciones_iniciales.append(todos_separados)
+            ##############################
+
+            # TODO: cargar el segmento de la segmentación anterior sgm en segmentacio.conteos para el caso de lados
+
+            costo_minimo = float('inf')
+            for solucion in soluciones_iniciales:
+                # algoritmo greedy
+                vecinos = list(vecindario(solucion))
+                costo_actual = costo_segmentacion(solucion)
+                costos_vecinos = map(costo_segmentacion, vecinos)
+
+                while min(costos_vecinos) < costo_actual: # se puede mejorar
+                    min_id, mejor_costo = min(enumerate(costos_vecinos), key=operator.itemgetter(1))
+                    solucion = vecinos[min_id] # greedy
+#                    print >> sys.stderr, mejor_costo
+                    vecinos = list(vecindario(solucion))
+                    costo_actual = mejor_costo
+                    costos_vecinos = map(costo_segmentacion, vecinos)
+                if costo_actual < costo_minimo:
+                    costo_minimo = costo_actual
+                    mejor_solucion = solucion
+
+            #muestra warnings
+            if componentes_no_en_adyacencias:
+                print "Cuidado: "
+                print
+                print "no están en adyacencias, cobertura con errores, quizás?", componentes_no_en_adyacencias
+                print "no se les asignó componentes adyacentes y quedaron aisladas"
+                print
+
+            # muestra solución
+            print "---------"
+            print "mínimo local"
+            print "costo", costo_minimo
+            for s, segmento in enumerate(mejor_solucion):
+                print ["segmento", s+1,
+                   "carga", carga(segmento),
+                   "costo", costo(segmento),
+                   "componentes", segmento]
+
+            print "deseada: %d, máxima: %d, mínima: %d" % (cantidad_de_viviendas_deseada_por_segmento,
+                cantidad_de_viviendas_maxima_deseada_por_segmento,
+                cantidad_de_viviendas_minima_deseada_por_segmento)
+
+
+
+            end = time.time()
+            print str(end - start) + " segundos"
+
+            # actualiza los valores de segmento en la tabla de polygons para representar graficamente
+            segmentos = {}
+            for s, segmento in enumerate(solucion):
+                for cpte in segmento:
+                    segmentos[cpte] = s + 1
+
+            # por ahora solo junin de los andes buscar la tabla usando una relacion prov, depto - aglomerado
+
+#------
+# update shapes.eAAAAa  (usando lados)
+#------
+            for cpte in componentes:
+                sql = ("update shapes." + _table + "a"
+                    + " set segi = " + str(segmentos[cpte])
+                    + sql_where_PPDDDLLLMMM(prov, depto, frac, radio, cpte, 'i')
+                    + "\n;")
+                cur.execute(sql)
+                sql = ("update shapes." + _table + "a"
+                    + " set segd = " + str(segmentos[cpte])
+                    + sql_where_PPDDDLLLMMM(prov, depto, frac, radio, cpte, 'd')
+                    + "\n;")
+                cur.execute(sql)
+            conn.commit()
+#            raw_input("Press Enter to continue...")
+        else:
+            print "sin adyacencias"
+#    else:
+#        print "radio Null"
+
+conn.close()
+
