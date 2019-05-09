@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
+from decimal import *
 print sys.argv[1:]
 _table = sys.argv[1]
 _prov = int(sys.argv[2])
@@ -7,70 +8,73 @@ _depto = int(sys.argv[3])
 
 #definición de funciones de adyacencia y operaciones sobre manzanas
 
-def son_adyacentes(mza, ady):
-    return ady in adyacentes[mza]
+def son_adyacentes(este, aquel):
+    return aquel in adyacentes[este]
 
-# calcula el componente conexo que contiene a m, para calcular las componentes conexas o contiguas luego de una extracción
-def clausura_conexa(m, segmento):
-    # se pueden ir de la manzana m a la n para toda manzana n dentro de la clausura
-    if m not in segmento:
+# calcula el componente conexo que contiene a este,
+# para calcular las componentes conexas o contiguas luego de una extracción
+def clausura_conexa(este, esos):
+    # se puede ir de este a ese para todo ese en esos
+    if este not in esos:
         return [] # caso seguro
     else:
-        clausura = [m] # al menos contiene a la manzana m
+        clausura = [este] # al menos contiene a este
         i = 0
-        while i < len(clausura): # i es el puntero a la manzana que falta expandir
-            # i se incrementa de a 1 expandiendo de a una las adyacencias
-            # hasta que la variable clausura no se expande más, queda en un puntos fijo, i.e. es una clausura
-            adyacentes_i = [manzana for manzana in adyacentes[clausura[i]] if manzana in segmento]
-            # las adyacentes a la i-ésima manzana de la clausura que están en el segmento
-            nuevas = [manzana for manzana in adyacentes_i if manzana not in clausura] # no agragadas aún
-            clausura = clausura + nuevas # se agregan al final las adyacencias no agregadas
+        while i < len(clausura): # i es el puntero lo que que falta expandir
+            # i se incrementa de a 1 expandiendo de a 1 las adyacencias
+            # hasta que la variable clausura no se expande más,
+            # queda en un puntos fijo, i.e. es una clausura
+            adyacentes_i = [ese for ese in adyacentes[clausura[i]] if ese in esos]
+            # los adyacentes a la i-ésimo elemento de la clausura que están en la coleccion
+            nuevos = [ese for ese in adyacentes_i if ese not in clausura] # no agragados aún
+            clausura.extend(nuevos) # se agregan al final las adyacencias no agregadas
             i = i + 1
         return clausura
 
-def conectado(segmento):
-    # True si el segmento es conexo, no hay partes separadas,
-    if not segmento: # es vacio
+def conectados(estos):
+    # True si coleccion es conexo, no hay partes separadas,
+    if not estos: # es vacio
         return True
     else:
-        una = segmento[0] # una es cualquiera, se elije la primera
-        return len(clausura_conexa(una, segmento)) == len(segmento)
+        este = estos[0] # este es cualquiera, se elije el primero
+        return len(clausura_conexa(este, estos)) == len(estos)
 
-# extraer una manzana
-def extraer(m, segmento):
+# extraer un componente
+def extraer(este, estos):
     # devuelve la lista de partes conexas resultado de remover la manzana m del segmento
-    if m not in segmento:
+    if este not in estos:
         return []
     else:
-        copia = list(segmento) # copia para no modificar el original
-        copia.remove(m)
+        esos = list(estos) # copia para no modificar el original
+        esos.remove(este)
         partes = []
-        while copia: # es no vacia
-            una = copia[0] # se elige una manzana cualquiera, se usa la 1ra
-            componente_conexo_a_una = clausura_conexa(una, copia)
-            for manzana in componente_conexo_a_una:
-                copia.remove(manzana) # en copia queda el resto no conexo a una
-            partes.append(componente_conexo_a_una)
+        while esos: # es no vacia
+            ese = esos[0] # se elige uno cualquiera, se usa el 1ro
+            clausura_de_ese_en_esos = clausura_conexa(ese, esos)
+            for aquel in clausura_de_ese_en_esos:
+                if aquel not in esos: # (?) cómo puede ser?????
+            #        pass
+                    raise Exception("elemento " + str(aquel) + " no está en " + str(esos)
+                        + "\nclausura_de_ese_en_esos " + str(clausura_de_ese_en_esos))
+                else:  # para que no se rompa acá....
+                    esos.remove(aquel) # en esos queda el resto no conexo a aquel
+            partes.append(clausura_de_ese_en_esos)
         return partes
 
-# transferir una manzana de un segmento a otro
-def transferir(m, origen, destino):
-    # transferir la manzana del segmento origen al segmento destino
-    # devuelve una lista binaria
-    if not conectado(destino + [m]): # no puedo transferir
+# transferir un componente de un conjunto a otro
+def transferir(este, estos, esos):
+    # transferir este del segmento origen al segmento destino
+    # devuelve una lista con 2 elementoe ... los nuevos estos y esos
+    if not conectados(esos + [este]): # no puedo transferir
         return False
-    elif len(origen) == 1: # no queda resto, se fusiona origen con destino
-        return [origen + destino]
+    elif len(estos) == 1: # no queda resto, se fusiona origen con destino
+        return [estos + esos]
     else:
-        return extraer(m, origen) + [destino + [m]]
+        return extraer(este, estos) + [esos + [este]]
 
-
-def carga_segmento(segmento):
-    # segmento es una lista de manzanas
-    viviendas_segmento = [viviendas[mza] for mza in segmento]
-    # la lista de cantidad de viviendas por manzana del segmento
-    return sum(viviendas_segmento)
-    # la cantidad de viviendas del segmento
+def carga(estos):
+    conteos = [viviendas[este] for este in estos]
+    return sum(conteos)
 
 #################################################################################
 #
@@ -78,44 +82,47 @@ def carga_segmento(segmento):
 # y relativas a la calidad del segmento y la segmentación
 #
 # caso 1
-cantidad_de_viviendas_deseada_por_segmento = 150
-cantidad_de_viviendas_maxima_deseada_por_segmento = 250
-cantidad_de_viviendas_minima_deseada_por_segmento = 130
+cantidad_de_viviendas_deseada_por_segmento = 20
+cantidad_de_viviendas_maxima_deseada_por_segmento = 23
+cantidad_de_viviendas_minima_deseada_por_segmento = 17
 if len(sys.argv) > 5:
     cantidad_de_viviendas_minima_deseada_por_segmento = int(sys.argv[4])
     cantidad_de_viviendas_maxima_deseada_por_segmento = int(sys.argv[5])
-if len(sys.argv) > 5:
+if len(sys.argv) > 6:
     cantidad_de_viviendas_deseada_por_segmento = int(sys.argv[6])
 
 
-def costo_segmento(segmento):
+def costo(segmento):
     # segmento es una lista de manzanas
-    carga = carga_segmento(segmento)
-    if carga > cantidad_de_viviendas_maxima_deseada_por_segmento:
+    carga_segmento = carga(segmento)
+    if carga_segmento > cantidad_de_viviendas_maxima_deseada_por_segmento:
         # la carga es mayor el costo es el cubo
-        return ((carga - cantidad_de_viviendas_maxima_deseada_por_segmento)**2
-            + abs(carga - cantidad_de_viviendas_deseada_por_segmento))
-    elif carga < cantidad_de_viviendas_minima_deseada_por_segmento:
+        return ((carga_segmento - cantidad_de_viviendas_maxima_deseada_por_segmento)
+                *(carga_segmento - cantidad_de_viviendas_maxima_deseada_por_segmento)
+                *(carga_segmento - cantidad_de_viviendas_maxima_deseada_por_segmento)
+            + (carga_segmento - cantidad_de_viviendas_deseada_por_segmento))
+    elif carga_segmento < cantidad_de_viviendas_minima_deseada_por_segmento:
         # la carga es menor el costo es el cuadrado
-        return ((cantidad_de_viviendas_deseada_por_segmento - carga)**2
-            + abs(carga - cantidad_de_viviendas_deseada_por_segmento))
+        return ((cantidad_de_viviendas_deseada_por_segmento - carga_segmento)
+                *(cantidad_de_viviendas_deseada_por_segmento - carga_segmento)
+            + (carga_segmento - cantidad_de_viviendas_deseada_por_segmento))
     else:  # está entre los valores deseados
         # el costo el la diferencia absoluta al valor esperado
-        return abs(carga - cantidad_de_viviendas_deseada_por_segmento)
-"""
+        return abs(carga_segmento - cantidad_de_viviendas_deseada_por_segmento)
+    """
     # otro caso, costo en rango, cuadrático por arriba y lineal por abajo
-    if carga > cantidad_de_viviendas_deseada_por_segmento:
-        return (carga - cantidad_de_viviendas_deseada_por_segmento)**4
+    if carga_segmento > cantidad_de_viviendas_deseada_por_segmento:
+        return (carga_segmento - cantidad_de_viviendas_deseada_por_segmento)**4
     else:
-        return (cantidad_de_viviendas_deseada_por_segmento - carga)**2
-"""
+        return (cantidad_de_viviendas_deseada_por_segmento - carga_segmento)**2
+    """
 
 
 #####################################################################################
 
 def costos_segmentos(segmentacion):
     # segmentacion es una lista de segmentos
-    return map(costo_segmento, segmentacion)
+    return map(costo, segmentacion)
     # la lista de costos de los segmentos
 
 def costo_segmentacion(segmentacion):
@@ -126,6 +133,7 @@ def costo_segmentacion(segmentacion):
 #        # suma la aplicación de costo a todos los segmentos
 #    else:
 #        return sum(costos_segmentos(segmentacion)) + 1e6*cantidad_de_segmentos
+
 # definicón del vecindario de una segmentacíon para definir y recorrer la red de segementaciones
 # vecindario devuelve array de vecinos usando extraer y transferir
 def vecindario(segmentacion):
@@ -133,30 +141,37 @@ def vecindario(segmentacion):
     vecindario = []
     # extracciones
     for segmento in segmentacion:
-        sgms = list(segmentacion); sgms.remove(segmento) # el resto no considerado de la segmentación
+        sgms = list(segmentacion)
+        sgms.remove(segmento) # el resto no considerado de la segmentación
         if len(segmento) == 2: # segmento binario se parte, no se analizan los 2 casos, ya que son el mismo
-            una = segmento[0]; otra = segmento[1]
-            vecino = [[una], [otra]] + sgms; vecindario.append(vecino)
+            este = segmento[0]; ese = segmento[1]
+            vecino = [[este], [ese]] + sgms
+            vecindario.append(vecino)
         elif len(segmento) > 2:
-            for manzana in segmento:
-                vecino = [[manzana]] + extraer(manzana, segmento) + sgms; vecindario.append(vecino)
+            for este in segmento:
+                vecino = [[este]] + extraer(este, segmento) + sgms
+                vecindario.append(vecino)
     # transferencias
     if len(segmentacion) >= 2: # se puede hacer una transferencia
-        for o, origen in enumerate(segmentacion):
-            sgms_o = list(segmentacion); sgms_o.remove(origen)
-            for d, destino in enumerate(sgms_o):
-                sgms_od = list(sgms_o); sgms_od.remove(destino) # copia de segmentacion sin origen ni destino
-                if len(origen) == 1 and len(destino) == 1 and d < o:
-                    pass # si no se repiten cuando destino y origen se permuten
+        for i, este in enumerate(segmentacion):
+            esa = list(segmentacion) # copia para preservar la original
+            esa.remove(este) # elimino de la copia de la segmentacion a este segmento
+            for j, ese in enumerate(esa): # busco otro segmento
+                aquella = list(esa) # copia de para eliminar a ese
+                aquella.remove(ese) # copia de segmentacion sin este ni ese
+                if len(este) == 1 and len(ese) == 1 and i < j:
+                    pass # si no se repiten cuando este y ese se permuten
                 else:
-                    for manzana in origen:
-                        transferencia = transferir(manzana, origen, destino)
-                        if transferencia: # la manzana esta conectada con el
-                            vecino = transferencia + sgms_od; vecindario.append(vecino)
+                    for cada in este:
+                        transferencia = transferir(cada, este, ese)
+                        if transferencia: # se pudo hacer
+                            vecino = transferencia + aquella
+                            vecindario.append(vecino)
                 # fusión de 2 segmentos evitando repeticiones
-                #(cuando alguno es una sola manzana la fusion es considerada en la transferencia)
-                if len(origen) > 1 and len(destino) > 1 and conectado(origen + destino):
-                    vecino = [origen + destino] + sgms_od; vecindario.append(vecino) # analizar fusiones
+                #(cuando alguno es una solo elemento la fusion es considerada en la transferencia)
+                if len(este) > 1 and len(ese) > 1 and conectados(este + ese):
+                    vecino = [este + ese] + aquella
+                    vecindario.append(vecino) # analizar fusiones
     return vecindario
 # no devuelve repeticiones
 
@@ -191,60 +206,165 @@ cur.execute(sql)
 radios = cur.fetchall()
 #print _prov, _depto
 #print radios
+
+def sql_where_pdfr(prov, depto, frac, radio):
+    return ("\nwhere prov::integer = " + str(prov)
+            + "\n and depto::integer = " + str(depto)
+            + "\n and frac::integer = " + str(frac)
+            + "\n and radio::integer = " + str(radio))
+
+def sql_where_PPDDDLLLMMM(prov, depto, frac, radio, cpte, side):
+    if type(cpte) is int:
+        mza = cpte
+    elif type(cpte) is tuple:
+        (mza, lado) = cpte
+    where_mza = ("\nwhere substr(mza" + side + ",1,2)::integer = " + str(prov)
+            + "\n and substr(mza" + side + ",3,3)::integer = " + str(depto)
+            + "\n and substr(mza" + side + ",9,2)::integer = " + str(frac)
+            + "\n and substr(mza" + side + ",11,2)::integer = " + str(radio)
+            + "\n and substr(mza" + side + ",13,3)::integer = " + str(mza)
+            )
+    if type(cpte) is tuple:
+            where_mza = (where_mza
+                + "\n and lado" + side + "::integer = " + str(lado))
+    return where_mza
+
 for prov, depto, frac, radio in radios:
-    if (radio and prov == 58 and depto == 49 and radio == 1): # junín de los andes (sacar radio 1 que es un lio)
-        continue
+  if (radio and not(prov == 58 and depto == 49 and radio == 1)): # junín de los andes (sacar radio 1 que es un lio)
     if (radio and prov == _prov and depto == _depto): # las del _table
         print
         print "radio: "
         print prov, depto, frac, radio
         cur = conn.cursor()
-        sql = ("select mza, sum(conteo) from segmentacion.conteos"
-            + " where prov = " + str(prov)
-            + " and depto = " + str(depto)
-            + " and frac = " + str(frac)
-            + " and radio = " + str(radio)
-            + " group by mza;")
-#        print sql
+        sql = ("select mza, sum(conteo)::int from segmentacion.conteos"
+            + sql_where_pdfr(prov, depto, frac, radio)
+            + "\ngroup by mza;")
         cur.execute(sql)
-        conteos = cur.fetchall()
-#    print conteos
+        conteos_mzas = cur.fetchall()
+        manzanas = [mza for mza, conteo in conteos_mzas]
+
+#        print >> sys.stderr, "conteos_mzas"
+#        print >> sys.stderr, conteos_mzas
+
+        sql = ("select mza, lado, sum(conteo)::int from segmentacion.conteos"
+            + sql_where_pdfr(prov, depto, frac, radio)
+            + "\ngroup by mza, lado;")
+        cur.execute(sql)
+        result = cur.fetchall()
+        conteos_lados = [((mza, lado), conteo) for mza, lado, conteo in result]
+        lados = [(mza, lado) for mza, lado, conteo in result]
+
+#        print >> sys.stderr, "conteos_lados"
+#        print >> sys.stderr, conteos_lados
+
+
+        sql = ("select mza, max(lado) from segmentacion.conteos"
+            + sql_where_pdfr(prov, depto, frac, radio)
+            + "\ngroup by mza;")
+        cur.execute(sql)
+        mza_ultimo_lado = cur.fetchall()
+
         sql = ("select mza, mza_ady from segmentacion.adyacencias"
-            + " where prov = " + str(prov)
-            + " and depto = " + str(depto)
-            + " and frac = " + str(frac)
-            + " and radio = " + str(radio)
-            + " and mza != mza_ady"
-            + " group by mza, mza_ady;")
-#        print sql
+            + sql_where_pdfr(prov, depto, frac, radio)
+            + "\n and mza != mza_ady"
+            + "\ngroup by mza, mza_ady;")
         cur.execute(sql)
-        adyacencias = cur.fetchall()
+        adyacencias_mzas_mzas = cur.fetchall()
+
+        sql = ("select mza, mza_ady, lado_ady from segmentacion.adyacencias"
+            + sql_where_pdfr(prov, depto, frac, radio)
+            + "\n and mza != mza_ady"
+            + ";")
+        cur.execute(sql)
+        result = cur.fetchall()
+        adyacencias_mzas_lados = [(mza, (mza_ady, lado_ady)) for mza, mza_ady, lado_ady in result]
+
+        sql = ("select mza, lado, mza_ady from segmentacion.adyacencias"
+            + sql_where_pdfr(prov, depto, frac, radio)
+            + "\n and mza != mza_ady"
+            + ";")
+        cur.execute(sql)
+        result = cur.fetchall()
+        adyacencias_lados_mzas= [((mza, lado), mza_ady) for mza, lado, mza_ady in result]
+
+        sql = ("select mza, lado, mza_ady, lado_ady from segmentacion.adyacencias"
+            + sql_where_pdfr(prov, depto, frac, radio)
+            + "\n and mza != mza_ady"
+            + ";")
+        cur.execute(sql)
+        result = cur.fetchall()
+        lados_enfrentados = [((mza, lado), (mza_ady, lado_ady)) for mza, lado, mza_ady, lado_ady in result]
+
+        lados_contiguos = []
+        for mza, lado in lados:
+            ultimo_lado = next(ultimo for mza, ultimo in mza_ultimo_lado)
+            if lado == 1:
+                lados_contiguos.append(((mza, lado),(mza, ultimo_lado)))
+                lados_contiguos.append(((mza, lado),(mza, lado + 1)))
+            elif lado == ultimo_lado:
+                lados_contiguos.append(((mza, lado),(mza, lado - 1)))
+                lados_contiguos.append(((mza, lado),(mza, 1)))
+            else:
+                lados_contiguos.append(((mza, lado),(mza, lado - 1)))
+                lados_contiguos.append(((mza, lado),(mza, lado + 1)))
+
+        conteos = conteos_mzas
+        adyacencias = adyacencias_mzas_mzas
+
+        conteos_excedidos = [(manzana, conteo) for (manzana, conteo) in conteos_mzas
+                            if conteo > cantidad_de_viviendas_maxima_deseada_por_segmento]
+        mzas_excedidas = [mza for mza, conteo in conteos_excedidos]
+
+        componentes = [mza for mza in manzanas if mza not in mzas_excedidas]
+        conteos = [(mza, conteo) for (mza, conteo) in conteos if mza not in mzas_excedidas]
+        adyacencias = [(mza, mza_ady) for (mza, mza_ady) in adyacencias
+                        if mza not in mzas_excedidas and mza_ady not in mzas_excedidas]
+        # se eliminana manzanas excedidas
+
+        componentes.extend([(mza, lado) for (mza, lado) in lados if mza in mzas_excedidas])
+        conteos.extend([((mza, lado), conteo) for ((mza, lado), conteo) in conteos_lados
+                        if mza in mzas_excedidas])
+        adyacencias.extend([((mza, lado), mza_ady) for (mza, lado), mza_ady in adyacencias_lados_mzas
+                        if mza in mzas_excedidas and mza_ady not in mzas_excedidas])
+        adyacencias.extend([(mza, (mza_ady, lado_ady))
+                        for mza, (mza_ady, lado_ady) in adyacencias_mzas_lados
+                        if mza not in mzas_excedidas and mza_ady in mzas_excedidas])
+        adyacencias.extend([((mza, lado), (mza_ady, lado_ady))
+                        for (mza, lado), (mza_ady, lado_ady) in lados_enfrentados
+                        if mza in mzas_excedidas and mza_ady in mzas_excedidas])
+        adyacencias.extend([((mza, lado), (mza_ady, lado_ady))
+                        for (mza, lado), (mza_ady, lado_ady) in lados_contiguos])
+        # se agregan los lados correspondientes a esas manzanas
+
+#        print >> sys.stderr, "componentes"
+#        print >> sys.stderr, componentes
+
+#---- hasta acá
+
         if adyacencias:
             start = time.time()
 #            print adyacencias
 
             # crea los dictionary
-            manzanas_con_viviendas = [manzana for manzana, viviendas in conteos]
-            manzanas_en_adyacencias = list(set([manzana for manzana, adyacente in adyacencias]))
-            todas_las_manzanas = list(set(manzanas_con_viviendas + manzanas_en_adyacencias))
+            componentes_en_adyacencias = list(set([cpte for cpte, cpte_ady in adyacencias]))
+            todos_los_componentes = list(set(componentes + componentes_en_adyacencias))
 
-            manzanas_sin_viviendas = list(set(todas_las_manzanas) - set(manzanas_con_viviendas))
             # print "no están en listado", manzanas_sin_viviendas
             # hay que ponerle 0 viviendas
             viviendas = dict()
-            for manzana in manzanas_sin_viviendas:
-                viviendas[manzana] = 0
-            for manzana, vivs in conteos:
-                viviendas[manzana] = int(vivs)
+            for cpte in componentes:
+                viviendas[cpte] = 0
+            for cpte, conteo in conteos:
+                viviendas[cpte] = int(conteo)
 
-            manzanas_no_en_adyacencias = list(set(todas_las_manzanas) - set(manzanas_en_adyacencias))
+            componentes_no_en_adyacencias = list(set(todos_los_componentes) - set(componentes_en_adyacencias))
             # print "no están en cobertura", manzanas_no_en_adyacencias
             # hay que ponerle nula la lista de adyacencias
             adyacentes = dict()
-            for manzana in todas_las_manzanas:
-                adyacentes[manzana] = list([])
-            for manzana, adyacente in adyacencias:
-                adyacentes[manzana] = adyacentes[manzana] + [adyacente]
+            for cpte in todos_los_componentes:
+                adyacentes[cpte] = list([])
+            for cpte, adyacente in adyacencias:
+                adyacentes[cpte] = adyacentes[cpte] + [adyacente]
 #            for manzana in sorted(adyacentes.iterkeys()):
 #                print manzana, adyacentes[manzana]
 
@@ -252,15 +372,13 @@ for prov, depto, frac, radio in radios:
 
             ##############################
             # soluciones iniciales
+            soluciones_iniciales = []
             # iniciando de un extremo de la red de segmentaciones: segmento único igual a todo el radio
-            todas_juntas = [todas_las_manzanas]
-            soluciones_iniciales = [todas_juntas]
+            todos_juntos = [componentes]
+            soluciones_iniciales.append(todos_juntos)
             # iniciando del otro extremo de la red de segmentaciones: un segmento por manzana
-            todas_juntas = [todas_las_manzanas]
-            soluciones_iniciales = [todas_juntas]
-            # iniciando del otro extremo de la red de segmentaciones: un segmento por manzana
-            todas_separadas = [[manzana] for manzana in todas_las_manzanas]
-            soluciones_iniciales.append(todas_separadas)
+            todos_separados = [[cpte] for cpte in componentes]
+            soluciones_iniciales.append(todos_separados)
             ##############################
 
             # TODO: cargar el segmento de la segmentación anterior sgm en segmentacio.conteos para el caso de lados
@@ -275,6 +393,7 @@ for prov, depto, frac, radio in radios:
                 while min(costos_vecinos) < costo_actual: # se puede mejorar
                     min_id, mejor_costo = min(enumerate(costos_vecinos), key=operator.itemgetter(1))
                     solucion = vecinos[min_id] # greedy
+#                    print >> sys.stderr, mejor_costo
                     vecinos = list(vecindario(solucion))
                     costo_actual = mejor_costo
                     costos_vecinos = map(costo_segmentacion, vecinos)
@@ -283,17 +402,11 @@ for prov, depto, frac, radio in radios:
                     mejor_solucion = solucion
 
             #muestra warnings
-            if manzanas_sin_viviendas:
+            if componentes_no_en_adyacencias:
                 print "Cuidado: "
                 print
-                print "no están en listado o conteo", manzanas_sin_viviendas
-                print "se les asignó 0 viviendas"
-                print
-            if manzanas_no_en_adyacencias:
-                print "Cuidado: "
-                print
-                print "no están en adyacencias, cobertura con errores, quizás?", manzanas_no_en_adyacencias
-                print "no se les asignó manzanas adyacentes y quedaron aisladas"
+                print "no están en adyacencias, cobertura con errores, quizás?", componentes_no_en_adyacencias
+                print "no se les asignó componentes adyacentes y quedaron aisladas"
                 print
 
             # muestra solución
@@ -302,9 +415,9 @@ for prov, depto, frac, radio in radios:
             print "costo", costo_minimo
             for s, segmento in enumerate(mejor_solucion):
                 print ["segmento", s+1,
-                   "carga", carga_segmento(segmento),
-                   "costo", costo_segmento(segmento),
-                   "manzanas", segmento]
+                   "carga", carga(segmento),
+                   "costo", costo(segmento),
+                   "componentes", segmento]
 
             print "deseada: %d, máxima: %d, mínima: %d" % (cantidad_de_viviendas_deseada_por_segmento,
                 cantidad_de_viviendas_maxima_deseada_por_segmento,
@@ -318,21 +431,26 @@ for prov, depto, frac, radio in radios:
             # actualiza los valores de segmento en la tabla de polygons para representar graficamente
             segmentos = {}
             for s, segmento in enumerate(solucion):
-                for manzana in segmento:
-                    segmentos[manzana] = s + 1
+                for cpte in segmento:
+                    segmentos[cpte] = s + 1
 
             # por ahora solo junin de los andes buscar la tabla usando una relacion prov, depto - aglomerado
-            for manzana in todas_las_manzanas:
-                sql = ("update shapes." + _table + "p"
-                      + " set segmento = " + str(segmentos[manzana])
-                      + " where prov::integer = " + str(prov)
-                      + " and depto::integer = " + str(depto)
-                      + " and frac::integer = " + str(frac)
-                      + " and radio::integer = " + str(radio)
-                      + " and mza::integer = " + str(manzana)
-                      )
+
+#------
+# update shapes.eAAAAa  (usando lados)
+#------
+            for cpte in componentes:
+                sql = ("update shapes." + _table + "a"
+                    + " set segi = " + str(segmentos[cpte])
+                    + sql_where_PPDDDLLLMMM(prov, depto, frac, radio, cpte, 'i')
+                    + "\n;")
                 cur.execute(sql)
-                conn.commit()
+                sql = ("update shapes." + _table + "a"
+                    + " set segd = " + str(segmentos[cpte])
+                    + sql_where_PPDDDLLLMMM(prov, depto, frac, radio, cpte, 'd')
+                    + "\n;")
+                cur.execute(sql)
+            conn.commit()
 #            raw_input("Press Enter to continue...")
         else:
             print "sin adyacencias"
