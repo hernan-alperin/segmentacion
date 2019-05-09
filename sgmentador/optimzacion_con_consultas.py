@@ -9,15 +9,11 @@ import psycopg2
 import operator
 import time
 
-#_table = '0339'  # San Javier
-#_prov = 54
-#_depto = 105 # ahora vienen en arg
-
 conn = psycopg2.connect(
-            database = "censo2020",
+            database = "comuna11",
             user = "segmentador",
             password = "rodatnemges",
-            host = "172.26.67.239",
+            host = "localhost",
             port = "5432")
 
 # obtener prov, depto, frac que estan en segmentacion.conteos
