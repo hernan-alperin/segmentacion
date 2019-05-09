@@ -17,29 +17,22 @@ conn = psycopg2.connect(
             port = "5432")
 
 # obtener prov, depto, frac que estan en segmentacion.conteos
+with open('radios.sql') as file:
+    sql = file.read()
 cur = conn.cursor()
-sql = ("select distinct prov::integer, depto::integer, frac::integer, radio::integer"
-       " from segmentacion.conteos"
-       " order by prov::integer, depto::integer, frac::integer, radio::integer;")
 cur.execute(sql)
 radios = cur.fetchall()
-#print _prov, _depto
-#print radios
 
-def sql_where_pdfr(prov, depto, frac, radio):
-    return ("\nwhere prov::integer = " + str(prov)
-            + "\n and depto::integer = " + str(depto)
-            + "\n and frac::integer = " + str(frac)
+def sql_where_fr(frac, radio):
+    return ("\nwhere frac::integer = " + str(frac)
             + "\n and radio::integer = " + str(radio))
 
-def sql_where_PPDDDLLLMMM(prov, depto, frac, radio, cpte, side):
+def sql_where_PPDDDLLLMMM(frac, radio, cpte, side):
     if type(cpte) is int:
         mza = cpte
     elif type(cpte) is tuple:
         (mza, lado) = cpte
-    where_mza = ("\nwhere substr(mza" + side + ",1,2)::integer = " + str(prov)
-            + "\n and substr(mza" + side + ",3,3)::integer = " + str(depto)
-            + "\n and substr(mza" + side + ",9,2)::integer = " + str(frac)
+    where_mza = ("\nwhere (mza" + side + ",9,2)::integer = " + str(frac)
             + "\n and substr(mza" + side + ",11,2)::integer = " + str(radio)
             + "\n and substr(mza" + side + ",13,3)::integer = " + str(mza)
             )
@@ -48,16 +41,15 @@ def sql_where_PPDDDLLLMMM(prov, depto, frac, radio, cpte, side):
                 + "\n and lado" + side + "::integer = " + str(lado))
     return where_mza
 
-for prov, depto, frac, radio in radios:
-  if (radio and not(prov == 58 and depto == 49 and radio == 1)): # junín de los andes (sacar radio 1 que es un lio)
-    if (radio and prov == _prov and depto == _depto): # las del _table
+for frac, radio in radios:
         print
         print "radio: "
-        print prov, depto, frac, radio
+        print frac, radio
         cur = conn.cursor()
-        sql = ("select mza, sum(conteo)::int from segmentacion.conteos"
-            + sql_where_pdfr(prov, depto, frac, radio)
-            + "\ngroup by mza;")
+        
+        sql = ("select mza_comuna as mza, count(*) as conteo from comuna11"
+            + sql_where_fr(frac, radio)
+            + "\ngroup by mza_comuna;")
         cur.execute(sql)
         conteos_mzas = cur.fetchall()
         manzanas = [mza for mza, conteo in conteos_mzas]
@@ -65,9 +57,9 @@ for prov, depto, frac, radio in radios:
 #        print >> sys.stderr, "conteos_mzas"
 #        print >> sys.stderr, conteos_mzas
 
-        sql = ("select mza, lado, sum(conteo)::int from segmentacion.conteos"
-            + sql_where_pdfr(prov, depto, frac, radio)
-            + "\ngroup by mza, lado;")
+        sql = ("select mza_comuna as mza, lado, count(*) as conteo from comuna11"
+            + sql_where_fr(frac, radio)
+            + "\ngroup by mza_comuna, lado;")
         cur.execute(sql)
         result = cur.fetchall()
         conteos_lados = [((mza, lado), conteo) for mza, lado, conteo in result]
@@ -77,21 +69,20 @@ for prov, depto, frac, radio in radios:
 #        print >> sys.stderr, conteos_lados
 
 
-        sql = ("select mza, max(lado) from segmentacion.conteos"
-            + sql_where_pdfr(prov, depto, frac, radio)
-            + "\ngroup by mza;")
+        sql = ("select mza_comuna as mza, max(lado) from comuna11"
+            + sql_where_fr(frac, radio)
+            + "\ngroup by mza_comuna;")
         cur.execute(sql)
         mza_ultimo_lado = cur.fetchall()
 
-        sql = ("select mza, mza_ady from segmentacion.adyacencias"
-            + sql_where_pdfr(prov, depto, frac, radio)
-            + "\n and mza != mza_ady"
+        sql = ("select mza, mza_ady from adyacencias_mzas"
+            + sql_where_fr(frac, radio)
             + "\ngroup by mza, mza_ady;")
         cur.execute(sql)
         adyacencias_mzas_mzas = cur.fetchall()
 
-        sql = ("select mza, mza_ady, lado_ady from segmentacion.adyacencias"
-            + sql_where_pdfr(prov, depto, frac, radio)
+        sql = ("select mza, mza_ady, lado_ady from adyacencias_mzas"
+            + sql_where_fr(frac, radio)
             + "\n and mza != mza_ady"
             + ";")
         cur.execute(sql)
