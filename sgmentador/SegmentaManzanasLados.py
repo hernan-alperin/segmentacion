@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+"""
+adaptacion de SegmentaManzanasLados.py
+usado en prueba pioto a caso de comuna11 de CABA
+
+"""
 import sys
 from decimal import *
 print sys.argv[1:]
-_table = sys.argv[1]
-_prov = int(sys.argv[2])
-_depto = int(sys.argv[3])
 
 #definición de funciones de adyacencia y operaciones sobre manzanas
 
@@ -83,40 +85,13 @@ def carga(estos):
 #
 # caso 1
 cantidad_de_viviendas_deseada_por_segmento = 20
-cantidad_de_viviendas_maxima_deseada_por_segmento = 23
-cantidad_de_viviendas_minima_deseada_por_segmento = 17
-if len(sys.argv) > 5:
-    cantidad_de_viviendas_minima_deseada_por_segmento = int(sys.argv[4])
-    cantidad_de_viviendas_maxima_deseada_por_segmento = int(sys.argv[5])
-if len(sys.argv) > 6:
-    cantidad_de_viviendas_deseada_por_segmento = int(sys.argv[6])
-
+if len(sys.argv) > 1:
+    cantidad_de_viviendas_deseada_por_segmento = int(sys.argv[1])
 
 def costo(segmento):
     # segmento es una lista de manzanas
     carga_segmento = carga(segmento)
-    if carga_segmento > cantidad_de_viviendas_maxima_deseada_por_segmento:
-        # la carga es mayor el costo es el cubo
-        return ((carga_segmento - cantidad_de_viviendas_maxima_deseada_por_segmento)
-                *(carga_segmento - cantidad_de_viviendas_maxima_deseada_por_segmento)
-                *(carga_segmento - cantidad_de_viviendas_maxima_deseada_por_segmento)
-            + (carga_segmento - cantidad_de_viviendas_deseada_por_segmento))
-    elif carga_segmento < cantidad_de_viviendas_minima_deseada_por_segmento:
-        # la carga es menor el costo es el cuadrado
-        return ((cantidad_de_viviendas_deseada_por_segmento - carga_segmento)
-                *(cantidad_de_viviendas_deseada_por_segmento - carga_segmento)
-            + (carga_segmento - cantidad_de_viviendas_deseada_por_segmento))
-    else:  # está entre los valores deseados
-        # el costo el la diferencia absoluta al valor esperado
-        return abs(carga_segmento - cantidad_de_viviendas_deseada_por_segmento)
-    """
-    # otro caso, costo en rango, cuadrático por arriba y lineal por abajo
-    if carga_segmento > cantidad_de_viviendas_deseada_por_segmento:
-        return (carga_segmento - cantidad_de_viviendas_deseada_por_segmento)**4
-    else:
-        return (cantidad_de_viviendas_deseada_por_segmento - carga_segmento)**2
-    """
-
+    return abs(carga_segmento - cantidad_de_viviendas_deseada_por_segmento)
 
 #####################################################################################
 
@@ -186,77 +161,56 @@ import psycopg2
 import operator
 import time
 
-#_table = '0339'  # San Javier
-#_prov = 54
-#_depto = 105 # ahora vienen en arg
-
 conn = psycopg2.connect(
-            database = "censo2020",
+            database = "comuna11",
             user = "segmentador",
             password = "rodatnemges",
-            host = "172.26.67.239",
+            host = "localhost",
             port = "5432")
 
-# obtener prov, depto, frac que estan en segmentacion.conteos
+# obtener los radios que estan en el listado
 cur = conn.cursor()
-sql = ("select distinct prov::integer, depto::integer, frac::integer, radio::integer"
-       " from segmentacion.conteos"
-       " order by prov::integer, depto::integer, frac::integer, radio::integer;")
+sql = ("select distinct frac, radio
+       " from lados_info"
+       " order by frac, radio")
 cur.execute(sql)
 radios = cur.fetchall()
-#print _prov, _depto
-#print radios
 
-def sql_where_pdfr(prov, depto, frac, radio):
-    return ("\nwhere prov::integer = " + str(prov)
-            + "\n and depto::integer = " + str(depto)
-            + "\n and frac::integer = " + str(frac)
-            + "\n and radio::integer = " + str(radio))
+def sql_where_fr(frac, radio):
+    return ("\nwhere frac = " + str(frac)
+            + "\n and radio = " + str(radio))
 
-def sql_where_PPDDDLLLMMM(prov, depto, frac, radio, cpte, side):
+def sql_where_MMM(cpte, side):
     if type(cpte) is int:
         mza = cpte
     elif type(cpte) is tuple:
         (mza, lado) = cpte
-    where_mza = ("\nwhere substr(mza" + side + ",1,2)::integer = " + str(prov)
-            + "\n and substr(mza" + side + ",3,3)::integer = " + str(depto)
-            + "\n and substr(mza" + side + ",9,2)::integer = " + str(frac)
-            + "\n and substr(mza" + side + ",11,2)::integer = " + str(radio)
-            + "\n and substr(mza" + side + ",13,3)::integer = " + str(mza)
+    where_mza = ("\nwhere mza = " + str(mza)
             )
     if type(cpte) is tuple:
             where_mza = (where_mza
-                + "\n and lado" + side + "::integer = " + str(lado))
+                + "\n and lado" + side + " = " + str(lado))
     return where_mza
 
-for prov, depto, frac, radio in radios:
-  if (radio and not(prov == 58 and depto == 49 and radio == 1)): # junín de los andes (sacar radio 1 que es un lio)
-    if (radio and prov == _prov and depto == _depto): # las del _table
+for frac, radio in radios:
         print
         print "radio: "
-        print prov, depto, frac, radio
+        print frac, radio
         cur = conn.cursor()
-        sql = ("select mza, sum(conteo)::int from segmentacion.conteos"
-            + sql_where_pdfr(prov, depto, frac, radio)
-            + "\ngroup by mza;")
+        sql = ("select mza_comuna as mza, count(*) from comuna11"
+            + sql_where_fr(frac, radio)
+            + "\ngroup by mza_comuna;")
         cur.execute(sql)
         conteos_mzas = cur.fetchall()
         manzanas = [mza for mza, conteo in conteos_mzas]
 
-#        print >> sys.stderr, "conteos_mzas"
-#        print >> sys.stderr, conteos_mzas
-
-        sql = ("select mza, lado, sum(conteo)::int from segmentacion.conteos"
-            + sql_where_pdfr(prov, depto, frac, radio)
-            + "\ngroup by mza, lado;")
+        sql = ("select mza_comuna as mza, clado as lado, count(*)"
+            + sql_where_fr(frac, radio)
+            + "\ngroup by mza_comuna, clado;")
         cur.execute(sql)
         result = cur.fetchall()
         conteos_lados = [((mza, lado), conteo) for mza, lado, conteo in result]
         lados = [(mza, lado) for mza, lado, conteo in result]
-
-#        print >> sys.stderr, "conteos_lados"
-#        print >> sys.stderr, conteos_lados
-
 
         sql = ("select mza, max(lado) from segmentacion.conteos"
             + sql_where_pdfr(prov, depto, frac, radio)
@@ -264,8 +218,8 @@ for prov, depto, frac, radio in radios:
         cur.execute(sql)
         mza_ultimo_lado = cur.fetchall()
 
-        sql = ("select mza, mza_ady from segmentacion.adyacencias"
-            + sql_where_pdfr(prov, depto, frac, radio)
+        sql = ("select mza, mza_ady from adyacencias_mzas"
+            + sql_where_fr(frac, radio)
             + "\n and mza != mza_ady"
             + "\ngroup by mza, mza_ady;")
         cur.execute(sql)
