@@ -74,16 +74,40 @@ with segs as (
   select frac_comun, radio_comu, mza_comuna, segmento_en_manzana_equilibrado as sgm, count(*) as vivs
   from comuna11
   group by frac_comun, radio_comu, mza_comuna, segmento_en_manzana_equilibrado
-  )
-  mza_completas as (select frac_comun, radio_comu, mza_comuna, sum(vivs) as vivs
+  ),
+  mzas_completas as (select frac_comun, radio_comu, mza_comuna, sum(vivs) as vivs
   from segs
   group by frac_comun, radio_comu, mza_comuna
   having cardinality(array_agg(sgm)) = 1
   order by frac_comun, radio_comu, mza_comuna
   )
-
+select distinct frac, radio, mza, mza_ady, m.vivs, y.vivs
+from adyacencias_mzas a
+join mzas_completas m
+on (m.frac_comun, m.radio_comu, m.mza_comuna) = (frac, radio, mza)
+join mzas_completas y
+on (y.frac_comun, y.radio_comu, y.mza_comuna) = (frac, radio, mza_ady)
+where mza < mza_ady
+order by frac, radio, mza, mza_ady
 ;
 
-
+/*
+ frac | radio | mza | mza_ady | vivs | vivs
+------+-------+-----+---------+------+------
+    1 |     1 |   8 |      11 |   30 |   15
+    1 |     2 |  12 |      13 |    1 |   33
+    1 |     2 |  13 |      14 |   33 |   19
+    1 |     2 |  16 |      31 |   33 |   36
+    1 |     2 |  30 |      31 |   34 |   36
+    1 |     2 |  31 |      33 |   36 |    8
+    1 |     3 |   9 |      10 |   39 |   30
+    1 |     3 |  10 |      19 |   30 |   34
+    1 |     3 |  19 |      28 |   34 |   37
+    1 |     5 |  25 |      39 |   31 |   35
+    1 |    12 |  62 |      65 |   21 |    2
+    1 |    12 |  64 |      65 |    1 |    2
+    1 |    12 |  64 |      78 |    1 |    5
+    1 |    12 |  65 |      68 |    2 |   18
+*/
 
 
