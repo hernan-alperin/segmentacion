@@ -115,15 +115,13 @@ create index sgm_idx on comuna11 (sgm);
 
 Duración: 681,010 ms
 -----
-     
-select costo_segmentacion(frac_comun::integer, radio_comu::integer, 40)
-from comuna11
-;
-                          
+                         
 se cuelga...
 mucho tiempo de ejecucion
 ;
 
+                          
+                          
 */
 
 create index mza_idx on comuna11 (mza_comuna);

@@ -18,10 +18,11 @@ la tabla lineas contiene los ejes del shape e0211lin enviado por mail por Manu
 mar 19/3, 10:38
 */
 
-drop table aydacencias_mzas;
-create table aydacencias_mza as
-select d.mza as mza, d.lado, 
-    h.mza as mza_ady, h.lado as lado_ady, 
+drop table adyacencias_mzas;
+create table adyacencias_mzas as
+select substr(d.mza,9,2)::integer as frac, substr(d.mza,11,2)::integer as radio,
+    substr(d.mza,13,3)::integer as mza, d.lado, 
+    substr(h.mza,13,3)::integer as mza_ady, h.lado as lado_ady, 
     d.id as lado_id, h.id as ady_id, tipo_ady
 from grafo_adyacencias_lados g
 join lados_de_manzana d
@@ -34,24 +35,31 @@ order by d.mza, d.lado, h.mza, h.lado
 
 /*
 select *
-from aydacencias_mza
+from adyacencias_mzas
 limit 10
-
-       mza       | lado |     mza_ady     | lado_ady | lado_id | ady_id | tipo_ady
------------------+------+-----------------+----------+---------+--------+----------
- 020770100101001 |    1 | 020770100101003 |        1 |       1 |      7 | cruzar
- 020770100101001 |    2 | 020770100101003 |        4 |       2 |     10 | volver
- 020770100101002 |    1 | 020770100101003 |        3 |       4 |      9 | volver
- 020770100101002 |    1 | 020770100101007 |        1 |       4 |     19 | cruzar
- 020770100101002 |    2 | 020770100101007 |        4 |       5 |     22 | volver
- 020770100101002 |    3 | 020770100101003 |        4 |       6 |     10 | cruzar
- 020770100101003 |    1 | 020770100101004 |        1 |       7 |     11 | cruzar
- 020770100101003 |    2 | 020770100101002 |        2 |       8 |      5 | cruzar
- 020770100101003 |    2 | 020770100101004 |        4 |       8 |     14 | volver
- 020770100101003 |    3 | 020770100101001 |        3 |       9 |      3 | cruzar
+;
+ frac | radio | mza | lado | mza_ady | lado_ady | lado_id | ady_id | tipo_ady
+------+-------+-----+------+---------+----------+---------+--------+----------
+    1 |     1 |   1 |    1 |       3 |        1 |       1 |      7 | cruzar
+    1 |     1 |   1 |    2 |       3 |        4 |       2 |     10 | volver
+    1 |     1 |   2 |    1 |       3 |        3 |       4 |      9 | volver
+    1 |     1 |   2 |    1 |       7 |        1 |       4 |     19 | cruzar
+    1 |     1 |   2 |    2 |       7 |        4 |       5 |     22 | volver
+    1 |     1 |   2 |    3 |       3 |        4 |       6 |     10 | cruzar
+    1 |     1 |   3 |    1 |       4 |        1 |       7 |     11 | cruzar
+    1 |     1 |   3 |    2 |       2 |        2 |       8 |      5 | cruzar
+    1 |     1 |   3 |    2 |       4 |        4 |       8 |     14 | volver
+    1 |     1 |   3 |    3 |       1 |        3 |       9 |      3 | cruzar
 (10 filas)
-
 */
+
+ select frac_comun, radio_comu, mza_comuna, 
+    cant_lados, vivs, segmento_en_manzana_equilibrado 
+ from segmentos_equilibrados
+ order by frac_comun, radio_comu, mza_comuna
+ ;
+ 
+ 
 
 
 

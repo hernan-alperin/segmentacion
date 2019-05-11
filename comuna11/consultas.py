@@ -6,7 +6,7 @@ conn = psycopg2.connect(
             host = "172.26.67.239",
             port = "5432")
 
-with open(listado.sql) as file:
+with open('listado.sql') as file:
   sql = file.read()
 print sql
 
@@ -15,6 +15,4 @@ cur.execute(sql)
 
 result = cur.fetchall()
 print result
-
-
 
