@@ -6,6 +6,7 @@ autor: -h
 fecha: 2019-05-09 Ju
 
 #definición de funciones de adyacencia y operaciones sobre manzanas
+TODO: hacer tests unitarios
 
 */
 
