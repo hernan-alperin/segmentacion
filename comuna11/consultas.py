@@ -16,5 +16,3 @@ cur.execute(sql)
 result = cur.fetchall()
 print result
 
-
-
