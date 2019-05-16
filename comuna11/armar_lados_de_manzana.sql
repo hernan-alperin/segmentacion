@@ -46,8 +46,8 @@ as with pedacitos_de_lado as (-- mza como PPDDDLLLFFRRMMMselect mzad as mza, lad
     ),
     lados_orientados as (
     select mza as nomencla, 
-        substr(mza,9,2) as frac, substr(mza,11,2) as radio, 
-        substr(mza,13,3) as mza, lado,
+        substr(mza,9,2)::integer as frac, substr(mza,11,2)::integer as radio, 
+        substr(mza,13,3)::integer as mza, lado,
         tipos, codigos, calles,
         ST_LineMerge(ST_Union(geom_pedacito)) as lado_geom -- une por mza,lado
     from pedacitos_de_lado
