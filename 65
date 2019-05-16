@@ -1,0 +1,76 @@
+
+
+-----------------+====+-----------+======+=====+-------+==+=====+
+00000000011111111112222222222333333333344444444445555555555666666
+12345678901234567890123456789012345678901234567890123456789012345
+
+
+
+0: 
+20 20 20 15
+20 40 60 65
+
+: no puede cortar en 20
+1-: (-2)
+18 | 20 20  7
+18 | 38 48 65
+1+: (+3)
+23 | 20 20  2
+23 | 43 63 65
+
+: no puede cortar en 38
+: no puede cortar en 43
+1-2-: (-2)(-2)
+18 17 |
+18 35 |
+
+...
+
+: no puede cortar en 20
+puede cortar en 18 y 23
+
+resuelve desde 18 y 
+resuelve desde 23
+
+segms(1, 65) :=
+18 + segms(18, 65) U
+23 + segms(23, 65)
+
+
+sea d la cantidad deseada de viviendas por segmento
+
+pseutruchoalgoritmo
+si n <= d:
+  segms(1, n) := [ n ]
+else:
+  segms(1, n) :=
+    puede cortar en d?:
+      return d ++ segms(d + 1, n) 
+    no:
+      abajo := max corte < d
+      arriba := min corte > d
+      return (abajo ++ segms(abajo + 1, n)) U (arriba ++ segms(arriba + 1, n))
+
+la lista contiene números consecutivos en principio de 1 a k
+durente la recursión se van cortando las cabezas
+de tamaño d si se puede, o
+del máximo menor (infimo, bajo) y minimo mayor (supremo, arriba) que d posibles
+y se exploran las 2 soluciones
+lista va quedándose con colas de [bajo + 1 .. k] y [arriba + 1 .. k]
+
+segmentos(lista, d):
+  if count(lista) <= d:
+    return [(lista[0:], count(lista))]
+  else:
+    if CanCutAt(lista[d]):  // no estoy dentro de un piso
+      return segmentos(d + 1, lista[(d + 1):]).push(d, lista[d:])
+    else: // no puedo cortar
+      bajo = infimo_corta(lista)
+      arriba = supremo_corta(lista)
+      return segmentos(bajo + 1, lista[(bajo + 1):])
+             .extend(segmentos(arriba + 1, lista[(arriba + 1):]))
+
+
+
+
+
