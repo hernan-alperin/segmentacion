@@ -163,16 +163,17 @@ import time
 
 conn = psycopg2.connect(
             database = "comuna11",
-            user = "segmentador",
-            password = "rodatnemges",
+            user = "alpe",
+            password = "HNK0th3a",
             host = "localhost",
             port = "5432")
 
 # obtener los radios que estan en el listado
 cur = conn.cursor()
-sql = ("select distinct frac, radio
-       " from lados_info"
+sql = ("select distinct frac, radio"
+       " from lados_de_manzana"
        " order by frac, radio")
+print sql
 cur.execute(sql)
 radios = cur.fetchall()
 
@@ -204,16 +205,16 @@ for frac, radio in radios:
         conteos_mzas = cur.fetchall()
         manzanas = [mza for mza, conteo in conteos_mzas]
 
-        sql = ("select mza_comuna as mza, clado as lado, count(*)"
+        sql = ("select mza, lado, count(*) from comuna11"
             + sql_where_fr(frac, radio)
-            + "\ngroup by mza_comuna, clado;")
+            + "\ngroup by mza, lado;")
         cur.execute(sql)
         result = cur.fetchall()
         conteos_lados = [((mza, lado), conteo) for mza, lado, conteo in result]
         lados = [(mza, lado) for mza, lado, conteo in result]
 
-        sql = ("select mza, max(lado) from segmentacion.conteos"
-            + sql_where_pdfr(prov, depto, frac, radio)
+        sql = ("select mza, max(lado) from lados_de_manzana"
+            + sql_where_fr(frac, radio)
             + "\ngroup by mza;")
         cur.execute(sql)
         mza_ultimo_lado = cur.fetchall()
@@ -225,24 +226,24 @@ for frac, radio in radios:
         cur.execute(sql)
         adyacencias_mzas_mzas = cur.fetchall()
 
-        sql = ("select mza, mza_ady, lado_ady from segmentacion.adyacencias"
-            + sql_where_pdfr(prov, depto, frac, radio)
+        sql = ("select mza, mza_ady, lado_ady from adyacencias_mzas"
+            + sql_where_fr(frac, radio)
             + "\n and mza != mza_ady"
             + ";")
         cur.execute(sql)
         result = cur.fetchall()
         adyacencias_mzas_lados = [(mza, (mza_ady, lado_ady)) for mza, mza_ady, lado_ady in result]
 
-        sql = ("select mza, lado, mza_ady from segmentacion.adyacencias"
-            + sql_where_pdfr(prov, depto, frac, radio)
+        sql = ("select mza, lado, mza_ady from adyacencias_mzas"
+            + sql_where_fr(frac, radio)
             + "\n and mza != mza_ady"
             + ";")
         cur.execute(sql)
         result = cur.fetchall()
         adyacencias_lados_mzas= [((mza, lado), mza_ady) for mza, lado, mza_ady in result]
 
-        sql = ("select mza, lado, mza_ady, lado_ady from segmentacion.adyacencias"
-            + sql_where_pdfr(prov, depto, frac, radio)
+        sql = ("select mza, lado, mza_ady, lado_ady from adyacencias_mzas"
+            + sql_where_fr(frac, radio)
             + "\n and mza != mza_ady"
             + ";")
         cur.execute(sql)
@@ -265,8 +266,9 @@ for frac, radio in radios:
         conteos = conteos_mzas
         adyacencias = adyacencias_mzas_mzas
 
+        excedente = 5;
         conteos_excedidos = [(manzana, conteo) for (manzana, conteo) in conteos_mzas
-                            if conteo > cantidad_de_viviendas_maxima_deseada_por_segmento]
+                            if conteo > cantidad_de_viviendas_deseada_por_segmento + excedente]
         mzas_excedidas = [mza for mza, conteo in conteos_excedidos]
 
         componentes = [mza for mza in manzanas if mza not in mzas_excedidas]
@@ -324,13 +326,9 @@ for frac, radio in radios:
 
             # optimización
 
-            ##############################
             # soluciones iniciales
             soluciones_iniciales = []
-            # iniciando de un extremo de la red de segmentaciones: segmento único igual a todo el radio
-            todos_juntos = [componentes]
-            soluciones_iniciales.append(todos_juntos)
-            # iniciando del otro extremo de la red de segmentaciones: un segmento por manzana
+            # iniciando segmentaciones: un manzanas independientes
             todos_separados = [[cpte] for cpte in componentes]
             soluciones_iniciales.append(todos_separados)
             ##############################
