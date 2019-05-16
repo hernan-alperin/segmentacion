@@ -111,3 +111,14 @@ order by frac, radio, mza, mza_ady
 */
 
 
+
+--------------------------
+--- traido de hacer_adyacencias_mzas.sql (?)
+ select frac_comun, radio_comu, mza_comuna,
+    cant_lados, vivs, segmento_en_manzana_equilibrado
+ from segmentos_equilibrados
+ order by frac_comun, radio_comu, mza_comuna
+ ;
+
+
+
