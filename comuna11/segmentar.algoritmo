@@ -1,0 +1,50 @@
+Algoritmo de Segmentación
+
+defs.:
+
+manzana completa: todas las viviendas de esa manzana están en el mismo segmento
+lado completo: idem
+
+manzana independiente: ningún segmento de esa manzana se continúa en otra
+
+manzanas enfrentadas: manzanas que comparten ejes de lado
+
+lados adyacentes: lados por los que puede continuar un segmento
+(respetando las reglas)
+1. doblando (hombre derecho, en sentido de las agujas del reloj)
+2. volviendo por en lado de la manzana de enfrente si comparte esquina
+3. cruzando la calle (siempre una sola calle)
+
+2. y 3. cruzan una sola calle, no se puede cruzar en diagonal
+
+in:
+listado (para secuencia en segmentos de recorrido)
+shape de lineas (para adyacencias)
+
+out:
+table segmentos_manzanas_completas
+frac, radio, mza, sgm
+listado con column shp
+que asigna el segmento a esa dirección/ registro
+
+Algo.: (listado) 
+1.0
+
+- agrupar manzanas completas
+    [iniciar y elejir según heurística]
+    mientras la cantidad de viviendas de estas no supere la cantidad deseada
+    (igual que en conteo)
+
+- numerar los grupos y asignar ese número a segmento
+    insertar en segmentos_manzanas_completas
+    
+- considerar las manzanas con mayor cantidad como manzanas independientes
+  ignorando las manzanas agrupadas en paso anterior
+    y segmentarlas con segmentos equilibrados
+    usar algo segmentar_equilibrado.sql
+    rankear window () order by (mza, sgm_quilibrado)
+    update sgm = max(smg_de_agrupadas) + rank
+
+
+
+
