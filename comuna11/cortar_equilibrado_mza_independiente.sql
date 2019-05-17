@@ -13,7 +13,7 @@ fecha: 2019-04-19 Vi
 -- de la catidad deseaado
 -------------------------------------------------------------------
 -- caso para testear
-
+/*
 with deseado as (
     select 40::float as deseado
     ),
@@ -32,7 +32,7 @@ with deseado as (
     )
 select * from mejor_diferencia
 ;
-
+*/
 --------------------------------------------------------------------
 -- caso en comuna
 ----
