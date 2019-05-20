@@ -1,5 +1,5 @@
 Algo.: (listado)
-0.1
+0.2
 
 - agrupar manzanas completas (lazy)
     mientras la cantidad de viviendas de estas no supere la cantidad deseada
@@ -10,9 +10,9 @@ Algo.: (listado)
 
 - considerar las manzanas con mayor cantidad como manzanas independientes
   ignorando las manzanas agrupadas en paso anterior
-    y segmentarlas greedy
-    usar algo cortar_greedy.sql
-    rankear window () order by (mza, sgm_mza_grd)
+    y segmentarlas con segmentos equilibrados
+    usar algo segmentar_equilibrado.sql
+    rankear window () order by (mza, sgm_mza_eq)
     update sgm = max(smg_de_agrupadas) + rank
 
 
