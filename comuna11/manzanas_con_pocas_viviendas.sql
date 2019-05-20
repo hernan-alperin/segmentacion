@@ -88,3 +88,51 @@ delimiter ',' csv header
 (10 rows)
 */
 
+
+create view manzanas_con_pocas_viviendas as
+select frac, radio, mza, count(*) as vivs
+from comuna11
+group by frac, radio, mza
+having count(*) < 30
+order by frac, radio, mza
+;
+
+create view radios_con_bloques_de_manzanas_con_pocas_viviendas as
+select frac, radio, sum(vivs) as vivs
+from manzanas_con_pocas_viviendas
+group by frac, radio
+having sum(vivs) < 30
+order by frac, radio
+;
+
+
+/*
+select * from radios_con_bloques_de_manzanas_con_pocas_viviendas ;
+ frac | radio | vivs 
+------+-------+------
+    1 |     1 |   15
+    1 |     2 |   28
+    1 |     6 |   20
+    1 |    10 |   21
+    1 |    11 |   13
+    2 |     2 |   12
+    2 |     8 |    7
+    2 |    10 |   15
+    3 |     5 |    4
+    3 |     8 |   24
+    3 |    10 |    2
+    3 |    11 |   26
+    4 |     1 |   28
+    4 |     6 |   21
+    4 |     8 |   15
+    5 |     1 |   20
+    9 |     1 |    1
+    9 |     2 |   21
+    9 |     3 |    3
+   10 |     2 |    4
+   11 |     4 |   17
+   11 |     7 |   27
+   12 |     3 |   25
+   13 |     6 |    1
+(24 rows)
+*/
