@@ -1,0 +1,25 @@
+Algo.: (listado)
+0.1
+
+- agrupar manzanas completas (lazy)
+    [iniciar y elejir según heurística] v 0.3
+    mientras la cantidad de viviendas de estas no supere la cantidad deseada
+    (igual que en conteo)
+
+- numerar los grupos y asignar ese número a segmento
+    insertar en segmentos_manzanas_completas
+
+- considerar las manzanas con mayor cantidad como manzanas independientes
+  ignorando las manzanas agrupadas en paso anterior
+    y segmentarlas greedy
+    usar algo cortar_greedy.sql
+    rankear window () order by (mza, sgm_mza_grd)
+    [
+    y segmentarlas con segmentos equilibrados
+    usar algo segmentar_equilibrado.sql
+    rankear window () order by (mza, sgm_mza_eq)
+    ] v 0.2
+    update sgm = max(smg_de_agrupadas) + rank
+
+
+
