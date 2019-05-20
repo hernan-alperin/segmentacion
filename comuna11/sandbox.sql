@@ -1,19 +1,24 @@
 /*
 título: sandbox
-descripción: para jugar y haceer castillito de arena
+descripción: para jugar y hacer castillitos de arena
+armando nuevas funciones y consultas que pueden llegar a ser útiles
 autor: -h
 fecha: 2019-04-26 Vi
 */
 
 -- parte para funcioes sql y pgsql
 
+-- luego de segmentar equilibrado, devuelve un array de segmentos por manzana y la cantidad de viviendas
 with segs as (
-  select frac_comun, radio_comu, mza_comuna, segmento_en_manzana_equilibrado as sgm, count(*) as vivs
+  select frac_comun, radio_comu, mza_comuna, 
+    segmento_en_manzana_equilibrado as sgm, count(*) as vivs
   from comuna11
-  group by frac_comun, radio_comu, mza_comuna, segmento_en_manzana_equilibrado
+  group by frac_comun, radio_comu, mza_comuna, 
+    segmento_en_manzana_equilibrado
   ),
   dif_segs as 
-  (select frac_comun, radio_comu, mza_comuna, array_agg(sgm), sum(vivs) as vivs
+  (select frac_comun, radio_comu, mza_comuna, array_agg(sgm), 
+    sum(vivs) as vivs -- contiene la suma de viviendas por manzana (en todos los segmentos)
   from segs
   group by frac_comun, radio_comu, mza_comuna
   order by frac_comun, radio_comu, mza_comuna
@@ -41,14 +46,17 @@ with segs as (
 
 
 with segs as (
-  select frac_comun, radio_comu, mza_comuna, segmento_en_manzana_equilibrado as sgm, count(*) as vivs
+  select frac_comun, radio_comu, mza_comuna, 
+    segmento_en_manzana_equilibrado as sgm, count(*) as vivs
   from comuna11
-  group by frac_comun, radio_comu, mza_comuna, segmento_en_manzana_equilibrado
+  group by frac_comun, radio_comu, mza_comuna, 
+    segmento_en_manzana_equilibrado
   )
 select frac_comun, radio_comu, mza_comuna, sum(vivs) as vivs
 from segs
 group by frac_comun, radio_comu, mza_comuna
-having cardinality(array_agg(sgm)) = 1
+having cardinality(array_agg(sgm)) = 1 -- los que tienen un solo segmento:
+-- son manzanas completas
 order by frac_comun, radio_comu, mza_comuna
 ;
 
@@ -71,24 +79,26 @@ order by frac_comun, radio_comu, mza_comuna
 */
 
 with segs as (
-  select frac_comun, radio_comu, mza_comuna, segmento_en_manzana_equilibrado as sgm, count(*) as vivs
+  select frac_comun, radio_comu, mza_comuna, 
+    segmento_en_manzana_equilibrado as sgm, count(*) as vivs
   from comuna11
   group by frac_comun, radio_comu, mza_comuna, segmento_en_manzana_equilibrado
   ),
-  mzas_completas as (select frac_comun, radio_comu, mza_comuna, sum(vivs) as vivs
-  from segs
-  group by frac_comun, radio_comu, mza_comuna
-  having cardinality(array_agg(sgm)) = 1
-  order by frac_comun, radio_comu, mza_comuna
+  mzas_completas as (
+    select frac_comun, radio_comu, mza_comuna, sum(vivs) as vivs
+    from segs
+    group by frac_comun, radio_comu, mza_comuna
+    having cardinality(array_agg(sgm)) = 1
+    order by frac_comun, radio_comu, mza_comuna
   )
-select distinct frac, radio, mza, mza_ady, m.vivs, y.vivs
+select distinct frac, radio, m.vivs, y.vivs, mza, mza_ady
 from adyacencias_mzas a
 join mzas_completas m
 on (m.frac_comun, m.radio_comu, m.mza_comuna) = (frac, radio, mza)
 join mzas_completas y
 on (y.frac_comun, y.radio_comu, y.mza_comuna) = (frac, radio, mza_ady)
 where mza < mza_ady
-order by frac, radio, mza, mza_ady
+order by frac, radio, m.vivs, y.vivs, mza, mza_ady
 ;
 
 /*
