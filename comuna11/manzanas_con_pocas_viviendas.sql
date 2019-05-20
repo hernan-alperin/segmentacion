@@ -61,13 +61,15 @@ limit 10
 TODO: resolver este problema de tuplas para poder usar function
 
 */
-
+copy (
 select frac, radio, mza, count(*) as vivs
 from comuna11
 group by frac, radio, mza
 having count(*) < 30
 order by frac, radio, mza
 --limit 10
+) to '/home/alpe/indec/segmentacion/comuna11/manzanas_con_pocas_viviendas.csv'
+delimiter ',' csv header
 ;
 
 /*
