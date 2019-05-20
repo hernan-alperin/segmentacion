@@ -58,4 +58,27 @@ limit 10
 
 */
 
+select frac, radio, mza, count(*) as vivs
+from comuna11
+group by frac, radio, mza
+having count(*) < 30
+order by frac, radio, mza
+limit 10
+;
+
+/*
+ frac | radio | mza | vivs 
+------+-------+-----+------
+    1 |     1 |  11 |   15
+    1 |     2 |  12 |    1
+    1 |     2 |  14 |   19
+    1 |     2 |  33 |    8
+    1 |     6 |  48 |   20
+    1 |    10 |  74 |   21
+    1 |    11 |  80 |   12
+    1 |    11 |  86 |    1
+    1 |    12 |  62 |   21
+    1 |    12 |  64 |    1
+(10 rows)
+*/
 
