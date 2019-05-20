@@ -2,7 +2,9 @@
 manzanas_con_pocas_viviendas
 con menos de un mínimo de viviendas
 para agrupar usando algori
-*/
+
+-----------
+
 drop function manzanas_con_pocas_viviendas(frac integer, radio integer, minimo integer);
 create function manzanas_con_pocas_viviendas(frac integer, radio integer, minimo integer) 
 returns table (
@@ -18,7 +20,7 @@ having count(*) < $3
 $$
 language sql
 ;
-
+*/
 
 /*
 select * from manzanas_con_pocas_viviendas(1,2,30);
@@ -56,6 +58,8 @@ limit 10
  (10,8,20,3)
 (10 rows)
 
+TODO: resolver este problema de tuplas para poder usar function
+
 */
 
 select frac, radio, mza, count(*) as vivs
@@ -63,7 +67,7 @@ from comuna11
 group by frac, radio, mza
 having count(*) < 30
 order by frac, radio, mza
-limit 10
+--limit 10
 ;
 
 /*
