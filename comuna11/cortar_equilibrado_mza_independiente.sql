@@ -79,7 +79,7 @@ with deseado as (
         group by frac_comun, radio_comu::integer, mza_comuna::integer
     )
 select frac_comun, radio_comu, mza_comuna, clado, hn, hp, hd,
-    floor((rank - 1)*seg_x_mza/vivs) + 1 as segmento, rank
+    floor((rank - 1)*seg_x_mza/vivs) + 1 as sgm_mza, rank
 from deseado_manzana
 join pisos_abiertos
 using(frac_comun, radio_comu, mza_comuna)
@@ -93,8 +93,27 @@ order by frac_comun, radio_comu::integer, mza_comuna::integer, clado, min_id, hn
 ---- hay cosas raras de pisos sin departamentos hp, con hd nulo
 
 
-copy segmentando_equilibrado
-to '/home/alpe/indec/segmentacion/comuna11/segmentando_equilibrado.csv'
+-----
+drop view segmentando_equilibrado_numerado;
+create view segmentando_equilibrado_numerado as
+with numerando_en_radio as (
+    select frac_comun, radio_comu, mza_comuna, sgm_mza, row_number() over w as segmento
+    from segmentando_equilibrado
+    group by frac_comun, radio_comu, mza_comuna, sgm_mza
+    window w as (
+        partition by frac_comun, radio_comu
+        order by frac_comun, radio_comu
+        )
+    )
+select segmentando_equilibrado.*, segmento
+from segmentando_equilibrado
+natural join numerando_en_radio
+;
+---- esto numera los segmentos dentro del radio,
+
+
+copy (select * from segmentando_equilibrado_numerado)
+to '/home/alpe/indec/segmentacion/comuna11/segmentando_equilibrado_numerado.csv'
 delimiter ',' csv header
 ;
 
