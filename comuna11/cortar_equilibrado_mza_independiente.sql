@@ -89,6 +89,12 @@ order by frac_comun, radio_comu::integer, mza_comuna::integer, clado, min_id, hn
     floor((rank - 1)*seg_x_mza/vivs) + 1, rank
 ;
 
-
+-- TODO ver esto
 ---- hay cosas raras de pisos sin departamentos hp, con hd nulo
+
+
+copy segmentando_equilibrado
+to '/home/alpe/indec/segmentacion/comuna11/segmentando_equilibrado.csv'
+delimiter ',' csv header
+;
 
