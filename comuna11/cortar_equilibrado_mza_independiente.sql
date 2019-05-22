@@ -57,25 +57,24 @@ with deseado as (
     from casos, deseado
     ),
     pisos_enteros as (
-        select frac, radio, mza, lado, min(id) as min_id, hn, hp
+        select frac, radio, mza, lado, min(id) as id_cmpnt, hn, hp
         from comuna11
         group by frac, radio, mza, lado, hn, hp
     ),
     pisos_abiertos as (
-        select frac, radio, mza, lado, hn, hp, hd, min_id,
+        select frac, radio, mza, lado, hn, hp, hd, id_cmpnt,
             row_number() over w as row, rank() over w as rank
         from pisos_enteros
         natural join comuna11
         window w as (
             partition by frac, radio, mza
             -- separa las manzanas
-            order by frac, radio, mza, lado, min_id, hp
+            order by frac, radio, mza, lado, id_cmpnt, hp
             -- rankea por piso (ordena hn como corresponde pares descendiendo)
         )
     ),
     sumados as (
-        select min(id) as id_cmpnt, 
-            frac, radio, mza, count(*) as cant
+        select frac, radio, mza, count(*) as cant
         from comuna11
         group by frac, radio, mza
     )
@@ -86,7 +85,7 @@ join pisos_abiertos
 using(frac, radio, mza)
 join sumados
 using(frac, radio, mza)
-order by frac, radio, mza, lado, min_id, hn, hp, hd,
+order by frac, radio, mza, lado, id_cmpnt, hn, hp, hd,
     floor((rank - 1)*seg_x_mza/vivs) + 1, rank
 ;
 
