@@ -7,19 +7,12 @@ autor: -h
 */
 
 
-with vivs_x_mza as (
-    select frac, radio, mza, count(*) as mza_vivs
-    from comuna11
-    group by frac, radio, mza
-    )
-select frac, radio, 
-    mza || array_agg(distinct mza_ady order by mza_ady) as bloque,
-    count(*) as grp_vivs
+select frac, radio, mza, vivs_mza,
+    mza || array_agg(distinct mza_ady order by mza_ady) as clausura_adyacencias
 from adyacencias_mzas
-natural join vivs_x_mza
-natural join comuna11
-where mza_vivs < 30
-group by frac, radio, mza
+natural join conteos_manzanas
+group by frac, radio, mza, vivs_mza
+having vivs_mza < 30
 order by frac, radio, mza
 ;
 
