@@ -38,54 +38,55 @@ select * from mejor_diferencia
 ----
 -- chequear que lo qe sigue anda... minusculizar
 
-drop view segmentando_equilibrado;
+drop view segmentando_equilibrado cascade;
 create or replace view segmentando_equilibrado as
 with deseado as (
     select 40::float as deseado),
     casos as (
-    select frac_comun, radio_comu::integer, mza_comuna::integer,
+    select frac, radio, mza,
            count(*) as vivs,
            ceil(count(*)/deseado) as max,
            greatest(1, floor(count(*)/deseado)) as min
     from comuna11, deseado
-    group by frac_comun, radio_comu::integer, mza_comuna::integer, deseado
+    group by frac, radio, mza, deseado
     ),
     deseado_manzana as (
-    select frac_comun, radio_comu::integer, mza_comuna::integer, vivs,
+    select frac, radio, mza, vivs,
         case when abs(vivs/max - deseado) < abs(vivs/min - deseado) then max
         else min end as seg_x_mza
     from casos, deseado
     ),
     pisos_enteros as (
-        select frac_comun, radio_comu::integer, mza_comuna::integer, clado, min(id) as min_id, hn, hp
+        select frac, radio, mza, lado, min(id) as min_id, hn, hp
         from comuna11
-        group by frac_comun, radio_comu::integer, mza_comuna::integer, clado, hn, hp
+        group by frac, radio, mza, lado, hn, hp
     ),
     pisos_abiertos as (
-        select frac_comun, radio_comu::integer, mza_comuna::integer, clado, hn, hp, hd, min_id,
+        select frac, radio, mza, lado, hn, hp, hd, min_id,
             row_number() over w as row, rank() over w as rank
         from pisos_enteros
         natural join comuna11
         window w as (
-            partition by frac_comun, radio_comu::integer, mza_comuna::integer
+            partition by frac, radio, mza
             -- separa las manzanas
-            order by frac_comun, radio_comu::integer, mza_comuna::integer, clado, min_id, hp
+            order by frac, radio, mza, lado, min_id, hp
             -- rankea por piso (ordena hn como corresponde pares descendiendo)
         )
     ),
     sumados as (
-        select frac_comun, radio_comu::integer, mza_comuna::integer, count(*) as cant
+        select min(id) as id_cmpnt, 
+            frac, radio, mza, count(*) as cant
         from comuna11
-        group by frac_comun, radio_comu::integer, mza_comuna::integer
+        group by frac, radio, mza
     )
-select frac_comun, radio_comu, mza_comuna, clado, hn, hp, hd,
+select id_cmpnt, frac, radio, mza, lado, hn, hp, hd,
     floor((rank - 1)*seg_x_mza/vivs) + 1 as sgm_mza, rank
 from deseado_manzana
 join pisos_abiertos
-using(frac_comun, radio_comu, mza_comuna)
+using(frac, radio, mza)
 join sumados
-using(frac_comun, radio_comu, mza_comuna)
-order by frac_comun, radio_comu::integer, mza_comuna::integer, clado, min_id, hn, hp, hd,
+using(frac, radio, mza)
+order by frac, radio, mza, lado, min_id, hn, hp, hd,
     floor((rank - 1)*seg_x_mza/vivs) + 1, rank
 ;
 
@@ -94,15 +95,15 @@ order by frac_comun, radio_comu::integer, mza_comuna::integer, clado, min_id, hn
 
 
 -----
-drop view segmentando_equilibrado_numerado;
+drop view segmentando_equilibrado_numerado cascade;
 create view segmentando_equilibrado_numerado as
 with numerando_en_radio as (
-    select frac_comun, radio_comu, mza_comuna, sgm_mza, row_number() over w as segmento
+    select frac, radio, mza, sgm_mza, row_number() over w as segmento
     from segmentando_equilibrado
-    group by frac_comun, radio_comu, mza_comuna, sgm_mza
+    group by frac, radio, mza, sgm_mza
     window w as (
-        partition by frac_comun, radio_comu
-        order by frac_comun, radio_comu
+        partition by frac, radio
+      order by frac, radio
         )
     )
 select segmentando_equilibrado.*, segmento
