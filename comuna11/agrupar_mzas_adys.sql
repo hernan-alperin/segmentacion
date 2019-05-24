@@ -164,4 +164,94 @@ para esta muestra representa el 5%
 
 */
 
+/*
+select frac, radio, count(*)
+from conjunto_de_mzas
+group by frac, radio
+;
+ frac | radio | count 
+------+-------+-------
+    1 |     1 |     1
+    1 |     2 |     2
+    1 |    12 |     4
+    2 |     1 |     1
+    2 |     7 |     1
+    2 |     9 |     2
+    2 |    10 |     1
+    2 |    11 |     3
+    4 |     3 |     4
+    4 |     4 |     2
+    4 |     5 |     3
+    4 |     6 |     1
+    4 |     8 |     1
+    4 |     9 |     5
+    5 |     4 |     1
+    5 |     8 |     5
+    5 |     9 |     1
+    5 |    10 |     2
+   10 |    10 |     1
+   11 |     1 |     2
+(20 rows)
+
+*/
+
+------------------------------
+-- setear segmento en listado comuna11
+---------------------------------------
+
+create view mzas_a_agrupar as
+with radios_con_un_solo_par as (
+    select frac, radio
+    from conjunto_de_mzas
+    group by frac, radio
+    having count(*) = 1
+    ),
+    pares as (
+    select frac, radio, unnest(par) as mza
+    from conjunto_de_mzas
+    where (frac, radio) in (select * from radios_con_un_solo_par)
+    )
+select * from pares;
+;
+
+
+alter table comuna11 add column sgm_grp_mzas integer default Null;
+
+update comuna11
+set sgm_grp_mzas = 1
+where (frac, radio, mza) in (
+    select frac, radio, mza from mzas_a_agrupar
+    )
+;
+
+
+/*
+select frac, radio, mza, sgm_mza_grd, sgm_mza_eq, sgm_grp_mzas, sgm
+from comuna11
+order by frac, radio, mza
+;
+.
+.
+.
+   11 |     9 |  44 |             |            |              |   3
+   11 |     9 |  47 |             |            |              |   6
+   12 |     1 |   4 |           1 |          1 |              |   3
+   12 |     1 |   5 |           4 |          3 |              |   4
+   12 |     1 |   5 |           4 |          4 |              |   4
+.
+.
+.
+TODO: revisar secuencia de corrida para generar sgm_mza_grd y sgm_mza_eq
+no deberían dar resultados null, y de donde sale sgm?
+
+*/
+
+
+update comuna11
+set sgm = 101 where sgm_grp_mzas is not Null
+;
+
+
+
+
 
