@@ -1,7 +1,7 @@
 /*
 manzanas_con_pocas_viviendas
 con menos de un mínimo de viviendas
-para agrupar usando algori
+para agrupar usando algoritmo de agregar manzanas
 
 -----------
 
