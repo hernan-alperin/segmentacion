@@ -22,7 +22,7 @@ cargar_listado.sql
 in:
 listado (en .dbf ó .xls(x))
 out: 
-+table segmentacion/<nombre>
++table listados.<nombre>
 ```
 
 2. estandarizar seguna archivo `especificaciones`  
@@ -36,9 +36,10 @@ va cortando de a _d_, cantidad deseada de viviendas por segmento sin cortar piso
 
 ```
 in:
-listado table comuna11
+tabla listados.<nombre>
 out:
-column sgm_mza_grd en comuna11
+tabla segmentaciones.<nombre>_greedy con campos id, segmento
+que se relaciona con listados.<nombre> via campo id
 ```
 
 3.2 cortar_equilibrado_mza_independiente.sql  
@@ -48,9 +49,10 @@ y rank es el orden de visita en el segmento
 
 ```
 in:
-listado table comuna11
+tabla listados.<nombre>
 out:
-view segmentando_equilibrado
+tabla segmentaciones.<nombre>_equilibrado con campos id, segmento
+que se relaciona con listados.<nombre> via campo id
 ```
 
 4. armar_lados_de_manzana.sql
