@@ -40,7 +40,9 @@ tabla listados.<nombre>
 out:
 tabla segmentaciones.<nombre>_greedy con campos id, segmento
 que se relaciona con listados.<nombre> via campo id
+y el campo segmento contiene un identificador único
 ```
+
 
 3.2 cortar_equilibrado_mza_independiente.sql  
 separando listado por segmentos en manzanas independientes  
@@ -53,6 +55,7 @@ tabla listados.<nombre>
 out:
 tabla segmentaciones.<nombre>_equilibrado con campos id, segmento
 que se relaciona con listados.<nombre> via campo id
+y el campo segmento contiene un identificador único
 ```
 
 4. armar_lados_de_manzana.sql
