@@ -10,15 +10,18 @@ fecha: 2019-06-03 Lu
 
 -- normalizar columnas de formato CABA
 -- frac_comun | radio_comu | mza_comuna --> frac | radio | mza
+drop table if exists listados.caba;
+create table listados.caba as
+select id_0, id, 
+    "COMUNAS" depto, "IdBarrio" idbarrio, 
+    "FRAC_COMUN" frac, "RADIO_COMU" radio, 
+    "MZA_COMUNA" mza , "CLADO" lado, "CCODIGO" cod_calle,
+    "CNOMBRE" nombre_calle, "HN" numero, "H4" as h4, Null cuerpo, 
+    "HP" piso, "HD" apt, "Nomencla-20" nomencla_20
+from listados.recorte_comunas_8_11_14_15
+where id is not Null
+;
 
-alter table comuna11 add column frac integer;
-update comuna11 set frac = frac_comun;
-alter table comuna11 add column radio integer;
-update comuna11 set radio = radio_comu;
-alter table comuna11 add column mza integer;
-update comuna11 set mza = mza_comuna;
-alter table comuna11 add column lado integer;
-update comuna11 set lado = clado;
 
 
 
