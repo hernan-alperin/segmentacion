@@ -25,10 +25,16 @@ out:
 +table segmentacion/<nombre>
 ```
 
+2. estandarizar seguna archivo `especificaciones`  
+```
+$ psql -f estadarizar_listado segmentacion
+```
+
 2. armar_lados_de_manzana.sql
-genera los lado agregando ejes de calles y pequeños pedazos
-agrega en arrays si tipos, codigos o calles cambian en ese lado
-usa shape de comuna11
+
+genera los lado agregando ejes de calles y pequeños pedazos  
+agrega en arrays si tipos, codigos o calles cambian en ese lado  
+usa shape de 
 in:
 e0211lin
 out:
