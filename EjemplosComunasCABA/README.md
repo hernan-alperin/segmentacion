@@ -22,13 +22,44 @@ cargar_listado.sql
 in:
 listado (en .dbf ó .xls(x))
 out: 
-+table segmentacion/<nombre>
++table listados.<nombre>
 ```
 
-2. armar_lados_de_manzana.sql
-genera los lado agregando ejes de calles y pequeños pedazos
-agrega en arrays si tipos, codigos o calles cambian en ese lado
-usa shape de comuna11
+2. estandarizar seguna archivo `especificaciones`  
+```
+$ psql -f estadarizar_listado segmentacion
+```
+
+3.1 cortar_greedy_por_mza.sql  
+con circuitos definidos por manzanas independientes  
+va cortando de a _d_, cantidad deseada de viviendas por segmento sin cortar piso  
+
+```
+in:
+tabla listados.<nombre>
+out:
+tabla segmentaciones.<nombre>_greedy con campos id, segmento
+que se relaciona con listados.<nombre> via campo id
+```
+
+3.2 cortar_equilibrado_mza_independiente.sql  
+separando listado por segmentos en manzanas independientes  
+donde la distribución de viviendas en cada segmento en la manzana es equilibrado  
+y rank es el orden de visita en el segmento  
+
+```
+in:
+tabla listados.<nombre>
+out:
+tabla segmentaciones.<nombre>_equilibrado con campos id, segmento
+que se relaciona con listados.<nombre> via campo id
+```
+
+4. armar_lados_de_manzana.sql
+
+genera los lado agregando ejes de calles y pequeños pedazos  
+agrega en arrays si tipos, codigos o calles cambian en ese lado  
+usa shape de 
 in:
 e0211lin
 out:
@@ -43,23 +74,6 @@ out:
     segmento integer, 
     deseado integer)
 . column sgm en table comuna11
-
-4.1 cortar_greedy_por_mza.sql
-con circuitos definidos por manzanas independientes
-va cortando de a $d$, cantidad deseada de viviendas por segmento sin cortar piso
-in:
-listado table comuna11
-out:
-column sgm_mza_grd en comuna11
-
-4.2 cortar_equilibrado_mza_independiente.sql
-separando listado por segmentos en manzanas independientes
-donde la distribución de viviendas en cada segmento en la manzana es equilibrado
-y rank es el orden de visita en el segmento
-in:
-listado table comuna11
-out:
-view segmentando_equilibrado
 
 5. hacer_adyacencias_lados.sql
 consultas sql
