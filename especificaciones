@@ -3,6 +3,7 @@ Listado a segmentar
 
 estructura de la tabla del listado
 cada registro debe contener (al menos) los siguientes campos
+
 	id
 	depto
 	frac
@@ -15,8 +16,10 @@ cada registro debe contener (al menos) los siguientes campos
 	piso
 	apt (timbre o departamento dentro del piso)
 
+los campos id, depto, frac, radio, mza, lado son de tipo integer
+(en case de que sean formato char DDD, FF, RR, MMM se pueden castear usando ::integer)
+
 Topología del radio censal
-1. todos los campos de las siguientes tablas son de tipo integer
 2. el par mza, lado identifica a un lado 
 
 
