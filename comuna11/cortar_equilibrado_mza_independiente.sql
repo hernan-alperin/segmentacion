@@ -12,28 +12,6 @@ fecha: 2019-04-19 Vi
 -- calcula la cantidad de viviendas por segmento que menor se aparte
 -- de la catidad deseaado
 -------------------------------------------------------------------
--- caso para testear
-/*
-with deseado as (
-    select 40::float as deseado
-    ),
-    casos as (
-    select generate_series(1, 1000) as vivs
-    ),
-    posibles_segs_mza as (
-    select vivs, greatest(1, floor(vivs/deseado)) as min, ceil(vivs/deseado) as max
-    from casos, deseado
-    ),
-    mejor_diferencia as (
-    select vivs, min, max, 
-           case when abs(vivs/max - deseado) < abs(vivs/min - deseado) then max
-           else min end as seg_x_mza
-    from posibles_segs_mza, deseado
-    )
-select * from mejor_diferencia
-;
-*/
---------------------------------------------------------------------
 -- caso en comuna
 ----
 -- chequear que lo qe sigue anda... minusculizar
@@ -62,14 +40,22 @@ with deseado as (
         group by frac, radio, mza, lado, hn, hp
     ),
     pisos_abiertos as (
-        select frac, radio, mza, lado, hn, hp, hd, id_cmpnt,
+        select p.frac, p.radio, p.mza, p.lado, p.hn, p.hp, hd, id_cmpnt,
             row_number() over w as row, rank() over w as rank
-        from pisos_enteros
-        natural join comuna11
+        from pisos_enteros p
+        join comuna11 c
+        on p.frac = c.frac
+        and p.radio = c.radio
+        and p.mza = p.mza
+        and p.lado = c.lado
+        and p.hn = c.hn
+        and case when c.hn is Null then true
+                else p.hn = c.hn
+            end
         window w as (
-            partition by frac, radio, mza
+            partition by p.frac, p.radio, p.mza
             -- separa las manzanas
-            order by frac, radio, mza, lado, id_cmpnt, hp
+            order by p.frac, p.radio, p.mza, p.lado, id_cmpnt, p.hp
             -- rankea por piso (ordena hn como corresponde pares descendiendo)
         )
     ),
