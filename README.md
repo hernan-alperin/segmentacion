@@ -3,28 +3,26 @@ segmentación
 
 ## algoritmos de segmentación para el censo2020
 
-procesar segmentación de listado de comuna11
+procesar segmentación de listado de viviendas
 
 0. crear base de datos (en localhost)  
 `$ psql -c 'create database segmentacion'`
 
 1. importar listado a PostgreSQL en el schema listados  
+vía
 
 cargar_listado.sql  
-carga el listado comuna11.dbf via
  * excel->.csv, function sql (csv->table);
  
  ó
  
- * drag & drop en QGIS
+ * drag & drop usando QGIS
  
 ```
 in:
-listado (en .dbf)
+listado (en .dbf ó .xls(x))
 out: 
-+table comuna11
-
-(!) TODO: out: generalizar para otras comunas/departamebnto/lo que sea
++table segmentacion/<nombre>
 ```
 
 2. armar_lados_de_manzana.sql
