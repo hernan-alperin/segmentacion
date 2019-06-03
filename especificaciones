@@ -8,7 +8,7 @@ cada registro debe contener (al menos) los siguientes campos
 	depto
 	frac
 	radio
-	mnza
+	mza
 	lado
 	cod_calle
 	numero
