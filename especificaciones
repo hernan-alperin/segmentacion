@@ -1,8 +1,7 @@
-Especificaciones 
-
+Especificaciones  
 Listado a segmentar
 
-tabla listado
+estructura de la tabla del listado
 cada registro debe contener (al menos) los siguientes campos
 	id
 	depto
