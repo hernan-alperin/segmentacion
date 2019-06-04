@@ -1,14 +1,14 @@
-Especificaciones 
-
+Especificaciones  
 Listado a segmentar
 
-tabla listado
+estructura de la tabla del listado
 cada registro debe contener (al menos) los siguientes campos
+
 	id
 	depto
 	frac
 	radio
-	mnza
+	mza
 	lado
 	cod_calle
 	numero
@@ -16,10 +16,16 @@ cada registro debe contener (al menos) los siguientes campos
 	piso
 	apt (timbre o departamento dentro del piso)
 
-Topología del radio censal
-1. todos los campos de las siguientes tablas son de tipo integer
-2. el par mza, lado identifica a un lado 
+los campos id, depto, frac, radio, mza, lado son de tipo integer
+(en case de que sean formato char DDD, FF, RR, MMM se pueden castear usando ::integer)
 
+## Topología del radio censal
+se obtiene del shape de lineas
+
+. el par mza, lado identifica a un lado dentro de un radio
+
+. esa identificación DEBE corresponderse con el listado
+(esto se podría comprobar y/o corregir usando las calles y alturas) 
 
 tabla lados_nodos
 	nodo_i, mza, lado, nodo_f
