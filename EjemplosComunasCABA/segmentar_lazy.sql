@@ -7,7 +7,10 @@ autor: -h
 fecha: 2019-06-04 Ma
 */
 
+create schema if not exists segmentaciones;
+
 --- usando ventanas para ayudar a calcular cortes
+drop table if exists segmentaciones.facil;
 create table segmentaciones.facil as
 with segmentos_id as (
     select row_number() 
