@@ -27,21 +27,24 @@ out:
 
 2.1 estandarizar según archivo `especificaciones`  
 ```
-$ psql -f estadarizar_listado segmentacion
+$ psql -f estadarizar_listado segmentacion.sql
 ```
 
 2.1 masajear los datos para que funciones los algorimos
 ```
-$ psql -f estadarizar_listado segmentacion
+$ psql -f masajear.sql
 ```
 
 
 
-3.1 cortar_greedy_por_mza.sql  
-con circuitos definidos por manzanas independientes  
-va cortando de a _d_, cantidad deseada de viviendas por segmento sin cortar piso  
+3.1 Segmentar usando algoritmo greedy  
+
+Circuitos definidos por manzanas independientes  
+cortan de a _d_, cantidad deseada de viviendas por segmento sin cortar piso  
 
 ```
+psql -f segmentar_greedy.sql
+
 in:
 tabla listados.<nombre>
 out:
@@ -51,12 +54,15 @@ y el campo segmento contiene un identificador único
 ```
 
 
-3.2 cortar_equilibrado_mza_independiente.sql  
+3.2 Segmentar usando algoritmo Equilibrado
+
 separando listado por segmentos en manzanas independientes  
 donde la distribución de viviendas en cada segmento en la manzana es equilibrado  
 y rank es el orden de visita en el segmento  
 
 ```
+psql -f segmentar_equilibrado.sql
+
 in:
 tabla listados.<nombre>
 out:
@@ -64,6 +70,9 @@ tabla segmentaciones.<nombre>_equilibrado con campos id, segmento
 que se relaciona con listados.<nombre> via campo id
 y el campo segmento contiene un identificador único
 ```
+
+Hasta acá está hecho (verificar descripción y comandos)
+---------------------------------------------
 
 4. armar_lados_de_manzana.sql
 
@@ -75,7 +84,7 @@ e0211lin
 out:
 +lados_de_manzana
 
-3. costo.sql
+(?). costo.sql
 define los costos
 out:
 . function costo_segmento(
@@ -101,16 +110,6 @@ out:
 table adyacencias_mzas (usa nomenclador frac | radio | mza | lado | mza_ady | lado_ady | lado_id | ady_id | tipo_ady)
 con _id de grafo_adyacencias_lados
 
-7.1. cortar_greedy_por_mza.sql
-con circuitos definidos por manzanas indeendientes
-va cortando de a $d$, cantidad deseada de viviendas por segmento sin cortar piso
-al final queda una cola de viviendas <= d
-
-7.2. cortar_equilibrado_mza_independiente.sql
--- separando listado por segmentos en manzanas independientes
--- donde la distribución de viviendas en cada segmento en la manzana es equilibrado
--- y rank es el orden de visita en el segmento
-
 8. manzanas_con_pocas_viviendas.sql
 con menos de un mínimo de viviendas
 para agrupar usando algoritmo de agregar manzanas
@@ -118,17 +117,3 @@ para agrupar usando algoritmo de agregar manzanas
 9. agrupar_mzas_adys.sql
 genera una tabla o vista con grupos de mzas adys
 setea segmento 101 para par de manzanas seleccionado para aparear
-
-
------
-. sanbox.sql
-para jugar y hacer castillitos de arena para veer hacia donde ir...
-
-. consultas.py
-draft de programa python que cargue consultas de archivos
-
-. estadisticas.sql
-calculando el estado de la comuna11 y los resultados de las diferentes métodos de segmentación
-
-. funciones.sql
-funciones pra operar sobre manzanas y circuitos
