@@ -65,35 +65,112 @@ limit 10
      8 |    2 |     1 | 501 |       9 |    19
 (10 rows)
 */
----- ahora hay que armar un único segmento_id
---- con depto, frac, radio, mza, sgm_mza
+---- ahora un único segmento_id
+---- usando depto, frac, radio, mza, sgm_mza
 
+drop table if exists segmentaciones.greedy;
+create table segmentaciones.greedy as
 with segmentos_id as (
     select row_number() over (order by depto, frac, radio, mza, sgm_mza) as segmento_id, 
         depto, frac, radio, mza, sgm_mza
     from segmentaciones.greedy_sgm_radio
     group by depto, frac, radio, mza, sgm_mza
     )
-select id as listado_id, segmento_id,
-    depto, frac, radio, mza, lado, numero, piso, apt, sgm_mza
+select id as listado_id, segmento_id --, esto era para verificar
+--    depto, frac, radio, mza, lado, numero, piso, apt, sgm_mza
 from segmentos_id
 join segmentaciones.greedy_sgm_radio
 using (depto, frac, radio, mza, sgm_mza)
 order by depto, frac, radio, mza, lado, id
 ;
----------- parece que anda...
+
+/*
+select segmento_id, count(*)
+from segmentaciones.greedy
+group by segmento_id
+limit 10
+;
+ segmento_id | count 
+-------------+-------
+        1489 |     8
+        4790 |    20
+         273 |     3
+        3936 |    21
+        2574 |    17
+         951 |    19
+        5761 |     6
+        5843 |    17
+        5729 |     5
+        5468 |    22
+(10 rows)
+*/
 
 
 /*
 
----- algunas estadśticas
---- post evaluaciones
---- vivendas por segmento
-select frac_comun, radio_comu::integer, mza_comuna::integer, sgm_mza, count(*) as cant_viv_sgm
-from segmentando_greedy
-group by frac_comun, radio_comu::integer, mza_comuna::integer, sgm_mza
-order by count(*) desc, sgm_mza desc, frac_comun, radio_comu::integer, mza_comuna::integer
+---- algunas estadísticas
+---- Distribución de longitudes de segmentos:
+
+with conteo as (
+    select segmento_id, count(*) as vivs
+    from segmentaciones.greedy
+    group by segmento_id
+    )
+select vivs, count(*)
+from conteo
+group by vivs
+order by vivs desc
 ;
+ vivs | count 
+------+-------
+   48 |     1
+   47 |     1
+   43 |     1
+   40 |     1
+   39 |     1
+   38 |     1
+   36 |     2
+   35 |     1
+   34 |     2
+   33 |     3
+   32 |     5
+   31 |     2
+   30 |     8
+   29 |     6
+   28 |    17
+   27 |    19
+   26 |    15
+   25 |    24
+   24 |   181
+   23 |   149
+   22 |   334
+   21 |   673
+   20 |  1431
+   19 |   977
+   18 |   450
+   17 |   189
+   16 |   156
+   15 |   100
+   14 |    94
+   13 |    83
+   12 |   104
+   11 |    78
+   10 |    69
+    9 |    93
+    8 |    87
+    7 |    88
+    6 |    91
+    5 |    94
+    4 |    89
+    3 |    99
+    2 |   100
+    1 |    74
+(42 rows)
+*/
+
+
+
+
 
 
 --------------------
