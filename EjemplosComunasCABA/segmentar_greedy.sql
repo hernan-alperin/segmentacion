@@ -168,19 +168,3 @@ order by vivs desc
 (42 rows)
 */
 
-
-
-
-
-
---------------------
-alter table comuna11 drop column segmento_en_manzana;
-alter table comuna11 add column sgm_mza_grd integer;
-update comuna11 l
-set sgm_mza_grd = sgm_mza 
-from segmentando_greedy g
-where (l.frac_comun, l.radio_comu::integer, l.mza_comuna::integer, l.clado, l.hn, case when l.hp is Null then 0 else l.hp end) = 
-    (g.frac_comun, g.radio_comu, g.mza_comuna, g.clado, g.hn, case when g.hp is Null then 0 else g.hp end)
-;
-
-*/
