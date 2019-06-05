@@ -25,10 +25,17 @@ out:
 +table listados.<nombre>
 ```
 
-2. estandarizar seguna archivo `especificaciones`  
+2.1 estandarizar según archivo `especificaciones`  
 ```
 $ psql -f estadarizar_listado segmentacion
 ```
+
+2.1 masajear los datos para que funciones los algorimos
+```
+$ psql -f estadarizar_listado segmentacion
+```
+
+
 
 3.1 cortar_greedy_por_mza.sql  
 con circuitos definidos por manzanas independientes  
