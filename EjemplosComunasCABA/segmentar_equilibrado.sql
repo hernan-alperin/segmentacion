@@ -65,33 +65,26 @@ using (depto, frac, radio, mza)
 ------------------------------------------------------------------------
 
 /*
+*/
+
+
+
+/* DEBUG:
 with segs_x_mza as (
-    select depto, frac, radio, mza, sgm_mza, count(*) 
+    select depto, frac, radio, mza, sgm_mza, count(*) as vivs
     from segmentaciones.eq_sgm_radio
     group by depto, frac, radio, mza, sgm_mza
     )
-select depto, frac, radio, mza, count(*) cant_sgms, round(avg(count)) as promedio
+select depto, frac, radio, mza, count(*) cant_sgms, round(avg(vivs)) as promedio
 from segs_x_mza
 group by depto, frac, radio, mza
-having count(*) > 1
-order by random()
-limit 10
+having count(*) = 2 and avg(vivs) < 13
 ;
  depto | frac | radio | mza | cant_sgms | promedio 
 -------+------+-------+-----+-----------+----------
-    11 |   10 |     2 |   4 |         8 |       19
-    15 |    4 |     1 |   2 |         3 |       17
-    11 |    9 |     9 |  33 |        14 |       20
-    15 |    3 |     6 |  34 |         2 |       16
-    11 |    3 |     2 |   9 |         5 |       18
-    11 |   11 |     7 |  51 |         4 |       16
-    15 |    3 |    13 |   6 |         4 |       19
-    11 |    3 |     5 |  38 |         8 |       20
-    15 |    5 |     7 |  24 |         3 |       18
-     8 |    4 |     4 |   8 |         2 |       11
-(10 rows)
+(0 rows)
+*/ 
 
-*/
 ---- ahora un único segmento_id
 ---- usando depto, frac, radio, mza, sgm_mza
 
@@ -119,16 +112,16 @@ limit 10
 ;
  segmento_id | count 
 -------------+-------
-        1489 |     8
-        4790 |    20
-         273 |     3
-        3936 |    21
-        2574 |    17
-         951 |    19
-        5761 |     6
-        5843 |    17
-        5729 |     5
-        5468 |    22
+        6114 |    20
+        4790 |    21
+         273 |    19
+        3936 |    18
+        5761 |    20
+        5468 |    19
+        4326 |    16
+        2520 |    20
+        2466 |    21
+        5697 |    20
 (10 rows)
 */
 
@@ -150,48 +143,49 @@ order by vivs desc
 ;
  vivs | count 
 ------+-------
+   50 |     1
    48 |     1
    47 |     1
-   43 |     1
+   41 |     1
    40 |     1
-   39 |     1
    38 |     1
-   36 |     2
-   35 |     1
-   34 |     2
-   33 |     3
-   32 |     5
-   31 |     2
-   30 |     8
-   29 |     6
-   28 |    17
-   27 |    19
-   26 |    15
-   25 |    24
-   24 |   181
-   23 |   149
-   22 |   334
-   21 |   673
-   20 |  1431
-   19 |   977
-   18 |   450
-   17 |   189
-   16 |   156
-   15 |   100
-   14 |    94
-   13 |    83
-   12 |   104
-   11 |    78
-   10 |    69
-    9 |    93
-    8 |    87
-    7 |    88
-    6 |    91
-    5 |    94
-    4 |    89
-    3 |    99
-    2 |   100
-    1 |    74
-(42 rows)
+   37 |     2
+   36 |     3
+   35 |     3
+   34 |     3
+   33 |     4
+   32 |     3
+   31 |     3
+   30 |     6
+   29 |    11
+   28 |    18
+   27 |    40
+   26 |    42
+   25 |    75
+   24 |   298
+   23 |   342
+   22 |   659
+   21 |  1050
+   20 |  1585
+   19 |  1121
+   18 |   878
+   17 |   544
+   16 |   347
+   15 |   183
+   14 |   126
+   13 |    51
+   12 |    42
+   11 |    15
+   10 |    12
+    9 |     8
+    8 |     5
+    7 |     6
+    6 |     6
+    5 |     6
+    4 |    13
+    3 |     7
+    2 |     9
+    1 |    20
+(43 rows)
 */
 
