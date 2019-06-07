@@ -35,7 +35,14 @@ $ psql -f estadarizar_listado segmentacion.sql
 $ psql -f masajear.sql
 ```
 
+3.
 
+Instrucciones:
+edite 
+`segmentar_equilibrado.sql`, o
+`segmentar_equilibrado.sql` 
+elijiendo la cantidad deseada de viviendas por segmento 
+en la parte del código donde está indicado
 
 3.1 Segmentar usando algoritmo greedy  
 
@@ -59,6 +66,7 @@ y el campo segmento contiene un identificador único
 separando listado por segmentos en manzanas independientes  
 donde la distribución de viviendas en cada segmento en la manzana es equilibrado  
 y rank es el orden de visita en el segmento  
+
 
 ```
 psql -f segmentar_equilibrado.sql
