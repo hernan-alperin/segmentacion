@@ -9,15 +9,11 @@ procesar segmentación de listado de viviendas
 `$ psql -c 'create database segmentacion'`
 
 1. importar listado a PostgreSQL en el schema listados  
-vía
-
+vía  
 cargar_listado.sql  
- * excel->.csv, function sql (csv->table);
- 
- ó
- 
- * drag & drop usando QGIS
- 
+ * excel->.csv, function sql (csv->table);  
+ ó  
+ * drag & drop usando QGIS  
 ```
 in:
 listado (en .dbf ó .xls(x))
@@ -27,28 +23,23 @@ out:
 
 2.1 estandarizar según archivo `especificaciones`  
 ```
-$ psql -f estadarizar_listado segmentacion.sql
+$ psql -f estadarizar.sql
 ```
-
-2.1 masajear los datos para que funciones los algorimos
+2.2 masajear los datos para que funciones los algorimos  
 ```
 $ psql -f masajear.sql
 ```
 
-3.
-
-Instrucciones:
-edite 
-`segmentar_equilibrado.sql`, o
-`segmentar_equilibrado.sql` 
-elijiendo la cantidad deseada de viviendas por segmento 
-en la parte del código donde está indicado
-
+3.  
+Instrucciones:  
+edite  
+`segmentar_equilibrado.sql`, o  
+`segmentar_equilibrado.sql`  
+elijiendo la cantidad deseada de viviendas por segmento  
+en la parte del código donde está indicado  
 3.1 Segmentar usando algoritmo greedy  
-
 Circuitos definidos por manzanas independientes  
 cortan de a _d_, cantidad deseada de viviendas por segmento sin cortar piso  
-
 ```
 psql -f segmentar_greedy.sql
 
@@ -59,15 +50,10 @@ tabla segmentaciones.<nombre>_greedy con campos id, segmento
 que se relaciona con listados.<nombre> via campo id
 y el campo segmento contiene un identificador único
 ```
-
-
-3.2 Segmentar usando algoritmo Equilibrado
-
+3.2 Segmentar usando algoritmo Equilibrado  
 separando listado por segmentos en manzanas independientes  
 donde la distribución de viviendas en cada segmento en la manzana es equilibrado  
 y rank es el orden de visita en el segmento  
-
-
 ```
 psql -f segmentar_equilibrado.sql
 
