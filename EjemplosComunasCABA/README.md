@@ -30,7 +30,8 @@ $ psql -f estadarizar.sql
 $ psql -f masajear.sql
 ```
 
-3.  
+3.  Segmentación  
+  
 Instrucciones:  
 edite  
 `segmentar_equilibrado.sql`, o  
@@ -50,6 +51,7 @@ tabla segmentaciones.<nombre>_greedy con campos id, segmento
 que se relaciona con listados.<nombre> via campo id
 y el campo segmento contiene un identificador único
 ```
+  
 3.2 Segmentar usando algoritmo Equilibrado  
 separando listado por segmentos en manzanas independientes  
 donde la distribución de viviendas en cada segmento en la manzana es equilibrado  
