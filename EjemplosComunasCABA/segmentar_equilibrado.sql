@@ -1,15 +1,15 @@
 /*
-titulo: segmentar_equilibradosql
+titulo: segmentar_equilibrado.sql
 descripción: con circuitos definidos por manzanas independientes
-va segemnta en forma equilibrada sin cortar piso, balanceando la
-cantidad deseada de viviendas por segmento 
-y la cantidad de viviendas en la manzana
-para que los segmentos se aparten lo mínimo de la cantidad deseada
-autor: -h
+segmenta en forma equilibrada sin cortar piso, balanceando la
+cantidad deseada con la proporcional de viviendas por segmento 
+usando la cantidad de viviendas en la manzana.
+El objetivo es que los segmentos se aparten lo mínimo de la cantidad deseada
+y que la carga de los censistas esté lo más balanceado
+autor: -h+M
 fecha: 2019-06-05 Mi
 */
 
---- usando ventanas para ayudar a calcular cortes
 
 create schema if not exists segmentaciones;
 
@@ -45,6 +45,7 @@ with deseado as (select
             row_number() over w as row, rank() over w as rank
         from pisos_enteros
         natural join listados.caba
+--- se usan ventanas para calcular cortes
         window w as (
             partition by depto, frac, radio, mza
             -- separa las manzanas
@@ -57,17 +58,9 @@ select id, depto, frac, radio, mza, lado, numero, piso, apt,
 from deseado_manzana
 join pisos_abiertos
 using (depto, frac, radio, mza)
----join casos
----using (depto, frac, radio, mza)
---order by depto, frac, radio, mza, lado, min_id
 ;
 -- sgm_mza indica el número de segmento dentro de cada mza independiente
 ------------------------------------------------------------------------
-
-/*
-*/
-
-
 
 /* DEBUG:
 with segs_x_mza as (
@@ -85,8 +78,9 @@ having count(*) = 2 and avg(vivs) < 13
 (0 rows)
 */ 
 
----- ahora un único segmento_id
----- usando depto, frac, radio, mza, sgm_mza
+---- tabla con único segmento_id independiente del radio
+---- usando la información de la tabla segmentaciones.eq_sgm_radio
+---- depto, frac, radio, mza, sgm_mza
 
 drop table if exists segmentaciones.equilibrado;
 create table segmentaciones.equilibrado as
@@ -96,8 +90,7 @@ with segmentos_id as (
     from segmentaciones.eq_sgm_radio
     group by depto, frac, radio, mza, sgm_mza
     )
-select id as listado_id, segmento_id --, esto era para verificar
---    depto, frac, radio, mza, lado, numero, piso, apt, sgm_mza
+select id as listado_id, segmento_id 
 from segmentos_id
 join segmentaciones.eq_sgm_radio
 using (depto, frac, radio, mza, sgm_mza)
