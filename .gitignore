@@ -91,3 +91,6 @@ ENV/
 # vim temporaries
 .*.sw*
 
+# info de Cartotagrafía INDEC (not OPEN _yet_)
+EjemplosComunasCABA/shapes
+
