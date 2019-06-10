@@ -9,11 +9,12 @@ procesar segmentación de listado de viviendas
 `$ psql -c 'create database segmentacion'`
 
 1. importar listado a PostgreSQL en el schema listados  
-vía  
-cargar_listado.sql  
- * excel->.csv, function sql (csv->table);  
- ó  
+leer instrucciones en 
+
+esto se hace vía  
+ * excel->.csv, function sql (csv->table);  ó
  * drag & drop usando QGIS  
+
 ```
 in:
 listado (en .dbf ó .xls(x))
