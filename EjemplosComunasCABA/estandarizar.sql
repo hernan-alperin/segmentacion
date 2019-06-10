@@ -22,7 +22,7 @@ select id_0, id,
     "HP" piso, "HD" apt, "Nomencla-20" nomencla_20
 from 
 ---------- Nombre de la tabla con los datos importados -----------
-recorte_comunas_8_11_14_15
+listados.recorte_comunas_8_11_14_15
 ------------------------------------------------------------------
 where id is not Null
 ;
