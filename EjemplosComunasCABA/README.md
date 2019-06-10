@@ -23,11 +23,11 @@ out:
 
 2.1 estandarizar según archivo `especificaciones`  
 ```
-$ psql -f estadarizar.sql
+$ psql -f estadarizar.sql segmentacion
 ```
 2.2 masajear los datos para que funciones los algorimos  
 ```
-$ psql -f masajear.sql
+$ psql -f masajear.sql segmentacion
 ```
 
 3.  Segmentación  
@@ -42,7 +42,7 @@ en la parte del código donde está indicado
 Circuitos definidos por manzanas independientes  
 cortan de a _d_, cantidad deseada de viviendas por segmento sin cortar piso  
 ```
-psql -f segmentar_greedy.sql
+psql -f segmentar_greedy.sql segmentacion
 
 in:
 tabla listados.<nombre>
@@ -57,7 +57,7 @@ separando listado por segmentos en manzanas independientes
 donde la distribución de viviendas en cada segmento en la manzana es equilibrado  
 y rank es el orden de visita en el segmento  
 ```
-psql -f segmentar_equilibrado.sql
+psql -f segmentar_equilibrado.sql segmentacion
 
 in:
 tabla listados.<nombre>
