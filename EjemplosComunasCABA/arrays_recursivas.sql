@@ -9,14 +9,32 @@ insert into mzas values(array[1]);
 insert into mzas values(array[2]);
 insert into mzas values(array[3]);
 
-
+/*
 select set_of_mza from mzas;
+ set_of_mza 
+------------
+ {1}
+ {2}
+ {3}
+(3 rows)
+*/
 
+/*
 select i.set_of_mza || j.set_of_mza as set_of_mza
 from mzas i
 inner join mzas j
 on not (i.set_of_mza && j.set_of_mza)
 ;
+ set_of_mza 
+------------
+ {1,2}
+ {1,3}
+ {2,1}
+ {2,3}
+ {3,1}
+ {3,2}
+(6 rows)
+*/
 
 drop table if exists arrays_recursivas;
 create table arrays_recursivas as
@@ -101,7 +119,6 @@ create table adyacencias (
 truncate adyacencias;
 insert into adyacencias values (1,2);
 insert into adyacencias values (1,3);
-insert into adyacencias values (2,3);
 
 create or replace function blqs_de_mzas(tbl_name text)
 returns table (set_of_mza integer[]) as $$
@@ -126,6 +143,34 @@ format('
     ', $1);
 end
 $$ language plpgsql;
+--TODO: hacer una function recursiva sobre adyacencias
+--me parece que es mucho más facil...
 
+/*
 select blqs_de_mzas('mzas');
+ blqs_de_mzas 
+--------------
+ {1}
+ {2}
+ {3}
+ {1,2}
+ {1,3}
+(5 rows)
+*/
 
+
+insert into adyacencias values (2,3);
+
+/*
+select blqs_de_mzas('mzas');
+ blqs_de_mzas 
+--------------
+ {1}
+ {2}
+ {3}
+ {1,2}
+ {1,3}
+ {2,3}
+ {1,2,3}
+(7 rows)
+*/
