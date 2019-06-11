@@ -1,7 +1,6 @@
 
 drop table if exists mzas;
 create table mzas(
---    conjunto integer,
     set_of_mza integer[]
 );
 
@@ -19,6 +18,7 @@ inner join mzas j
 on not (i.set_of_mza && j.set_of_mza)
 ;
 
+drop table if exists arrays_recursivas;
 create table arrays_recursivas as
 with recursive conjuntos as (
     select set_of_mza from mzas
@@ -91,3 +91,41 @@ select sets_de_mzas('mzas');
  {1,2,3}
 (15 rows)
 */
+
+drop table if exists adyacencias;
+create table adyacencias (
+    mza_i integer,
+    mza_j integer
+);
+
+truncate adyacencias;
+insert into adyacencias values (1,2);
+insert into adyacencias values (1,3);
+insert into adyacencias values (2,3);
+
+create or replace function blqs_de_mzas(tbl_name text)
+returns table (set_of_mza integer[]) as $$
+begin
+return query execute
+format('    
+    with recursive conjuntos as (
+        select set_of_mza from %1$s
+        union
+        select i.set_of_mza || j.set_of_mza
+        from %1$s i
+        inner join conjuntos j
+        on not (i.set_of_mza && j.set_of_mza)
+    )
+    select set_of_mza from conjuntos
+    where array_length(set_of_mza,1) = 1
+    or array_length(set_of_mza,1) = 2
+        and (set_of_mza[1], set_of_mza[2]) in (select * from adyacencias)
+    or array_length(set_of_mza,1) = 3
+        and (set_of_mza[1], set_of_mza[2]) in (select * from adyacencias)
+        and (set_of_mza[2], set_of_mza[3]) in (select * from adyacencias)
+    ', $1);
+end
+$$ language plpgsql;
+
+select blqs_de_mzas('mzas');
+
