@@ -140,11 +140,15 @@ format('
     or array_length(set_of_mza,1) = 3
         and (set_of_mza[1], set_of_mza[2]) in (select * from adyacencias)
         and (set_of_mza[2], set_of_mza[3]) in (select * from adyacencias)
+    or array_length(set_of_mza,1) = 4
+        and (set_of_mza[1], set_of_mza[2]) in (select * from adyacencias)
+        and (set_of_mza[2], set_of_mza[3]) in (select * from adyacencias)
+        and (set_of_mza[3], set_of_mza[4]) in (select * from adyacencias)
     ', $1);
 end
 $$ language plpgsql;
 --TODO: hacer una function recursiva sobre adyacencias
---me parece que es mucho más facil...
+-- o poner un límite en la cantidad de mzas, lo que me parece mejor
 
 /*
 select blqs_de_mzas('mzas');
@@ -174,3 +178,14 @@ select blqs_de_mzas('mzas');
  {1,2,3}
 (7 rows)
 */
+
+create or replace function blqs_de_mzas(tbl_name text)
+returns table (set_of_mza integer[]) as $$
+$$
+begin
+return query execute
+format('    
+    select set_of_mza from %1$s
+    ', $1);
+end
+language plpgsql;
