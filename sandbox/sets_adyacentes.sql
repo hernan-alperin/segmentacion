@@ -37,6 +37,7 @@ format('
         from sets i
         inner join conjuntos j
         on not (i.set_de_mza && j.set_de_mza)
+        and i.set_de_mza[1] < all(j.set_de_mza) 
     )
     select set_de_mza from conjuntos
     where array_length(set_de_mza,1) = 1
