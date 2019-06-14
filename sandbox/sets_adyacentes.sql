@@ -1,3 +1,4 @@
+CREATE EXTENSION intarray;
 
 drop table if exists mzas;
 create table mzas(
@@ -18,7 +19,6 @@ create table adyacencias (
 
 truncate adyacencias;
 insert into adyacencias values (1,2);
-insert into adyacencias values (1,3);
 
 create or replace function blqs_de_mzas(mzas text, adyacencias text)
 returns table (set_de_mza integer[]) as $$
@@ -37,9 +37,9 @@ format('
         from sets i
         inner join conjuntos j
         on not (i.set_de_mza && j.set_de_mza)
-        and i.set_de_mza[1] < all(j.set_de_mza) 
+        --and i.set_de_mza[1] < all(j.set_de_mza) 
     )
-    select set_de_mza from conjuntos
+    select distinct sort(set_de_mza) as blq from conjuntos
     where array_length(set_de_mza,1) = 1
     or array_length(set_de_mza,1) = 2
         and (set_de_mza[1], set_de_mza[2]) in (select * from %2$s)
@@ -49,12 +49,13 @@ format('
     or array_length(set_de_mza,1) = 3
         and (set_de_mza[1], set_de_mza[2]) in (select * from %2$s)
         and (set_de_mza[1], set_de_mza[3]) in (select * from %2$s)
+    order by blq
     ', $1, $2);
 end
 $$ language plpgsql;
 --TODO: hacer una function recursiva sobre adyacencias
 -- o poner un límite en la cantidad de mzas, lo que me parece mejor
 
+insert into adyacencias values(1,3);
+insert into adyacencias values(1,4);
 select blqs_de_mzas('mzas', 'adyacencias');
-
-
