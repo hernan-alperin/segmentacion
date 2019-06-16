@@ -18,12 +18,7 @@ create table adyacencias (
 
 truncate adyacencias;
 insert into adyacencias values (1,2);
+insert into adyacencias values (2,3);
+insert into adyacencias values (2,4);
 select sets_de_adys('mzas', 'adyacencias');
-
-
-/*
-insert into adyacencias values(1,3);
-insert into adyacencias values(1,4);
-select sets_de_adys('mzas', 'adyacencias');
-*/                                                       
 
