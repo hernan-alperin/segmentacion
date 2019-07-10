@@ -1,3 +1,9 @@
+"""
+titulo: particiones.py
+descripción: calcula todas las particiones posibles de los componentes
+author: -h
+fecha: 2019-06
+"""
 # ver https://stackoverflow.com/questions/19368375/set-partitions-in-python
 
 def partition(collection):
