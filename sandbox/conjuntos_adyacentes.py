@@ -1,3 +1,11 @@
+"""
+título: conjuntos_adyacentes.py
+descripción: calcula todos los conjuntos que se pueden generar siguiendo la relación de adyacencias
+(no reflexiva)
+autor: -h
+fecha: 2019-06
+"""
+
 def conjuntos_adyacentes(componentes, adyacencias):
     conjuntos = []
     for cmpt in componentes:
