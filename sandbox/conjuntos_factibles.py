@@ -1,3 +1,11 @@
+"""
+título: conjuntos_factibles.py
+descripción: calcula la suma de conjuntos generados por adyacencias y la intersecta con las particiones
+quedan todas las particiones de los componentes que respetan las secuencias de adyacencias
+autor: -h
+fecha: 2019-06
+"""
+
 import particiones
 import conjuntos_adyacentes
 
