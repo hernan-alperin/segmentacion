@@ -17,14 +17,14 @@ def conjuntos_adyacentes(componentes, adyacencias):
         cantidad = len(conjuntos)
         for c in conjuntos:
             for (i, j) in adyacencias:
-                for (m, n) in adyacencias:  
-                    if i in c and j in c and m in c and n not in c:
-                        b = c.copy()
-                        b.append(n)
-                        b.sort()
-                        if b not in conjuntos:
-                            conjuntos.append(b)
+                if i in c and j not in c:
+                    b = list(c)
+                    b.append(j)
+                    b.sort()
+                    if b not in conjuntos:
+                        conjuntos.append(b)
     return conjuntos
+
 
 
 #componentes = [1, 2, 3, 4, 5]
