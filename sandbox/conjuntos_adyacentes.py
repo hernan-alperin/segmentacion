@@ -10,8 +10,6 @@ def conjuntos_adyacentes(componentes, adyacencias):
     conjuntos = []
     for cmpt in componentes:
         conjuntos.append([cmpt])
-    for (i, j) in adyacencias:
-        conjuntos.append([i, j])
     cantidad = 0
     while cantidad < len(conjuntos):
         cantidad = len(conjuntos)
@@ -27,9 +25,10 @@ def conjuntos_adyacentes(componentes, adyacencias):
 
 
 
-#componentes = [1, 2, 3, 4, 5]
-#adyacencias = [(5,4), (1,2), (2,3), (3,4)]
+componentes = []
+adyacencias = [(5,4), (1,2), (2,3), (3,4)]
 
-#print(conjuntos_adyacentes(componentes, adyacencias))
+print(len(conjuntos_adyacentes(componentes, adyacencias)))
+print(conjuntos_adyacentes(componentes, adyacencias))
 
     
