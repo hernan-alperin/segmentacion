@@ -21,15 +21,11 @@ class Componentes(list):
             sgms.append(Segmento([c]))
         cantidad = 0
         while cantidad < len(sgms):
-            print(cantidad)
             cantidad = len(sgms)
             for s in sgms:
-                print(s)
                 for c in s:
-                    print('  '+str(c))
                     for i in c.adyacentes:
                         if i not in s:
-                            print('    '+str(i))
                             b = Segmento(s)
                             b.append(i)
                             if b not in sgms:
@@ -38,12 +34,12 @@ class Componentes(list):
 
 class Segmento(Componentes):
     def costo(self):
-        return 20 - sum(c.vivs for c in self) 
+        return abs(20 - sum(c.vivs for c in self))
     def __str__(self):
         s = '['
         for c in self:
             s += str(c.id) + ' '
-        s += '] ' + str(self.costo()) + '\n'
+        s += '\b] ' + str(self.costo())
         return s
 
 from random import *
