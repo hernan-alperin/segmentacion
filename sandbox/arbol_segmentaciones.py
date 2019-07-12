@@ -1,9 +1,12 @@
 class Componente:
-    def __init__(self, id, costo):
+    def __init__(self, id, vivs):
+        self.adyacentes = []
         self.id = id
-        self.costo = costo
+        self.vivs = vivs
     def __str__(self):
-        return str((self.id, self.costo))
+        return str((self.id, self.vivs))
+    def agregar_adyacencia(self, ady):
+        self.adyacentes.append(ady)
 
 class Componentes(list):
     def __str__(self):
@@ -12,43 +15,71 @@ class Componentes(list):
             s += str(c) + '\n'
         return s
 
-    def segmentos(self, adyacencias):
+    def segmentos(self):
         sgms = []
         for c in self:
-            sgms.append([c.id])
+            sgms.append(Segmento([c]))
         cantidad = 0
         while cantidad < len(sgms):
+            print(cantidad)
             cantidad = len(sgms)
-            for c in sgms:
-                for (i, j) in adyacencias:
-                    if i in c and j not in c:
-                        b = list(c)
-                        b.append(j)
-                        b.sort()
-                        if b not in sgms:
-                            sgms.append(b)
+            for s in sgms:
+                print(s)
+                for c in s:
+                    print('  '+str(c))
+                    for i in c.adyacentes:
+                        if i not in s:
+                            print('    '+str(i))
+                            b = Segmento(s)
+                            b.append(i)
+                            if b not in sgms:
+                                sgms.append(b)
         return sgms
 
-
-class Adyacencias(list):
-    pass
+class Segmento(Componentes):
+    def costo(self):
+        return 20 - sum(c.vivs for c in self) 
+    def __str__(self):
+        s = '['
+        for c in self:
+            s += str(c.id) + ' '
+        s += '] ' + str(self.costo()) + '\n'
+        return s
 
 from random import *
 
-componentes = Componentes()
-adyacencias = Adyacencias()
 
-for i in range(10):
+"""
+for i in range(3):
     componentes.append(Componente(i, randrange(10)))
 for c_i in componentes:
     for c_j in componentes:
         if c_i.id != c_j.id and random() < 0.2:
-            adyacencias.append((c_i.id, c_j.id))
+            c_i.agregar_adyacencia(c_j)
+"""
 
-sgms = componentes.segmentos(adyacencias)
+#componentes = [1, 2, 3, 4, 5]
+#adyacencias = [(5,4), (1,2), (2,3), (3,4)]
+
+c1 = Componente(1, randrange(10))
+c2 = Componente(2, randrange(10))
+c3 = Componente(3, randrange(10))
+c4 = Componente(4, randrange(10))
+c5 = Componente(5, randrange(10))
+
+c1.agregar_adyacencia(c2)
+c2.agregar_adyacencia(c3)
+c3.agregar_adyacencia(c4)
+c5.agregar_adyacencia(c4)
+
+componentes = Componentes([c1, c2, c3, c4, c5])
 
 print (componentes)
-print (adyacencias)
+
+sgms = componentes.segmentos()
+
+print ('----------------------------------')
 
 for s in sgms:
-    print (s, sum(c.costo for c in componentes if c.id in s))
+    sgm = Segmento(s)
+    print (sgm)
