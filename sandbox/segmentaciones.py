@@ -20,7 +20,7 @@ class Componentes(list):
     def __str__(self):
         s = ''
         for c in self:
-            s += str(c) + '\n'
+            s += str(c) + ' '
         return s
     def ids(self):
         return [c.id for c in self]
@@ -35,7 +35,7 @@ class Componentes(list):
             for s in sgms:
                 for c in s:
                     for i in c.adyacentes:
-                        if i not in s:
+                        if i in self and i not in s:
                             b = Segmento(s)
                             b.append(i)
                             b.sort(key=lambda x: x.id)
@@ -45,6 +45,7 @@ class Componentes(list):
     def componentes(self):
         return self
 
+
 class Segmento(Componentes):
     def costo(self):
         return abs(20 - sum(c.vivs for c in self))
@@ -52,17 +53,17 @@ class Segmento(Componentes):
         s = '['
         for c in self:
             s += str(c.id) + ' '
-        s += '\b] ' + str(self.costo())
+        s += '] ' + str(self.costo())
         return s
     def componentes(self):
         return Componentes(super().componentes())
 
 class Segmentos(list):
     def __str__(self):
-        s = '[\n'
+        s = '['
         for sgm in self:
-            s += ' ' + str(sgm) + '\n'
-        s += '\b] ' + str(self.costo())
+            s += ' ' + str(sgm) + ' '
+        s += '] ' + str(self.costo())
         return s
     def costo(self):
         return sum(sgm.costo() for sgm in self)
@@ -76,3 +77,15 @@ class Segmentos(list):
                 c.append(comp)
         return Componentes(c)
 
+def segmenta(segmentacion, componentes):
+    if componentes == []:
+        return segmentacion
+    else:
+        sgms = componentes.segmentos()
+        sgms.ordenar()
+        segmentacion.append(sgms[0])
+        nueva = segmentacion
+        resto = Componentes(set(componentes) - set(nueva.componentes()))
+        return segmenta(nueva, resto)
+
+    

@@ -74,4 +74,21 @@ print ('---resto = Componentes(set(comps) - set(unos.componentes()))')
 print ('-----------------------resto---------------------------------')
 print (resto)
 
+print ('-----------------------sgms , resto -----------------')
+lista = []
+for s in todos:
+    lista.append([Segmento(s), Componentes(set(comps) - set(s))]) 
+for [s, r] in lista:
+    print (str(s) + ' - ' + str(r))
+
+[s, r] = lista[0]
+print ('-----------------------r.segmentos()------------------------')
+print (r.segmentos())
+print ('-----------------------2da vuelta con el 1ro----------------')
+for n in r.segmentos():
+    quedan = Componentes(set(r) - set(n))
+    print (str(s) + ' + ' + str(n) + ' - ' + str(quedan)) 
+
+print ('-----------------------segmenta----------------')
+print (segmenta(Segmentos(), comps))
 
