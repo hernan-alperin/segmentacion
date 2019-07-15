@@ -77,15 +77,23 @@ class Segmentos(list):
                 c.append(comp)
         return Componentes(c)
 
-def segmenta(segmentacion, componentes):
+def segmenta(segmentacion, componentes, soluciones):
     if componentes == []:
+        if soluciones == []:
+            soluciones.append(segmentacion)
+        if segmentacion.costo() < soluciones[0].costo():
+            soluciones = [segmentacion]
+        if segmentacion.costo() == soluciones[0].costo():
+            soluciones.append(segmentacion)
         return segmentacion
     else:
         sgms = componentes.segmentos()
         sgms.ordenar()
-        segmentacion.append(sgms[0])
-        nueva = segmentacion
-        resto = Componentes(set(componentes) - set(nueva.componentes()))
-        return segmenta(nueva, resto)
+        for s in sgms:
+            segmts = Segmentos(segmentacion)
+            segmts.append(s)
+            nueva = segmts
+            resto = Componentes(set(componentes) - set(nueva.componentes()))
+            segmenta(nueva, resto, soluciones)
 
     
