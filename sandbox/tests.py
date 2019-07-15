@@ -14,7 +14,7 @@ for c_i in componentes:
 #componentes = [1, 2, 3, 4, 5]
 #adyacencias = [(5,4), (1,2), (2,3), (3,4)]
 
-"""
+
 c1 = Componente(1, 3*randrange(10))
 c2 = Componente(2, 3*randrange(10))
 c3 = Componente(3, 2*randrange(10))
@@ -26,6 +26,7 @@ c2 = Componente(2, 5)
 c3 = Componente(3, 7)
 c4 = Componente(4, 10)
 c5 = Componente(5, 10)
+"""
 c1.agregar_adyacencia(c2)
 c2.agregar_adyacencia(c3)
 c3.agregar_adyacencia(c4)
