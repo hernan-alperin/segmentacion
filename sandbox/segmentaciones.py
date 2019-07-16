@@ -34,6 +34,7 @@ class Componentes(list):
             cantidad = len(sgms)
             for s in sgms:
                 for c in s:
+                # adyacencias de todos los componentes
                     for i in c.adyacentes:
                         if i in self and i not in s:
                             b = Segmento(s)
@@ -42,6 +43,23 @@ class Componentes(list):
                             if b not in sgms:
                                 sgms.append(b)
         return Segmentos(sgms)
+    def recorridos(self):
+        sgms = []
+        for c in self:
+            sgms.append(Segmento([c]))
+        cantidad = 0
+        while cantidad < len(sgms):
+            cantidad = len(sgms)
+            for s in sgms:
+                c = s[-1] # con el último arma recorridos
+                for i in c.adyacentes:
+                    if i in self and i not in s:
+                        b = Segmento(s)
+                        b.append(i)
+                        if b not in sgms:
+                            sgms.append(b)
+        return Segmentos(sgms)
+
     def componentes(self):
         return self
 
@@ -79,21 +97,22 @@ class Segmentos(list):
 
 def segmenta(segmentacion, componentes, soluciones):
     if componentes == []:
-        if soluciones == []:
+        if soluciones == [] or segmentacion.costo() == soluciones[0].costo():
             soluciones.append(segmentacion)
-        if segmentacion.costo() < soluciones[0].costo():
+        elif segmentacion.costo() < soluciones[0].costo():
             soluciones = [segmentacion]
-        if segmentacion.costo() == soluciones[0].costo():
-            soluciones.append(segmentacion)
-        return segmentacion
     else:
-        sgms = componentes.segmentos()
+        #sgms = componentes.segmentos()
+        # segmentacion plana, util a manzanas
+        sgms = componentes.recorridos()
+        # segmentacion por recorrido, util con lados
         sgms.ordenar()
         for s in sgms:
             segmts = Segmentos(segmentacion)
             segmts.append(s)
             nueva = segmts
-            resto = Componentes(set(componentes) - set(nueva.componentes()))
-            segmenta(nueva, resto, soluciones)
+            if soluciones == [] or soluciones[0].costo() >= nueva.costo():
+                resto = Componentes(set(componentes) - set(nueva.componentes()))
+                segmenta(nueva, resto, soluciones)
 
     

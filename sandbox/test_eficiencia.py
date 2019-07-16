@@ -7,18 +7,32 @@ componentes = Componentes()
 for i in range(n):
     componentes.append(Componente(i, randrange(10)))
 for c_i in componentes:
-    for c_j in componentes:
-        if c_i.id != c_j.id and random() < 3.0/n:
-            c_i.agregar_adyacencia(c_j)
+    r = int(random()*3) + 1
+    while r > 0:
+        s = int(random()*len(componentes))
+        if c_i != componentes[s] and componentes[s] not in c_i.adyacentes:
+            c_i.agregar_adyacencia(componentes[s])
+        r = r - 1
 
+
+print ('-----------------------componentes-------------')
+print ('-----------------------adyacencias-------------')
+for c in componentes:
+    print (c.id, c.vivs)
+    adys = []    
+    for a in c.adyacentes:
+        adys.append(a.id)
+    print ('  ', adys)
 
 print ('-----------------------segmenta----------------')
 soluciones = []
-print (segmenta(Segmentos(), componentes, soluciones))
+segmenta(Segmentos(), componentes, soluciones)
+"""
 print ('-----------------------soluciones----------------')
 for s in soluciones:
     print(s)
 
+"""
 print ('-----------------------unicas-------------------')
 ss = []
 sols = []
@@ -27,7 +41,7 @@ for sol in soluciones:
     if en_set not in ss:
         ss.append(en_set)
         sols.append(sol)
-for sol in sols:
-    print (sol)
-
+#for sol in sols:
+#    print (sol)
+print (sols[0])
 
