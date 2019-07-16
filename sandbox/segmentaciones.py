@@ -108,16 +108,12 @@ def segmenta(segmentacion, componentes, soluciones):
             soluciones.append(segmentacion)
         return segmentacion
     else:
-        #sgms = componentes.segmentos()
-        # segmentacion plana, util a manzanas
-        sgms = componentes.recorridos()
-        # segmentacion por recorrido, util con lados
-        # sgms.ordenar()
-        for s in sgms:
-            segmts = Segmentos(segmentacion)
-            segmts.append(s)
-            nueva = segmts
-            if soluciones == [] or soluciones[0].costo() >= nueva.costo():
+        if  soluciones == [] or segmentacion.costo() <= soluciones[-1].costo():
+            sgms = componentes.segmentos()
+            for s in sgms:
+                segmts = Segmentos(segmentacion)
+                segmts.append(s)
+                nueva = segmts
                 resto = Componentes(set(componentes) - set(nueva.componentes()))
                 segmenta(nueva, resto, soluciones)
 
