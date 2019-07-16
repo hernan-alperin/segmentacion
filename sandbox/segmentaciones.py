@@ -109,7 +109,7 @@ def segmenta(segmentacion, componentes, soluciones):
         return segmentacion
     else:
         if  soluciones == [] or segmentacion.costo() <= soluciones[-1].costo():
-            sgms = componentes.segmentos()
+            sgms = componentes.recorridos()
             for s in sgms:
                 segmts = Segmentos(segmentacion)
                 segmts.append(s)
