@@ -97,16 +97,22 @@ class Segmentos(list):
 
 def segmenta(segmentacion, componentes, soluciones):
     if componentes == []:
-        if soluciones == [] or segmentacion.costo() == soluciones[0].costo():
+        if soluciones == []:
             soluciones.append(segmentacion)
-        elif segmentacion.costo() < soluciones[0].costo():
-            soluciones = [segmentacion]
+            print("Primero:" + str(segmentacion.costo()))
+        elif segmentacion.costo() == soluciones[-1].costo():
+            print("Sol ant: "+str(soluciones[-1].costo())+" Agrego solucion igual: " + str(segmentacion.costo()))
+            soluciones.append(segmentacion)
+        elif segmentacion.costo() < soluciones[-1].costo():
+            print("Sol ant: "+str(soluciones[-1].costo())+" Mejor: " + str(segmentacion.costo()))
+            soluciones.append(segmentacion)
+        return segmentacion
     else:
         #sgms = componentes.segmentos()
         # segmentacion plana, util a manzanas
         sgms = componentes.recorridos()
         # segmentacion por recorrido, util con lados
-        sgms.ordenar()
+        # sgms.ordenar()
         for s in sgms:
             segmts = Segmentos(segmentacion)
             segmts.append(s)
