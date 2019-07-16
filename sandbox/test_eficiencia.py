@@ -1,7 +1,8 @@
 from segmentaciones import *
 from random import *
+from sys import *
 
-n = 8
+n = int(argv[1])
 componentes = Componentes()
 for i in range(n):
     componentes.append(Componente(i, randrange(10)))
