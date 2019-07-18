@@ -6,6 +6,7 @@ fecha: 2019-07-13
 autor: -h
 """
 from operator import *
+segmentacion_deseada = 40
 
 class Componente:
     def __init__(self, id, vivs):
@@ -26,6 +27,9 @@ class Componentes(list):
     def ids(self):
         return [c.id for c in self]
 
+    def min_id(self):
+        return min(self.ids())
+
     def segmentos(self):
         sgms = []
         for c in self:
@@ -39,10 +43,14 @@ class Componentes(list):
                         if i in self and i not in s:
                             b = Segmento(s)
                             b.append(i)
-                            b.sort(key=lambda x: x.id)
+                            b.ordenar()
                             if b not in sgms:
                                 sgms.append(b)
         return Segmentos(sgms)
+
+    def ordenar(self):
+        self.sort(key=lambda x: x.id)
+        return
 
     def recorridos(self):
         sgms = []
@@ -63,12 +71,12 @@ class Componentes(list):
     def componentes(self):
         return self
     def mejor_costo_teorico(self):
-        return abs(mod( sum(c.vivs for c in self) -10,20)-10)
+        return abs(mod( sum(c.vivs for c in self) -(segmentacion_deseada/2),segmentacion_deseada)-(segmentacion_deseada/2))
 
 
 class Segmento(Componentes):
     def costo(self):
-        return abs(20 - sum(c.vivs for c in self))
+        return abs(segmentacion_deseada - sum(c.vivs for c in self))
     def __str__(self):
         s = '['
         for c in self:
@@ -77,6 +85,8 @@ class Segmento(Componentes):
         return s
     def componentes(self):
         return Componentes(super().componentes())
+    def id(self):
+        return self.min_id()
 
 class Segmentos(list):
     def __str__(self):
@@ -117,9 +127,12 @@ def segmenta(segmentacion, componentes, soluciones):
     else:
         if  soluciones == [] or segmentacion.costo()+componentes.mejor_costo_teorico() <= soluciones[-1].costo():
             sgms = componentes.recorridos()
+            sgms.ordenar()
             for s in sgms:
                 segmts = Segmentos(segmentacion)
                 segmts.append(s)
                 nueva = segmts
                 resto = Componentes(set(componentes) - set(nueva.componentes()))
-                segmenta(nueva, resto, soluciones)
+                if  soluciones == [] or nueva.costo()+resto.mejor_costo_teorico() <= soluciones[-1].costo():
+                    segmenta(nueva, resto, soluciones)
+
