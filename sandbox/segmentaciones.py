@@ -118,3 +118,4 @@ def segmenta(segmentacion, componentes, soluciones):
                 segmenta(nueva, resto, soluciones)
 
     
+	
