@@ -5,6 +5,7 @@ usando classes
 fecha: 2019-07-13
 autor: -h
 """
+from operator import *
 
 class Componente:
     def __init__(self, id, vivs):
@@ -34,7 +35,6 @@ class Componentes(list):
             cantidad = len(sgms)
             for s in sgms:
                 for c in s:
-                # adyacencias de todos los componentes
                     for i in c.adyacentes:
                         if i in self and i not in s:
                             b = Segmento(s)
@@ -43,6 +43,7 @@ class Componentes(list):
                             if b not in sgms:
                                 sgms.append(b)
         return Segmentos(sgms)
+
     def recorridos(self):
         sgms = []
         for c in self:
@@ -59,9 +60,10 @@ class Componentes(list):
                         if b not in sgms:
                             sgms.append(b)
         return Segmentos(sgms)
-
     def componentes(self):
         return self
+    def mejor_costo_teorico(self):
+        return abs(mod( sum(c.vivs for c in self) -10,20)-10)
 
 
 class Segmento(Componentes):
@@ -81,10 +83,14 @@ class Segmentos(list):
         s = '['
         for sgm in self:
             s += ' ' + str(sgm) + ' '
-        s += '] ' + str(self.costo())
+        s += '] Costo:' + str(self.costo()) +  '(Min:' + str(self.min_costo()) + 'Max:' + str(self.max_costo()) + ')'
         return s
     def costo(self):
         return sum(sgm.costo() for sgm in self)
+    def max_costo(self):
+        return max(sgm.costo() for sgm in self)
+    def min_costo(self):
+        return min(sgm.costo() for sgm in self)
     def ordenar(self):
         self.sort(key=lambda x: x.costo())
         return
@@ -101,14 +107,15 @@ def segmenta(segmentacion, componentes, soluciones):
             soluciones.append(segmentacion)
             print("Primero:" + str(segmentacion.costo()))
         elif segmentacion.costo() == soluciones[-1].costo():
-            print("Sol ant: "+str(soluciones[-1].costo())+" Agrego solucion igual: " + str(segmentacion.costo()))
+            print(".",end='')
             soluciones.append(segmentacion)
         elif segmentacion.costo() < soluciones[-1].costo():
             print("Sol ant: "+str(soluciones[-1].costo())+" Mejor: " + str(segmentacion.costo()))
-            soluciones.append(segmentacion)
+            print(segmentacion)
+            soluciones[:]=[segmentacion]
         return segmentacion
     else:
-        if  soluciones == [] or segmentacion.costo() <= soluciones[-1].costo():
+        if  soluciones == [] or segmentacion.costo()+componentes.mejor_costo_teorico() <= soluciones[-1].costo():
             sgms = componentes.recorridos()
             for s in sgms:
                 segmts = Segmentos(segmentacion)
@@ -116,6 +123,3 @@ def segmenta(segmentacion, componentes, soluciones):
                 nueva = segmts
                 resto = Componentes(set(componentes) - set(nueva.componentes()))
                 segmenta(nueva, resto, soluciones)
-
-    
-	
