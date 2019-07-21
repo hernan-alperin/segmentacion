@@ -5,6 +5,8 @@ usando classes
 fecha: 2019-07-13
 autor: -h
 """
+from operator import *
+segmentacion_deseada = 40
 
 class Componente:
     def __init__(self, id, vivs):
@@ -25,6 +27,9 @@ class Componentes(list):
     def ids(self):
         return [c.id for c in self]
 
+    def min_id(self):
+        return min(self.ids())
+
     def segmentos(self):
         sgms = []
         for c in self:
@@ -34,15 +39,19 @@ class Componentes(list):
             cantidad = len(sgms)
             for s in sgms:
                 for c in s:
-                # adyacencias de todos los componentes
                     for i in c.adyacentes:
                         if i in self and i not in s:
                             b = Segmento(s)
                             b.append(i)
-                            b.sort(key=lambda x: x.id)
+                            b.ordenar()
                             if b not in sgms:
                                 sgms.append(b)
         return Segmentos(sgms)
+
+    def ordenar(self):
+        self.sort(key=lambda x: x.id)
+        return
+
     def recorridos(self):
         sgms = []
         for c in self:
@@ -59,14 +68,15 @@ class Componentes(list):
                         if b not in sgms:
                             sgms.append(b)
         return Segmentos(sgms)
-
     def componentes(self):
         return self
+    def mejor_costo_teorico(self):
+        return abs(mod( sum(c.vivs for c in self) -(segmentacion_deseada/2),segmentacion_deseada)-(segmentacion_deseada/2))
 
 
 class Segmento(Componentes):
     def costo(self):
-        return abs(20 - sum(c.vivs for c in self))
+        return abs(segmentacion_deseada - sum(c.vivs for c in self))
     def __str__(self):
         s = '['
         for c in self:
@@ -75,16 +85,22 @@ class Segmento(Componentes):
         return s
     def componentes(self):
         return Componentes(super().componentes())
+    def id(self):
+        return self.min_id()
 
 class Segmentos(list):
     def __str__(self):
         s = '['
         for sgm in self:
             s += ' ' + str(sgm) + ' '
-        s += '] ' + str(self.costo())
+        s += '] Costo:' + str(self.costo()) +  '(Min:' + str(self.min_costo()) + 'Max:' + str(self.max_costo()) + ')'
         return s
     def costo(self):
         return sum(sgm.costo() for sgm in self)
+    def max_costo(self):
+        return max(sgm.costo() for sgm in self)
+    def min_costo(self):
+        return min(sgm.costo() for sgm in self)
     def ordenar(self):
         self.sort(key=lambda x: x.costo())
         return
@@ -101,20 +117,21 @@ def segmenta(segmentacion, componentes, soluciones):
             soluciones.append(segmentacion)
             print("Primero:" + str(segmentacion.costo()))
         elif segmentacion.costo() == soluciones[-1].costo():
-            print("Sol ant: "+str(soluciones[-1].costo())+" Agrego solucion igual: " + str(segmentacion.costo()))
+            print(".",end='')
             soluciones.append(segmentacion)
         elif segmentacion.costo() < soluciones[-1].costo():
             print("Sol ant: "+str(soluciones[-1].costo())+" Mejor: " + str(segmentacion.costo()))
-            soluciones.append(segmentacion)
+            print(segmentacion)
+            soluciones[:]=[segmentacion]
         return segmentacion
     else:
-        if  soluciones == [] or segmentacion.costo() <= soluciones[-1].costo():
+        if  soluciones == [] or segmentacion.costo()+componentes.mejor_costo_teorico() <= soluciones[-1].costo():
             sgms = componentes.recorridos()
+            sgms.ordenar()
             for s in sgms:
                 segmts = Segmentos(segmentacion)
                 segmts.append(s)
                 nueva = segmts
                 resto = Componentes(set(componentes) - set(nueva.componentes()))
-                segmenta(nueva, resto, soluciones)
-
-    
+                if  soluciones == [] or nueva.costo()+resto.mejor_costo_teorico() <= soluciones[-1].costo():
+                    segmenta(nueva, resto, soluciones)
