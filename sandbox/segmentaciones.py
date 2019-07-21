@@ -1,6 +1,9 @@
 """
 título: arbol_segmentaciones.py
 descripción: calcula los segmentos posibles siguiendo adyacencias
+para el caso de conteos o listados con manzanas con pocas viviendas
+que se pasan a conteos para evitar segmentos que contengan 
+listado parcial y una o más manzanas completas 
 usando classes
 fecha: 2019-07-13
 autor: -h
@@ -9,6 +12,8 @@ from operator import *
 segmentacion_deseada = 40
 
 class Componente:
+    # elemento unitario o indivisible para el caso de segmentación
+    # puede ser un lado o una manzana
     def __init__(self, id, vivs):
         self.adyacentes = []
         self.id = id
@@ -71,7 +76,11 @@ class Componentes(list):
     def componentes(self):
         return self
     def mejor_costo_teorico(self):
-        return abs(mod( sum(c.vivs for c in self) -(segmentacion_deseada/2),segmentacion_deseada)-(segmentacion_deseada/2))
+        return (abs(mod(sum(c.vivs for c in self) - (segmentacion_deseada/2),
+                        segmentacion_deseada) 
+                    - (segmentacion_deseada/2)
+                    )
+                ) 
 
 
 class Segmento(Componentes):
@@ -93,7 +102,9 @@ class Segmentos(list):
         s = '['
         for sgm in self:
             s += ' ' + str(sgm) + ' '
-        s += '] Costo:' + str(self.costo()) +  '(Min:' + str(self.min_costo()) + 'Max:' + str(self.max_costo()) + ')'
+        s += ('] Costo: ' + str(self.costo()) 
+            + ' (Min: ' + str(self.min_costo()) 
+            + ' Max: ' + str(self.max_costo()) + ')')
         return s
     def costo(self):
         return sum(sgm.costo() for sgm in self)
@@ -120,12 +131,16 @@ def segmenta(segmentacion, componentes, soluciones):
             print(".",end='')
             soluciones.append(segmentacion)
         elif segmentacion.costo() < soluciones[-1].costo():
-            print("Sol ant: "+str(soluciones[-1].costo())+" Mejor: " + str(segmentacion.costo()))
+            print("Sol ant: " 
+                + str(soluciones[-1].costo())
+                + " Mejor: " + str(segmentacion.costo()))
             print(segmentacion)
             soluciones[:]=[segmentacion]
         return segmentacion
     else:
-        if  soluciones == [] or segmentacion.costo()+componentes.mejor_costo_teorico() <= soluciones[-1].costo():
+        if (soluciones == [] 
+            or segmentacion.costo() + componentes.mejor_costo_teorico() 
+                <= soluciones[-1].costo()):
             sgms = componentes.recorridos()
             sgms.ordenar()
             for s in sgms:
@@ -133,5 +148,5 @@ def segmenta(segmentacion, componentes, soluciones):
                 segmts.append(s)
                 nueva = segmts
                 resto = Componentes(set(componentes) - set(nueva.componentes()))
-                if  soluciones == [] or nueva.costo()+resto.mejor_costo_teorico() <= soluciones[-1].costo():
+                if soluciones == [] or nueva.costo()+resto.mejor_costo_teorico() <= soluciones[-1].costo():
                     segmenta(nueva, resto, soluciones)
