@@ -81,6 +81,7 @@ class Componentes(list):
         return sgms
 
     def componentes(self):
+        # devuelve los componentes ordenados
         return self
 
     def mejor_costo_teorico(self):
@@ -109,6 +110,13 @@ class Segmento(Componentes):
     def id(self):
         return self.min_id()
 
+    def ordenado(self):
+        copia = self[:]
+        copia.sort(key=lambda x: x.id())
+        return copia
+
+    def equivalente(self, otro):
+        return self.ordenado() == otro.ordenado()
 
 class Segmentos(list):
 
@@ -133,42 +141,51 @@ class Segmentos(list):
 
     def ordenar(self):
         self.sort(key=lambda x: x.costo())
-        return
+        return self
 
     def componentes(self):
+        """
         c = Componentes()
         for sgm in self:
             for comp in sgm:
                 c.append(comp)
-        return c
-    
+        """
+        return [c for s in self for c in s.componentes()]
+
     def equivalentes(self, otros):
         if len(self) != len(otros):
             return False
-        self.sort(key=lambda x: x.min_id())
-        otros.sort(key=lambda x: x.min_id())
-        for i in range(len(self)):
-            if (self[i].min_id != otros[i].min_id):
+        for i, s in self:
+            if (self[i].equivalente(otros[i].id)):
                 return False
-        if [s for s in self] != [s for s in otros]:
+        if self.componentes() == otros.componentes():
             return False
         return True
 
 class Segmentacion(Segmentos):
 
-    def equivalente(self, otra):
-        return self.equivalentes(otra)
+    def ordenada(self):
+        ordenada = self[:]
+        for s in self:
+            s.ordenar()
+            ordenada.append(s)
+        ordenada.sort(key=lambda s: s.min_id())
+        return ordenada
+
+    def unica(self):
+        una = Segmentacion(self)
+        una.sort(key=lambda s: s.min_id())
+        return una
 
 class Segmentaciones(list):
 
     def unicas(self):
         lista = []
-        esta = False
         for i, s in enumerate(self):
-            for j in range(i):
-                if i < j and s.equivalente(s[j]):
+            esta = False
+            for j in lista:
+                if s.ordenada().equivalente(j.ordenada()):
                     esta = True
-                    break
         if not esta:
             lista.append(s)    
         return lista    
@@ -179,16 +196,18 @@ def segmenta(segmentacion, componentes, soluciones):
         if soluciones == []:
             soluciones.append(segmentacion)
             print("\nPrimero:" + str(segmentacion.costo()))
-        elif segmentacion.costo() == soluciones[-1].costo():
+        elif (segmentacion.costo() == soluciones[-1].costo()
+            and segmentacion.ordenada() != soluciones[-1].ordenada()):
             print(".",end='',flush=True)
-            soluciones.append(segmentacion)
+            soluciones.append(segmentacion.unica())
         elif segmentacion.costo() < soluciones[-1].costo():
             print("\nSol ant: " 
                 + str(soluciones[-1].costo())
                 + " Mejor: " + str(segmentacion.costo()))
             print(segmentacion)
-            soluciones[:]=[segmentacion]
-        return segmentacion
+            soluciones[:]=[segmentacion.unica()]
+        return
+
     else:
         if (soluciones == [] 
             or segmentacion.costo() + componentes.mejor_costo_teorico() 
@@ -196,7 +215,7 @@ def segmenta(segmentacion, componentes, soluciones):
             sgms = componentes.recorridos()
             sgms.ordenar()
             for s in sgms:
-                segmts = Segmentos(segmentacion)
+                segmts = Segmentacion(segmentacion)
                 segmts.append(s)
                 nueva = segmts
                 resto = Componentes(set(componentes) - set(nueva.componentes()))

@@ -97,10 +97,11 @@ for c in componentes:
     print (c.id, '(', c.vivs,')', adys)
 
 print ('-----------------------segmenta----------------')
-soluciones = Segmentaciones()
-segmenta(Segmentos(), componentes, soluciones)
-print ('\n-----------------------unicas-------------------')
-for u in soluciones.unicas():
+soluciones = []
+segmenta(Segmentacion(), componentes, soluciones)
+print ('\n---------------------unicas-como-metodo-------')
+unicas = Segmentaciones(soluciones)
+for u in unicas:
     print(u)
 
 
