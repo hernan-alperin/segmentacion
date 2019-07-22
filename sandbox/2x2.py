@@ -97,30 +97,10 @@ for c in componentes:
     print (c.id, '(', c.vivs,')', adys)
 
 print ('-----------------------segmenta----------------')
-soluciones = []
+soluciones = Segmentaciones()
 segmenta(Segmentos(), componentes, soluciones)
 print ('\n-----------------------unicas-------------------')
-sol = []
-sols = []
-"""
-for s in soluciones:
-    en_set = set(map(tuple, s))
-    if en_set not in sol:
-        sol.append(en_set)
-        sols.append(s)
-for sol in sols:
-    print (sol)
-"""
-unicas = [soluciones[0]]
-for s in soluciones:
-    vista = False
-    for una in unicas:
-        if s.equivalentes(una):
-            vista = True
-            break
-    if not vista:
-        unicas.append(s)
-for u in unicas:
+for u in soluciones.unicas():
     print(u)
 
 

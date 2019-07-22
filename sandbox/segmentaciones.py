@@ -124,6 +124,7 @@ class Segmentos(list):
     def costo(self):
         return (sum(sgm.costo() for sgm in self)
                 + self.max_costo() - self.min_costo())
+
     def max_costo(self):
         return max(sgm.costo() for sgm in self)
 
@@ -152,13 +153,32 @@ class Segmentos(list):
         if [s for s in self] != [s for s in otros]:
             return False
         return True
-            
+
+class Segmentacion(Segmentos):
+
+    def equivalente(self, otra):
+        return self.equivalentes(otra)
+
+class Segmentaciones(list):
+
+    def unicas(self):
+        lista = []
+        esta = False
+        for i, s in enumerate(self):
+            for j in range(i):
+                if i < j and s.equivalente(s[j]):
+                    esta = True
+                    break
+        if not esta:
+            lista.append(s)    
+        return lista    
+                  
 
 def segmenta(segmentacion, componentes, soluciones):
     if componentes == []:
         if soluciones == []:
             soluciones.append(segmentacion)
-            print("Primero:" + str(segmentacion.costo()))
+            print("\nPrimero:" + str(segmentacion.costo()))
         elif segmentacion.costo() == soluciones[-1].costo():
             print(".",end='',flush=True)
             soluciones.append(segmentacion)
