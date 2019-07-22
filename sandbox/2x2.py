@@ -89,8 +89,7 @@ c14, c12, c24,  c22,
 c34, c32, c44,  c42,
   c33,       c43,
 ])
-print ('-----------------------componentes-------------')
-print ('-----------------------adyacencias-------------')
+print ('---------------componentes-con-adyacencias---')
 for c in componentes:
     adys = []
     for a in c.adyacentes:
@@ -100,16 +99,29 @@ for c in componentes:
 print ('-----------------------segmenta----------------')
 soluciones = []
 segmenta(Segmentos(), componentes, soluciones)
-print ('-----------------------unicas-------------------')
-ss = []
+print ('\n-----------------------unicas-------------------')
+sol = []
 sols = []
-for sol in soluciones:
-    en_set = set(map(tuple, sol))
-    if en_set not in ss:
-        ss.append(en_set)
-        sols.append(sol)
+"""
+for s in soluciones:
+    en_set = set(map(tuple, s))
+    if en_set not in sol:
+        sol.append(en_set)
+        sols.append(s)
 for sol in sols:
     print (sol)
+"""
+unicas = [soluciones[0]]
+for s in soluciones:
+    vista = False
+    for una in unicas:
+        if s.equivalentes(una):
+            vista = True
+            break
+    if not vista:
+        unicas.append(s)
+for u in unicas:
+    print(u)
 
 
 
