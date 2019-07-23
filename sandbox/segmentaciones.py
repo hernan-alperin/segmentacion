@@ -192,10 +192,11 @@ class Segmentacion(Segmentos):
         # devuelve una forma unica de representar segmentacion
         # con los segmentos ordenados por min_id
         # y los componentes ordenados por id dentro de cada segmento
-        una = self.ordenada()
-        for sgm in una:
-            sgm = sgm.ordenado()
-        return una
+        una = Segmentacion()
+        for sgm in self:
+            s = sgm.ordenado()
+            una.append(s)
+        return una.ordenada()
 
     def equivalente(self, otra):
         return super().equivalentes(otra)
