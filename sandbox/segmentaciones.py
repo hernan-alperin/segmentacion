@@ -232,7 +232,7 @@ def segmenta(segmentacion, componentes, soluciones):
             soluciones.append(segmentacion)
         elif segmentacion.costo() < soluciones.ultima().costo():
             print("\nSol ant: " 
-                + str(soluciones[-1].costo())
+                + str(soluciones.ultima().costo())
                 + " Mejor: " + str(segmentacion.costo()))
             print(segmentacion.canonica())
             soluciones[:]=[segmentacion.canonica()]
@@ -241,7 +241,7 @@ def segmenta(segmentacion, componentes, soluciones):
     else:
         if (soluciones == Segmentaciones() 
             or segmentacion.costo() + componentes.mejor_costo_teorico() 
-                <= soluciones[-1].costo()):
+                <= soluciones.ultima().costo()):
             sgms = componentes.recorridos()
             sgms.ordenar()
             for s in sgms:
@@ -251,7 +251,7 @@ def segmenta(segmentacion, componentes, soluciones):
                 resto = Componentes(set(componentes) - set(nueva.componentes()))
                 if (soluciones == [] 
                     or nueva.costo() + resto.mejor_costo_teorico() 
-                        <= soluciones[-1].costo()):
+                        <= soluciones.ultima().costo()):
                     #or any(nueva.equivalentes(s) for s in soluciones)
                     # ya explorada 
                     print(".",end='', flush=True)
