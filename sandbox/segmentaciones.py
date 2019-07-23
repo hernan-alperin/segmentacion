@@ -9,7 +9,12 @@ fecha: 2019-07-13
 autor: -h
 """
 from operator import *
+
 segmentacion_deseada = 40
+
+def set_segmentacion_deseada(valor):
+    global segmentacion_deseada
+    segmentacion_deseada = int(valor)
 
 class Componente:
     # elemento unitario o indivisible para el caso de segmentación
@@ -108,18 +113,21 @@ class Segmento(Componentes):
         return s
 
     def componentes(self):
+        # devuelve su lista de componentes
         return Componentes(super().componentes())
 
     def id(self):
         return self.min_id()
 
     def ordenado(self):
-        copia = self[:]
-        copia.sort(key=lambda x: x.id())
+        # devuelve una copia del segmento con sus componentes ordenados por id
+        copia = Segmento(self)
+        copia.sort(key=lambda x: x.id)
         return copia
 
     def equivalente(self, otro):
-        return self.ordenado() == otro.ordenado()
+        # devuelve verdadero si tiene los mismos componentes
+        return set(self.componentes()) == set(otro.componentes())
 
 class Segmentos(list):
 
@@ -132,9 +140,15 @@ class Segmentos(list):
             + ' Max: ' + str(self.max_carga()) + ')')
         return s
 
+    def suma_de_costos_de_segmentos(self):
+        return sum(sgm.costo() for sgm in self)
+
+    def maxima_diferencia_de_costos_entre_segmentos(self):
+        return self.max_carga() - self.min_carga()
+
     def costo(self):
-        return (sum(sgm.costo() for sgm in self)
-                + 0.1*(self.max_carga() - self.min_carga()))
+        return (self.suma_de_costos_de_segmentos()
+                + 0.1*(self.maxima_diferencia_de_costos_entre_segmentos()))
 
     def max_carga(self):
         return max(sgm.carga() for sgm in self)
@@ -143,76 +157,88 @@ class Segmentos(list):
         return min(sgm.carga() for sgm in self)
 
     def ordenar(self):
+        # ordena el conjunto de segmentos segun sus costos y lo devuelve
         self.sort(key=lambda x: x.costo())
         return self
 
     def componentes(self):
-        """
-        c = Componentes()
-        for sgm in self:
-            for comp in sgm:
-                c.append(comp)
-        """
+        # devuelve la lista de componentes del conjunto de segmentos
         return [c for s in self for c in s.componentes()]
 
     def equivalentes(self, otros):
+        # para unificar circuitos
+        # define equivalencia entre conjunto de segmentos
+        # 1. tienen la misma cantidad de elementos
+        # 2. las secuencias ordenadas de segmentos 
+        # de self y otros son equivalentes uno a uno
         if len(self) != len(otros):
             return False
-        for i, s in self:
-            if (self[i].equivalente(otros[i].id)):
+        self.sort(key=lambda x: x.min_id())
+        otros.sort(key=lambda x: x.min_id())
+        for i, s in enumerate(self):
+            if (not s.equivalente(otros[i])):
                 return False
-        if self.componentes() == otros.componentes():
-            return False
         return True
 
 class Segmentacion(Segmentos):
 
     def ordenada(self):
-        ordenada = self[:]
-        for s in self:
-            s.ordenar()
-            ordenada.append(s)
+        # devuelve una copia con los segmentos ordenada por min_id
+        ordenada = Segmentacion(self)
         ordenada.sort(key=lambda s: s.min_id())
         return ordenada
 
-    def unica(self):
-        una = Segmentacion(self)
-        una.sort(key=lambda s: s.min_id())
+    def canonica(self):
+        # devuelve una forma unica de representar segmentacion
+        # con los segmentos ordenados por min_id
+        # y los componentes ordenados por id dentro de cada segmento
+        una = self.ordenada()
+        for sgm in una:
+            sgm = sgm.ordenado()
         return una
+
+    def equivalente(self, otra):
+        return super().equivalentes(otra)
 
 class Segmentaciones(list):
 
-    def unicas(self):
-        lista = []
-        for i, s in enumerate(self):
+    def diferentes(self):
+        # devuelve las segmentaciones que tienen una única
+        # representación canónica
+        lista = Segmentaciones()
+        for i, s_i in enumerate(self):
             esta = False
-            for j in lista:
-                if s.ordenada().equivalente(j.ordenada()):
+            for s_j in lista:
+                if s_i.equivalentes(s_j):
                     esta = True
-        if not esta:
-            lista.append(s)    
-        return lista    
-                  
+            if not esta:
+                lista.append(s_i)    
+        return lista
 
+    def ultima(self):
+        if self:
+            return self[-1]
+        return None
+                  
 def segmenta(segmentacion, componentes, soluciones):
-    if componentes == []:
-        if soluciones == []:
+    if componentes == Componentes():
+        if soluciones == Segmentaciones():
             soluciones.append(segmentacion)
             print("\nPrimero:" + str(segmentacion.costo()))
-        elif (segmentacion.costo() == soluciones[-1].costo()
-            and segmentacion.ordenada() != soluciones[-1].ordenada()):
+        elif (segmentacion.costo() == soluciones.ultima().costo()
+            and not segmentacion.equivalente(soluciones.ultima())):
             print(".",end='',flush=True)
-            soluciones.append(segmentacion.unica())
-        elif segmentacion.costo() < soluciones[-1].costo():
+            soluciones.append(segmentacion)
+        elif segmentacion.costo() < soluciones.ultima().costo():
             print("\nSol ant: " 
                 + str(soluciones[-1].costo())
                 + " Mejor: " + str(segmentacion.costo()))
-            print(segmentacion)
-            soluciones[:]=[segmentacion.unica()]
+            print(segmentacion.canonica())
+            soluciones[:]=[segmentacion]
         return
 
     else:
-        if (soluciones == [] 
+        if (soluciones == Segmentaciones() 
             or segmentacion.costo() + componentes.mejor_costo_teorico() 
                 <= soluciones[-1].costo()):
             sgms = componentes.recorridos()

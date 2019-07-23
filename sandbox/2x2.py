@@ -89,18 +89,24 @@ c14, c12, c24,  c22,
 c34, c32, c44,  c42,
   c33,       c43,
 ])
+
+set_segmentacion_deseada(40)
+
 print ('---------------componentes-con-adyacencias---')
 for c in componentes:
-    adys = []
+    adys = Componentes()
     for a in c.adyacentes:
         adys.append(a.id)
     print (c.id, '(', c.vivs,')', adys)
 
 print ('-----------------------segmenta----------------')
-soluciones = []
+soluciones = Segmentaciones()
 segmenta(Segmentacion(), componentes, soluciones)
-print ('\n---------------------unicas-como-metodo-------')
-unicas = Segmentaciones(soluciones)
+print ('\n---------------------soluciones-------')
+for s in soluciones:
+    print(s)
+print ('\n---------------------diferentes-------')
+unicas = soluciones.diferentes()
 for u in unicas:
     print(u)
 
