@@ -94,14 +94,17 @@ class Componentes(list):
 
 class Segmento(Componentes):
 
+    def carga(self):
+        return sum(c.vivs for c in self) - segmentacion_deseada 
+
     def costo(self):
-        return abs(segmentacion_deseada - sum(c.vivs for c in self))
+        return abs(self.carga())
 
     def __str__(self):
         s = '['
         for c in self:
             s += str(c.id) + ' '
-        s += '] ' + str(self.costo())
+        s += '] ' + str(self.carga())
         return s
 
     def componentes(self):
@@ -125,19 +128,19 @@ class Segmentos(list):
         for sgm in self:
             s += ' ' + str(sgm) + ' '
         s += ('] Costo: ' + str(self.costo()) 
-            + ' (Min: ' + str(self.min_costo()) 
-            + ' Max: ' + str(self.max_costo()) + ')')
+            + ' (Min: ' + str(self.min_carga()) 
+            + ' Max: ' + str(self.max_carga()) + ')')
         return s
 
     def costo(self):
         return (sum(sgm.costo() for sgm in self)
-                + self.max_costo() - self.min_costo())
+                + 0.1*(self.max_carga() - self.min_carga()))
 
-    def max_costo(self):
-        return max(sgm.costo() for sgm in self)
+    def max_carga(self):
+        return max(sgm.carga() for sgm in self)
 
-    def min_costo(self):
-        return min(sgm.costo() for sgm in self)
+    def min_carga(self):
+        return min(sgm.carga() for sgm in self)
 
     def ordenar(self):
         self.sort(key=lambda x: x.costo())
