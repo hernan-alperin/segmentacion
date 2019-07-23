@@ -192,11 +192,10 @@ class Segmentacion(Segmentos):
         # devuelve una forma unica de representar segmentacion
         # con los segmentos ordenados por min_id
         # y los componentes ordenados por id dentro de cada segmento
-        una = Segmentacion()
-        for sgm in self:
-            s = Segmento(sgm)
-            una.append(s.ordenado())
-        return una.ordenada()
+        una = self.ordenada()
+        for sgm in una:
+            sgm = sgm.ordenado()
+        return una
 
     def equivalente(self, otra):
         return super().equivalentes(otra)
@@ -230,7 +229,7 @@ def segmenta(segmentacion, componentes, soluciones):
             #and not segmentacion.equivalente(soluciones.ultima())):
             and segmentacion.canonica() not in soluciones.diferentes()):
             print(".",end='',flush=True)
-            soluciones.append(segmentacion)
+            soluciones.append(segmentacion.canonica())
         elif segmentacion.costo() < soluciones.ultima().costo():
             print("\nSol ant: " 
                 + str(soluciones.ultima().costo())
