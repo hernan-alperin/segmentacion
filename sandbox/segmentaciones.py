@@ -223,10 +223,11 @@ class Segmentaciones(list):
 def segmenta(segmentacion, componentes, soluciones):
     if componentes == Componentes():
         if soluciones == Segmentaciones():
-            soluciones.append(segmentacion)
+            soluciones.append(segmentacion.canonica())
             print("\nPrimero:" + str(segmentacion.costo()))
         elif (segmentacion.costo() == soluciones.ultima().costo()
-            and not segmentacion.equivalente(soluciones.ultima())):
+            #and not segmentacion.equivalente(soluciones.ultima())):
+            and segmentacion.canonica() not in soluciones.diferentes()):
             print(".",end='',flush=True)
             soluciones.append(segmentacion)
         elif segmentacion.costo() < soluciones.ultima().costo():
@@ -234,7 +235,7 @@ def segmenta(segmentacion, componentes, soluciones):
                 + str(soluciones[-1].costo())
                 + " Mejor: " + str(segmentacion.costo()))
             print(segmentacion.canonica())
-            soluciones[:]=[segmentacion]
+            soluciones[:]=[segmentacion.canonica()]
         return
 
     else:
