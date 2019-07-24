@@ -116,6 +116,9 @@ class Segmento(Componentes):
         # devuelve su lista de componentes
         return Componentes(super().componentes())
 
+    def manzanas(self):
+        return len(list(set([c.id/10 for c in self.componentes()])))
+
     def id(self):
         return self.min_id()
 
@@ -146,9 +149,13 @@ class Segmentos(list):
     def maxima_diferencia_de_costos_entre_segmentos(self):
         return self.max_carga() - self.min_carga()
 
+    def suma_cantidad_de_mzas_x_sgm(self):
+        return sum(s.manzanas() for s in self)
+
     def costo(self):
         return (self.suma_de_costos_de_segmentos()
-                + 0.1*(self.maxima_diferencia_de_costos_entre_segmentos()))
+                + 0.1*(self.maxima_diferencia_de_costos_entre_segmentos())
+                + 0.01*self.suma_cantidad_de_mzas_x_sgm())
 
     def max_carga(self):
         return max(sgm.carga() for sgm in self)
