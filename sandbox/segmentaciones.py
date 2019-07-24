@@ -13,6 +13,22 @@ from operator import *
 
 segmentacion_deseada = 40
 
+class Procesando:
+        
+    def __init__(self):
+        self.reloj = '-'
+
+    def proximo(self):
+        if self.reloj == '-':
+            self.reloj = '\\'
+        elif self.reloj == '\\':
+            self.reloj = '|'
+        elif self.reloj == '|':
+            self.reloj = '/'
+        elif self.reloj == '/':
+            self.reloj = '-'
+        return self.reloj
+
 def set_segmentacion_deseada(valor):
     global segmentacion_deseada
     segmentacion_deseada = int(valor)
@@ -90,12 +106,15 @@ class Componentes(list):
         # devuelve los componentes ordenados
         return self
 
+    def manzanas(self):
+        return len(list(set([c.id/10 for c in self.componentes()])))
+
     def mejor_costo_teorico(self):
-        return (abs(mod(sum(c.vivs for c in self) - (segmentacion_deseada/2),
+        return (1.1*abs(mod(sum(c.vivs for c in self) - (segmentacion_deseada/2),
                         segmentacion_deseada) 
                     - (segmentacion_deseada/2)
                     )
-                ) 
+                + 0.01*self.manzanas()) 
 
 
 class Segmento(Componentes):
@@ -116,9 +135,6 @@ class Segmento(Componentes):
     def componentes(self):
         # devuelve su lista de componentes
         return Componentes(super().componentes())
-
-    def manzanas(self):
-        return len(list(set([c.id/10 for c in self.componentes()])))
 
     def id(self):
         return self.min_id()
@@ -229,6 +245,8 @@ class Segmentaciones(list):
             return self[-1]
         return None
                   
+reloj = Procesando()
+
 def segmenta(segmentacion, componentes, soluciones):
     if componentes == Componentes():
         if (soluciones == Segmentaciones()
@@ -237,7 +255,8 @@ def segmenta(segmentacion, componentes, soluciones):
             # el costo de la segmentacion es igual al de la ultima
                 and segmentacion.canonica() not in soluciones.diferentes()):
                 # y no está entre las soluciones diferentes (en el grupo de equivalentes)
-            print(len(soluciones),end='',flush=True)
+            #print(len(soluciones),end='',flush=True)
+            print('\b'*(len(str(len(soluciones) - 2)) + 2) + str(len(soluciones)) + ' ',end='',flush=True)
             soluciones.append(segmentacion.canonica())
         elif segmentacion.costo() < soluciones.ultima().costo():
             # mejora el costo
@@ -264,5 +283,5 @@ def segmenta(segmentacion, componentes, soluciones):
                         <= soluciones.ultima().costo()):
                     #or any(nueva.equivalentes(s) for s in soluciones)
                     # ya explorada 
-                    print(".",end='', flush=True)
+                    print("\b\b" + ' ' + reloj.proximo(),end='', flush=True)
                     segmenta(nueva, resto, soluciones)
