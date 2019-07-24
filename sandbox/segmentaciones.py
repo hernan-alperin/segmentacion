@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 título: arbol_segmentaciones.py
 descripción: calcula los segmentos posibles siguiendo adyacencias

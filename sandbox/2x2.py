@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 ejemplo de 2 x 2 manzanas
 con componentes lados
