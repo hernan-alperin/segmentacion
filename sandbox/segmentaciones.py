@@ -229,7 +229,7 @@ def segmenta(segmentacion, componentes, soluciones):
             # el costo de la segmentacion es igual al de la ultima
                 and segmentacion.canonica() not in soluciones.diferentes()):
                 # y no está entre las soluciones diferentes (en el grupo de equivalentes)
-            print(".",end='',flush=True)
+            print(len(soluciones),end='',flush=True)
             soluciones.append(segmentacion.canonica())
         elif segmentacion.costo() < soluciones.ultima().costo():
             # mejora el costo

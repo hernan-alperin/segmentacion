@@ -15,16 +15,13 @@ con componentes lados
  +--33--+ +--43--+
 
 """
-import os
-import sys
-sys.path.insert(0, os.path.dirname(__file__) + '..')
 from segmentaciones import *
 from random import *
 
 c11 = Componente(11, 10)
-c12 = Componente(12, 0)
+c12 = Componente(12, 10)
 c13 = Componente(13, 10)
-c14 = Componente(14, 10)
+c14 = Componente(14, 0)
 c21 = Componente(21, 0)
 c22 = Componente(22, 0)
 c23 = Componente(23, 10)
@@ -92,18 +89,24 @@ c14, c12, c24,  c22,
 c34, c32, c44,  c42,
   c33,       c43,
 ])
+
+set_segmentacion_deseada(20)
+
 print ('---------------componentes-con-adyacencias---')
 for c in componentes:
-    adys = []
+    adys = Componentes()
     for a in c.adyacentes:
         adys.append(a.id)
     print (c.id, '(', c.vivs,')', adys)
 
 print ('-----------------------segmenta----------------')
-soluciones = []
+soluciones = Segmentaciones()
 segmenta(Segmentacion(), componentes, soluciones)
-print ('\n---------------------unicas-como-metodo-------')
-unicas = Segmentaciones(soluciones)
+print ('\n---------------------soluciones-------')
+for s in soluciones:
+    print(s)
+print ('\n---------------------diferentes-------')
+unicas = soluciones.diferentes()
 for u in unicas:
     print(u)
 
