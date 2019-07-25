@@ -85,7 +85,8 @@ class Componentes(list):
         self.sort(key=lambda x: x.id)
         return
 
-    def recorridos(self):
+    def recorridos(self, 
+        hasta=max(1.5*segmentacion_deseada, segmentacion_deseada+4)):
         sgms = Segmentos()
         for c in self:
             sgms.append(Segmento([c]))
@@ -95,7 +96,8 @@ class Componentes(list):
             for s in sgms:
                 ultimo = s[-1] # con el último arma recorridos
                 for c in ultimo.adyacentes:
-                    if c in self and c not in s:
+                    if (c in self and c not in s
+                        and c.vivs + s.costo() < hasta):
                         s_mas_c = Segmento(s)
                         s_mas_c.append(c)
                         if s_mas_c not in sgms:
@@ -281,7 +283,5 @@ def segmenta(segmentacion, componentes, soluciones):
                 if (soluciones == [] 
                     or nueva.costo() + resto.mejor_costo_teorico() 
                         <= soluciones.ultima().costo()):
-                    #or any(nueva.equivalentes(s) for s in soluciones)
-                    # ya explorada 
                     print("\b\b" + ' ' + reloj.proximo(),end='', flush=True)
                     segmenta(nueva, resto, soluciones)
