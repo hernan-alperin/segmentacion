@@ -118,35 +118,50 @@ c102.agregar_adyacencia(c103)
 c103.agregar_adyacencia(c104)
 c104.agregar_adyacencia(c101)
 
-c111.agregar_adyacencia(c102)
-c112.agregar_adyacencia(c103)
-c113.agregar_adyacencia(c104)
-c114.agregar_adyacencia(c101)
+c111.agregar_adyacencia(c112)
+c112.agregar_adyacencia(c113)
+c113.agregar_adyacencia(c114)
+c114.agregar_adyacencia(c111)
 
 # volver
 c12.agregar_adyacencia(c24)
 c24.agregar_adyacencia(c12)
 
-c13.agregar_adyacencia(c31)
-c31.agregar_adyacencia(c13)
+c13.agregar_adyacencia(c61)
+c61.agregar_adyacencia(c13)
 
-c23.agregar_adyacencia(c41)
-c41.agregar_adyacencia(c23)
+c23.agregar_adyacencia(c51)
+c51.agregar_adyacencia(c23)
 
 c22.agregar_adyacencia(c34)
 c34.agregar_adyacencia(c22)
 
+c33.agregar_adyacencia(c41)
+c41.agregar_adyacencia(c33)
+
 c72.agregar_adyacencia(c64)
 c64.agregar_adyacencia(c72)
+
+c73.agregar_adyacencia(c81)
+c81.agregar_adyacencia(c73)
 
 c62.agregar_adyacencia(c54)
 c54.agregar_adyacencia(c62)
 
+c63.agregar_adyacencia(c91)
+c91.agregar_adyacencia(c63)
+
 c52.agregar_adyacencia(c44)
 c44.agregar_adyacencia(c52)
 
+c53.agregar_adyacencia(c101)
+c101.agregar_adyacencia(c53)
+
 c82.agregar_adyacencia(c94)
 c94.agregar_adyacencia(c82)
+
+c43.agregar_adyacencia(c111)
+c111.agregar_adyacencia(c43)
 
 c92.agregar_adyacencia(c104)
 c104.agregar_adyacencia(c92)
