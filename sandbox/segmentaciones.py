@@ -86,7 +86,8 @@ class Componentes(list):
         return
 
     def recorridos(self, 
-        hasta=max(1.5*segmentacion_deseada, segmentacion_deseada+4)):
+        hasta=max(1.5*segmentacion_deseada, segmentacion_deseada + 4),
+        desde=min(0.5*segmentacion_deseada, segmentacion_deseada - 4)):
         sgms = Segmentos()
         for c in self:
             sgms.append(Segmento([c]))
@@ -102,7 +103,10 @@ class Componentes(list):
                         s_mas_c.append(c)
                         if s_mas_c not in sgms:
                             sgms.append(s_mas_c)
-        return sgms
+        for s in sgms:
+            if s.costo()<desde:
+                sgms.remove(s)
+            return Segmentos(sgms)
 
     def componentes(self):
         # devuelve los componentes ordenados
@@ -273,7 +277,7 @@ def segmenta(segmentacion, componentes, soluciones):
         if (soluciones == Segmentaciones() 
             or segmentacion.costo() + componentes.mejor_costo_teorico() 
                 <= soluciones.ultima().costo()):
-            sgms = componentes.recorridos()
+            sgms = componentes.recorridos(44,36)
             sgms.ordenar()
             for s in sgms:
                 segmts = Segmentacion(segmentacion)
