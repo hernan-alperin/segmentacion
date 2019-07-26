@@ -219,16 +219,10 @@ for c in componentes:
     print (c.id, '(', c.vivs,')', adys)
 
 print ('-----------------------segmenta----------------')
-soluciones = []
+soluciones = Segmentaciones()
 segmenta(Segmentos(), componentes, soluciones)
 print ('-----------------------unicas-------------------')
-ss = []
-sols = []
-for sol in soluciones:
-    en_set = set(map(tuple, sol))
-    if en_set not in ss:
-        ss.append(en_set)
-        sols.append(sol)
+sols = Soluciones()
 for sol in sols:
     print (sol)
 
