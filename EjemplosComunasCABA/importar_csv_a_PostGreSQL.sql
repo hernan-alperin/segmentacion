@@ -15,9 +15,9 @@ comuna11.dbf mar 19/3, 10:38
 
 Opcion 1)
 
-pasar el .dbf a .csv usando una planilla de cálculo
-poner en /tmp para que sea visible para postgresl
-import un .csv con header de columnas
+1. pasar el .dbf a .csv usando una planilla de cálculo
+2. poner en /tmp para que sea visible para postgresl
+3. import un .csv con header de columnas
 definir la function a continuacion
 */
 CREATE OR REPLACE FUNCTION load_csv_file(
@@ -73,8 +73,9 @@ $BODY$
 ALTER FUNCTION load_csv_file(text, text, integer)
   OWNER TO postgres;
 /*
+
 se invoca
-select load_csv_file('myTable','C:/MyPath/MyFile.csv',n)
+select load_csv_file('myTable','\tmp\MyFile.csv',n)
 -- siendo n el número de columnas
 
 para averiguarlo usar awk, ejemplo
@@ -84,7 +85,9 @@ o -F'\t' según cual sea el separador de campos del csv... debería ser comas...
 comuna11=# 
 
 */
-select load_csv_file('listado','/tmp/comuna11.csv',14);
+
+
+select load_csv_file('listados','/tmp/comuna11.csv',14);
 /*
 load_csv_file
 ---------------
