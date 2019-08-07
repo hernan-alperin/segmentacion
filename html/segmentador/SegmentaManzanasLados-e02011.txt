@@ -1,0 +1,616 @@
+['e02011', '2', '77', '18', '22', '20']
+
+radio: 
+2 77 1 1
+---------
+mínimo local
+costo 2240
+['segmento', 1, 'carga', 13, 'costo', 42, 'componentes', [(2, 3)]]
+['segmento', 2, 'carga', 19, 'costo', 1, 'componentes', [(2, 2), (2, 1)]]
+['segmento', 3, 'carga', 21, 'costo', 1, 'componentes', [(1, 2), (3, 4)]]
+['segmento', 4, 'carga', 22, 'costo', 2, 'componentes', [(1, 3), (1, 1)]]
+['segmento', 5, 'carga', 32, 'costo', 1012, 'componentes', [(5, 1)]]
+['segmento', 6, 'carga', 18, 'costo', 2, 'componentes', [(5, 3), (5, 2)]]
+['segmento', 7, 'carga', 23, 'costo', 4, 'componentes', [(5, 4)]]
+['segmento', 8, 'carga', 18, 'costo', 2, 'componentes', [(4, 1), (4, 2)]]
+['segmento', 9, 'carga', 15, 'costo', 20, 'componentes', [11]]
+['segmento', 10, 'carga', 18, 'costo', 2, 'componentes', [(8, 2), (8, 1)]]
+['segmento', 11, 'carga', 12, 'costo', 56, 'componentes', [(8, 4), (8, 3)]]
+['segmento', 12, 'carga', 25, 'costo', 32, 'componentes', [(7, 2)]]
+['segmento', 13, 'carga', 18, 'costo', 2, 'componentes', [(7, 1)]]
+['segmento', 14, 'carga', 20, 'costo', 0, 'componentes', [(7, 4)]]
+['segmento', 15, 'carga', 14, 'costo', 30, 'componentes', [(7, 3)]]
+['segmento', 16, 'carga', 32, 'costo', 1012, 'componentes', [(3, 3)]]
+['segmento', 17, 'carga', 20, 'costo', 0, 'componentes', [(3, 2), (4, 4), (3, 1)]]
+['segmento', 18, 'carga', 15, 'costo', 20, 'componentes', [(4, 3)]]
+deseada: 20, máxima: 22, mínima: 18
+0.13942193985 segundos
+
+radio: 
+2 77 1 2
+---------
+mínimo local
+costo 1339
+['segmento', 1, 'carga', 15, 'costo', 20, 'componentes', [(18, 1)]]
+['segmento', 2, 'carga', 24, 'costo', 12, 'componentes', [(29, 4), (18, 2)]]
+['segmento', 3, 'carga', 11, 'costo', 72, 'componentes', [(31, 1)]]
+['segmento', 4, 'carga', 22, 'costo', 2, 'componentes', [(30, 4), (30, 3)]]
+['segmento', 5, 'carga', 18, 'costo', 2, 'componentes', [(13, 2), (13, 1)]]
+['segmento', 6, 'carga', 21, 'costo', 1, 'componentes', [(18, 3), (18, 4)]]
+['segmento', 7, 'carga', 20, 'costo', 0, 'componentes', [(16, 2), (16, 3), (16, 4), (16, 5)]]
+['segmento', 8, 'carga', 19, 'costo', 1, 'componentes', [14]]
+['segmento', 9, 'carga', 20, 'costo', 0, 'componentes', [(17, 3), (17, 4)]]
+['segmento', 10, 'carga', 19, 'costo', 1, 'componentes', [(29, 2), (29, 1)]]
+['segmento', 11, 'carga', 16, 'costo', 12, 'componentes', [(13, 3), 12, (13, 5), (13, 4)]]
+['segmento', 12, 'carga', 12, 'costo', 56, 'componentes', [(34, 2), 33]]
+['segmento', 13, 'carga', 22, 'costo', 2, 'componentes', [(17, 2), (17, 1)]]
+['segmento', 14, 'carga', 13, 'costo', 42, 'componentes', [(16, 1)]]
+['segmento', 15, 'carga', 25, 'costo', 32, 'componentes', [(31, 4), (31, 3)]]
+['segmento', 16, 'carga', 22, 'costo', 2, 'componentes', [(29, 3), (30, 1)]]
+['segmento', 17, 'carga', 26, 'costo', 70, 'componentes', [(34, 1)]]
+['segmento', 18, 'carga', 32, 'costo', 1012, 'componentes', [(34, 3)]]
+deseada: 20, máxima: 22, mínima: 18
+0.17857003212 segundos
+
+radio: 
+2 77 1 3
+---------
+mínimo local
+costo 321
+['segmento', 1, 'carga', 26, 'costo', 70, 'componentes', [(6, 2), (6, 1)]]
+['segmento', 2, 'carga', 20, 'costo', 0, 'componentes', [(19, 4), (19, 1)]]
+['segmento', 3, 'carga', 14, 'costo', 30, 'componentes', [(19, 3), (19, 2)]]
+['segmento', 4, 'carga', 15, 'costo', 20, 'componentes', [(10, 2), (10, 3)]]
+['segmento', 5, 'carga', 15, 'costo', 20, 'componentes', [(10, 1), (10, 4)]]
+['segmento', 6, 'carga', 18, 'costo', 2, 'componentes', [(9, 4), (9, 3)]]
+['segmento', 7, 'carga', 22, 'costo', 2, 'componentes', [(20, 4), (20, 3), (20, 2)]]
+['segmento', 8, 'carga', 21, 'costo', 1, 'componentes', [(9, 1), (9, 2)]]
+['segmento', 9, 'carga', 9, 'costo', 110, 'componentes', [(21, 3)]]
+['segmento', 10, 'carga', 22, 'costo', 2, 'componentes', [(21, 4), (21, 1)]]
+['segmento', 11, 'carga', 21, 'costo', 1, 'componentes', [(28, 3), (28, 2)]]
+['segmento', 12, 'carga', 23, 'costo', 4, 'componentes', [(21, 2)]]
+['segmento', 13, 'carga', 16, 'costo', 12, 'componentes', [(28, 1)]]
+['segmento', 14, 'carga', 13, 'costo', 42, 'componentes', [(6, 3)]]
+['segmento', 15, 'carga', 19, 'costo', 1, 'componentes', [(20, 1)]]
+['segmento', 16, 'carga', 23, 'costo', 4, 'componentes', [(6, 4)]]
+deseada: 20, máxima: 22, mínima: 18
+0.109391927719 segundos
+
+radio: 
+2 77 1 4
+---------
+mínimo local
+costo 1127931
+['segmento', 1, 'carga', 24, 'costo', 12, 'componentes', [(23, 1), (23, 4)]]
+['segmento', 2, 'carga', 21, 'costo', 1, 'componentes', [(22, 1), (22, 2)]]
+['segmento', 3, 'carga', 22, 'costo', 2, 'componentes', [(41, 3)]]
+['segmento', 4, 'carga', 22, 'costo', 2, 'componentes', [(41, 1), (41, 4)]]
+['segmento', 5, 'carga', 17, 'costo', 6, 'componentes', [(23, 3)]]
+['segmento', 6, 'carga', 36, 'costo', 2760, 'componentes', [(42, 2)]]
+['segmento', 7, 'carga', 20, 'costo', 0, 'componentes', [(42, 3)]]
+['segmento', 8, 'carga', 10, 'costo', 90, 'componentes', [(42, 1)]]
+['segmento', 9, 'carga', 26, 'costo', 70, 'componentes', [(41, 2)]]
+['segmento', 10, 'carga', 17, 'costo', 6, 'componentes', [(42, 4)]]
+['segmento', 11, 'carga', 126, 'costo', 1124970, 'componentes', [(22, 4)]]
+['segmento', 12, 'carga', 24, 'costo', 12, 'componentes', [(23, 2)]]
+deseada: 20, máxima: 22, mínima: 18
+0.0218331813812 segundos
+
+radio: 
+2 77 1 5
+---------
+mínimo local
+costo 63
+['segmento', 1, 'carga', 18, 'costo', 2, 'componentes', [(44, 1), (44, 2)]]
+['segmento', 2, 'carga', 23, 'costo', 4, 'componentes', [(39, 2), (39, 1), (44, 4)]]
+['segmento', 3, 'carga', 19, 'costo', 1, 'componentes', [(44, 3)]]
+['segmento', 4, 'carga', 23, 'costo', 4, 'componentes', [(24, 1), (24, 2)]]
+['segmento', 5, 'carga', 17, 'costo', 6, 'componentes', [(40, 3), (40, 4)]]
+['segmento', 6, 'carga', 19, 'costo', 1, 'componentes', [(25, 2), (24, 3), (25, 1)]]
+['segmento', 7, 'carga', 20, 'costo', 0, 'componentes', [(43, 2), (43, 1)]]
+['segmento', 8, 'carga', 24, 'costo', 12, 'componentes', [(40, 2), (43, 4)]]
+['segmento', 9, 'carga', 18, 'costo', 2, 'componentes', [(39, 4), (39, 3)]]
+['segmento', 10, 'carga', 16, 'costo', 12, 'componentes', [(43, 3)]]
+['segmento', 11, 'carga', 16, 'costo', 12, 'componentes', [(24, 4)]]
+['segmento', 12, 'carga', 17, 'costo', 6, 'componentes', [(40, 1)]]
+['segmento', 13, 'carga', 19, 'costo', 1, 'componentes', [(25, 3)]]
+deseada: 20, máxima: 22, mínima: 18
+0.0792150497437 segundos
+
+radio: 
+2 77 1 6
+---------
+mínimo local
+costo 350
+['segmento', 1, 'carga', 24, 'costo', 12, 'componentes', [(45, 3), (45, 4)]]
+['segmento', 2, 'carga', 17, 'costo', 6, 'componentes', [(26, 3)]]
+['segmento', 3, 'carga', 22, 'costo', 2, 'componentes', [(26, 2), (26, 1)]]
+['segmento', 4, 'carga', 14, 'costo', 30, 'componentes', [(38, 1)]]
+['segmento', 5, 'carga', 23, 'costo', 4, 'componentes', [(38, 2), (38, 3)]]
+['segmento', 6, 'carga', 15, 'costo', 20, 'componentes', [(47, 1), (47, 2)]]
+['segmento', 7, 'carga', 15, 'costo', 20, 'componentes', [(47, 4), (47, 3)]]
+['segmento', 8, 'carga', 10, 'costo', 90, 'componentes', [(36, 1)]]
+['segmento', 9, 'carga', 23, 'costo', 4, 'componentes', [(36, 3)]]
+['segmento', 10, 'carga', 19, 'costo', 1, 'componentes', [(37, 2), (46, 4)]]
+['segmento', 11, 'carga', 24, 'costo', 12, 'componentes', [(37, 4), (37, 3)]]
+['segmento', 12, 'carga', 20, 'costo', 0, 'componentes', [(46, 3)]]
+['segmento', 13, 'carga', 21, 'costo', 1, 'componentes', [(46, 1), (46, 2)]]
+['segmento', 14, 'carga', 25, 'costo', 32, 'componentes', [(36, 2)]]
+['segmento', 15, 'carga', 20, 'costo', 0, 'componentes', [48]]
+['segmento', 16, 'carga', 18, 'costo', 2, 'componentes', [(45, 2), (45, 1)]]
+['segmento', 17, 'carga', 13, 'costo', 42, 'componentes', [(37, 1)]]
+['segmento', 18, 'carga', 11, 'costo', 72, 'componentes', [(38, 4)]]
+deseada: 20, máxima: 22, mínima: 18
+0.0812108516693 segundos
+
+radio: 
+2 77 1 7
+---------
+mínimo local
+costo 21718
+['segmento', 1, 'carga', 16, 'costo', 12, 'componentes', [(51, 1)]]
+['segmento', 2, 'carga', 14, 'costo', 30, 'componentes', [(51, 3), (51, 2)]]
+['segmento', 3, 'carga', 19, 'costo', 1, 'componentes', [(49, 2)]]
+['segmento', 4, 'carga', 12, 'costo', 56, 'componentes', [(49, 1), (49, 3)]]
+['segmento', 5, 'carga', 23, 'costo', 4, 'componentes', [(53, 1)]]
+['segmento', 6, 'carga', 9, 'costo', 110, 'componentes', [(53, 2), (54, 4)]]
+['segmento', 7, 'carga', 31, 'costo', 740, 'componentes', [(54, 2)]]
+['segmento', 8, 'carga', 22, 'costo', 2, 'componentes', [(54, 3), (54, 1)]]
+['segmento', 9, 'carga', 20, 'costo', 0, 'componentes', [(50, 1)]]
+['segmento', 10, 'carga', 20, 'costo', 0, 'componentes', [(50, 2)]]
+['segmento', 11, 'carga', 14, 'costo', 30, 'componentes', [(52, 3), (52, 2)]]
+['segmento', 12, 'carga', 36, 'costo', 2760, 'componentes', [(53, 3)]]
+['segmento', 13, 'carga', 21, 'costo', 1, 'componentes', [(50, 4), (50, 3)]]
+['segmento', 14, 'carga', 48, 'costo', 17604, 'componentes', [(51, 4)]]
+['segmento', 15, 'carga', 14, 'costo', 30, 'componentes', [(52, 1)]]
+['segmento', 16, 'carga', 7, 'costo', 156, 'componentes', [(52, 4)]]
+['segmento', 17, 'carga', 6, 'costo', 182, 'componentes', [(53, 4)]]
+deseada: 20, máxima: 22, mínima: 18
+0.0444760322571 segundos
+
+radio: 
+2 77 1 8
+---------
+mínimo local
+costo 22522
+['segmento', 1, 'carga', 11, 'costo', 72, 'componentes', [(55, 3)]]
+['segmento', 2, 'carga', 22, 'costo', 2, 'componentes', [(55, 1), (55, 2)]]
+['segmento', 3, 'carga', 24, 'costo', 12, 'componentes', [(58, 4)]]
+['segmento', 4, 'carga', 10, 'costo', 90, 'componentes', [(58, 1)]]
+['segmento', 5, 'carga', 18, 'costo', 2, 'componentes', [(56, 2)]]
+['segmento', 6, 'carga', 25, 'costo', 32, 'componentes', [(56, 3), (56, 4)]]
+['segmento', 7, 'carga', 27, 'costo', 132, 'componentes', [(56, 1)]]
+['segmento', 8, 'carga', 21, 'costo', 1, 'componentes', [(57, 3)]]
+['segmento', 9, 'carga', 35, 'costo', 2212, 'componentes', [(58, 3)]]
+['segmento', 10, 'carga', 17, 'costo', 6, 'componentes', [(55, 4)]]
+['segmento', 11, 'carga', 23, 'costo', 4, 'componentes', [(57, 2)]]
+['segmento', 12, 'carga', 21, 'costo', 1, 'componentes', [(57, 1)]]
+['segmento', 13, 'carga', 43, 'costo', 9284, 'componentes', [(57, 4)]]
+['segmento', 14, 'carga', 44, 'costo', 10672, 'componentes', [(58, 2)]]
+deseada: 20, máxima: 22, mínima: 18
+0.0156791210175 segundos
+
+radio: 
+2 77 1 9
+---------
+mínimo local
+costo 15369
+['segmento', 1, 'carga', 20, 'costo', 0, 'componentes', [(71, 4)]]
+['segmento', 2, 'carga', 24, 'costo', 12, 'componentes', [(59, 3), (59, 2)]]
+['segmento', 3, 'carga', 25, 'costo', 32, 'componentes', [(70, 4), (70, 5)]]
+['segmento', 4, 'carga', 17, 'costo', 6, 'componentes', [(69, 4)]]
+['segmento', 5, 'carga', 11, 'costo', 72, 'componentes', [(70, 2)]]
+['segmento', 6, 'carga', 10, 'costo', 90, 'componentes', [(69, 3), (69, 2)]]
+['segmento', 7, 'carga', 24, 'costo', 12, 'componentes', [(61, 3)]]
+['segmento', 8, 'carga', 14, 'costo', 30, 'componentes', [(61, 1), (61, 4)]]
+['segmento', 9, 'carga', 21, 'costo', 1, 'componentes', [(60, 2)]]
+['segmento', 10, 'carga', 30, 'costo', 522, 'componentes', [(71, 2)]]
+['segmento', 11, 'carga', 24, 'costo', 12, 'componentes', [(70, 1), (71, 3)]]
+['segmento', 12, 'carga', 41, 'costo', 6880, 'componentes', [(69, 1)]]
+['segmento', 13, 'carga', 39, 'costo', 4932, 'componentes', [(71, 1)]]
+['segmento', 14, 'carga', 32, 'costo', 1012, 'componentes', [(60, 1)]]
+['segmento', 15, 'carga', 34, 'costo', 1742, 'componentes', [(60, 4)]]
+['segmento', 16, 'carga', 24, 'costo', 12, 'componentes', [(60, 3)]]
+['segmento', 17, 'carga', 18, 'costo', 2, 'componentes', [(59, 4)]]
+deseada: 20, máxima: 22, mínima: 18
+0.0387849807739 segundos
+
+radio: 
+2 77 1 10
+---------
+mínimo local
+costo 167920
+['segmento', 1, 'carga', 21, 'costo', 1, 'componentes', [74]]
+['segmento', 2, 'carga', 21, 'costo', 1, 'componentes', [(73, 3)]]
+['segmento', 3, 'carga', 40, 'costo', 5852, 'componentes', [(85, 1)]]
+['segmento', 4, 'carga', 11, 'costo', 72, 'componentes', [(85, 3), (85, 2)]]
+['segmento', 5, 'carga', 22, 'costo', 2, 'componentes', [(72, 4)]]
+['segmento', 6, 'carga', 13, 'costo', 42, 'componentes', [(72, 1)]]
+['segmento', 7, 'carga', 15, 'costo', 20, 'componentes', [(72, 3)]]
+['segmento', 8, 'carga', 29, 'costo', 352, 'componentes', [(84, 1)]]
+['segmento', 9, 'carga', 7, 'costo', 156, 'componentes', [(84, 4)]]
+['segmento', 10, 'carga', 15, 'costo', 20, 'componentes', [(84, 2)]]
+['segmento', 11, 'carga', 28, 'costo', 224, 'componentes', [(72, 2)]]
+['segmento', 12, 'carga', 18, 'costo', 2, 'componentes', [(73, 2)]]
+['segmento', 13, 'carga', 25, 'costo', 32, 'componentes', [(73, 1)]]
+['segmento', 14, 'carga', 56, 'costo', 39340, 'componentes', [(85, 4)]]
+['segmento', 15, 'carga', 68, 'costo', 97384, 'componentes', [(73, 4)]]
+['segmento', 16, 'carga', 51, 'costo', 24420, 'componentes', [(84, 3)]]
+deseada: 20, máxima: 22, mínima: 18
+0.015645980835 segundos
+
+radio: 
+2 77 1 11
+---------
+mínimo local
+costo 186233
+['segmento', 1, 'carga', 16, 'costo', 12, 'componentes', [(90, 3)]]
+['segmento', 2, 'carga', 14, 'costo', 30, 'componentes', [(90, 2)]]
+['segmento', 3, 'carga', 18, 'costo', 2, 'componentes', [(90, 1)]]
+['segmento', 4, 'carga', 10, 'costo', 90, 'componentes', [(89, 4)]]
+['segmento', 5, 'carga', 12, 'costo', 56, 'componentes', [80]]
+['segmento', 6, 'carga', 71, 'costo', 117700, 'componentes', [(81, 4)]]
+['segmento', 7, 'carga', 22, 'costo', 2, 'componentes', [(82, 4)]]
+['segmento', 8, 'carga', 12, 'costo', 56, 'componentes', [(81, 1)]]
+['segmento', 9, 'carga', 38, 'costo', 4114, 'componentes', [(82, 5)]]
+['segmento', 10, 'carga', 37, 'costo', 3392, 'componentes', [(89, 1)]]
+['segmento', 11, 'carga', 51, 'costo', 24420, 'componentes', [(89, 2)]]
+['segmento', 12, 'carga', 21, 'costo', 1, 'componentes', [(81, 2)]]
+['segmento', 13, 'carga', 55, 'costo', 35972, 'componentes', [(82, 3)]]
+['segmento', 14, 'carga', 25, 'costo', 32, 'componentes', [(82, 2), (82, 1)]]
+['segmento', 15, 'carga', 24, 'costo', 12, 'componentes', [(81, 3)]]
+['segmento', 16, 'carga', 1, 'costo', 342, 'componentes', [86]]
+deseada: 20, máxima: 22, mínima: 18
+0.0144681930542 segundos
+
+radio: 
+2 77 1 12
+---------
+mínimo local
+costo 61589
+['segmento', 1, 'carga', 26, 'costo', 70, 'componentes', [78, (77, 4), (77, 3)]]
+['segmento', 2, 'carga', 24, 'costo', 12, 'componentes', [65, 62, 64]]
+['segmento', 3, 'carga', 24, 'costo', 12, 'componentes', [(75, 3), (75, 2)]]
+['segmento', 4, 'carga', 19, 'costo', 1, 'componentes', [(77, 1)]]
+['segmento', 5, 'carga', 31, 'costo', 740, 'componentes', [(76, 4)]]
+['segmento', 6, 'carga', 23, 'costo', 4, 'componentes', [(76, 2), (76, 1)]]
+['segmento', 7, 'carga', 40, 'costo', 5852, 'componentes', [(75, 1)]]
+['segmento', 8, 'carga', 23, 'costo', 4, 'componentes', [(75, 4), 68]]
+['segmento', 9, 'carga', 54, 'costo', 32802, 'componentes', [(77, 2)]]
+['segmento', 10, 'carga', 9, 'costo', 110, 'componentes', [(76, 3)]]
+['segmento', 11, 'carga', 50, 'costo', 21982, 'componentes', [(77, 5)]]
+deseada: 20, máxima: 22, mínima: 18
+0.0272619724274 segundos
+
+radio: 
+2 77 2 1
+---------
+mínimo local
+costo 329
+['segmento', 1, 'carga', 14, 'costo', 30, 'componentes', [(23, 5)]]
+['segmento', 2, 'carga', 21, 'costo', 1, 'componentes', [(23, 1), (23, 4)]]
+['segmento', 3, 'carga', 23, 'costo', 4, 'componentes', [(7, 2), (7, 1), (7, 4)]]
+['segmento', 4, 'carga', 18, 'costo', 2, 'componentes', [8, (10, 5), (7, 3)]]
+['segmento', 5, 'carga', 13, 'costo', 42, 'componentes', [(10, 4)]]
+['segmento', 6, 'carga', 19, 'costo', 1, 'componentes', [(24, 2), (24, 3)]]
+['segmento', 7, 'carga', 24, 'costo', 12, 'componentes', [(23, 3), (24, 1)]]
+['segmento', 8, 'carga', 23, 'costo', 4, 'componentes', [(21, 3), (22, 1)]]
+['segmento', 9, 'carga', 22, 'costo', 2, 'componentes', [(10, 2), (10, 3), 9]]
+['segmento', 10, 'carga', 20, 'costo', 0, 'componentes', [(11, 4), (11, 1)]]
+['segmento', 11, 'carga', 20, 'costo', 0, 'componentes', [(10, 1), (11, 3)]]
+['segmento', 12, 'carga', 26, 'costo', 70, 'componentes', [(21, 1), (21, 2)]]
+['segmento', 13, 'carga', 12, 'costo', 56, 'componentes', [(11, 2), (21, 4)]]
+['segmento', 14, 'carga', 25, 'costo', 32, 'componentes', [(22, 4)]]
+['segmento', 15, 'carga', 19, 'costo', 1, 'componentes', [(22, 3)]]
+['segmento', 16, 'carga', 26, 'costo', 70, 'componentes', [(22, 2)]]
+['segmento', 17, 'carga', 18, 'costo', 2, 'componentes', [(23, 2)]]
+deseada: 20, máxima: 22, mínima: 18
+0.180705070496 segundos
+
+radio: 
+2 77 2 2
+---------
+mínimo local
+costo 55914
+['segmento', 1, 'carga', 23, 'costo', 4, 'componentes', [(3, 1), (3, 3)]]
+['segmento', 2, 'carga', 22, 'costo', 2, 'componentes', [(2, 2), (3, 4)]]
+['segmento', 3, 'carga', 23, 'costo', 4, 'componentes', [(4, 3), (4, 1)]]
+['segmento', 4, 'carga', 20, 'costo', 0, 'componentes', [(13, 4), (5, 2)]]
+['segmento', 5, 'carga', 18, 'costo', 2, 'componentes', [(3, 2)]]
+['segmento', 6, 'carga', 10, 'costo', 90, 'componentes', [(15, 4)]]
+['segmento', 7, 'carga', 34, 'costo', 1742, 'componentes', [(13, 3)]]
+['segmento', 8, 'carga', 21, 'costo', 1, 'componentes', [(13, 1), (13, 2)]]
+['segmento', 9, 'carga', 19, 'costo', 1, 'componentes', [(14, 2)]]
+['segmento', 10, 'carga', 22, 'costo', 2, 'componentes', [(14, 1), (14, 3)]]
+['segmento', 11, 'carga', 44, 'costo', 10672, 'componentes', [(15, 2)]]
+['segmento', 12, 'carga', 15, 'costo', 20, 'componentes', [(15, 3), (15, 1)]]
+['segmento', 13, 'carga', 23, 'costo', 4, 'componentes', [(5, 1), (5, 3)]]
+['segmento', 14, 'carga', 27, 'costo', 132, 'componentes', [(4, 2)]]
+['segmento', 15, 'carga', 18, 'costo', 2, 'componentes', [(14, 4)]]
+['segmento', 16, 'carga', 57, 'costo', 42912, 'componentes', [(2, 1)]]
+['segmento', 17, 'carga', 14, 'costo', 30, 'componentes', [1, (2, 3)]]
+['segmento', 18, 'carga', 13, 'costo', 42, 'componentes', [(2, 4)]]
+['segmento', 19, 'carga', 26, 'costo', 70, 'componentes', [(4, 4)]]
+['segmento', 20, 'carga', 6, 'costo', 182, 'componentes', [(5, 5)]]
+deseada: 20, máxima: 22, mínima: 18
+0.0988187789917 segundos
+
+radio: 
+2 77 2 3
+---------
+mínimo local
+costo 96766
+['segmento', 1, 'carga', 16, 'costo', 12, 'componentes', [(16, 2)]]
+['segmento', 2, 'carga', 16, 'costo', 12, 'componentes', [(16, 1), (16, 4), (16, 3)]]
+['segmento', 3, 'carga', 8, 'costo', 132, 'componentes', [(32, 1)]]
+['segmento', 4, 'carga', 34, 'costo', 1742, 'componentes', [(33, 3)]]
+['segmento', 5, 'carga', 16, 'costo', 12, 'componentes', [(17, 3)]]
+['segmento', 6, 'carga', 18, 'costo', 2, 'componentes', [(17, 4)]]
+['segmento', 7, 'carga', 12, 'costo', 56, 'componentes', [(17, 2)]]
+['segmento', 8, 'carga', 32, 'costo', 1012, 'componentes', [(32, 2)]]
+['segmento', 9, 'carga', 17, 'costo', 6, 'componentes', [(32, 3)]]
+['segmento', 10, 'carga', 17, 'costo', 6, 'componentes', [(17, 1)]]
+['segmento', 11, 'carga', 29, 'costo', 352, 'componentes', [(32, 4)]]
+['segmento', 12, 'carga', 46, 'costo', 13850, 'componentes', [(33, 4)]]
+['segmento', 13, 'carga', 15, 'costo', 20, 'componentes', [(33, 1)]]
+['segmento', 14, 'carga', 65, 'costo', 79552, 'componentes', [(33, 2)]]
+deseada: 20, máxima: 22, mínima: 18
+0.0140569210052 segundos
+
+radio: 
+2 77 2 4
+---------
+mínimo local
+costo 12798
+['segmento', 1, 'carga', 22, 'costo', 2, 'componentes', [(35, 1)]]
+['segmento', 2, 'carga', 19, 'costo', 1, 'componentes', [(35, 3), (72, 3), (35, 2)]]
+['segmento', 3, 'carga', 16, 'costo', 12, 'componentes', [(71, 1), (72, 2)]]
+['segmento', 4, 'carga', 22, 'costo', 2, 'componentes', [(73, 4), (73, 3), (73, 2)]]
+['segmento', 5, 'carga', 19, 'costo', 1, 'componentes', [(71, 2)]]
+['segmento', 6, 'carga', 22, 'costo', 2, 'componentes', [(71, 3), (71, 4)]]
+['segmento', 7, 'carga', 30, 'costo', 522, 'componentes', [(73, 1)]]
+['segmento', 8, 'carga', 20, 'costo', 0, 'componentes', [(73, 5)]]
+['segmento', 9, 'carga', 25, 'costo', 32, 'componentes', [(35, 4)]]
+['segmento', 10, 'carga', 45, 'costo', 12192, 'componentes', [(35, 5)]]
+['segmento', 11, 'carga', 25, 'costo', 32, 'componentes', [(72, 1)]]
+deseada: 20, máxima: 22, mínima: 18
+0.0260820388794 segundos
+
+radio: 
+2 77 2 5
+---------
+mínimo local
+costo 3218
+['segmento', 1, 'carga', 19, 'costo', 1, 'componentes', [(69, 3), (69, 2)]]
+['segmento', 2, 'carga', 24, 'costo', 12, 'componentes', [(69, 1), (69, 4)]]
+['segmento', 3, 'carga', 25, 'costo', 32, 'componentes', [(19, 2), (30, 4)]]
+['segmento', 4, 'carga', 25, 'costo', 32, 'componentes', [(18, 3), (18, 4)]]
+['segmento', 5, 'carga', 13, 'costo', 42, 'componentes', [(38, 1)]]
+['segmento', 6, 'carga', 18, 'costo', 2, 'componentes', [(38, 2), (38, 3)]]
+['segmento', 7, 'carga', 12, 'costo', 56, 'componentes', [(70, 1)]]
+['segmento', 8, 'carga', 24, 'costo', 12, 'componentes', [(70, 3), (70, 2)]]
+['segmento', 9, 'carga', 17, 'costo', 6, 'componentes', [(30, 3)]]
+['segmento', 10, 'carga', 13, 'costo', 42, 'componentes', [(30, 2)]]
+['segmento', 11, 'carga', 19, 'costo', 1, 'componentes', [(19, 1)]]
+['segmento', 12, 'carga', 25, 'costo', 32, 'componentes', [(19, 4), (19, 3)]]
+['segmento', 13, 'carga', 16, 'costo', 12, 'componentes', [(18, 1)]]
+['segmento', 14, 'carga', 17, 'costo', 6, 'componentes', [(18, 2)]]
+['segmento', 15, 'carga', 23, 'costo', 4, 'componentes', [(74, 2)]]
+['segmento', 16, 'carga', 11, 'costo', 72, 'componentes', [(74, 3)]]
+['segmento', 17, 'carga', 16, 'costo', 12, 'componentes', [(74, 1)]]
+['segmento', 18, 'carga', 24, 'costo', 12, 'componentes', [(70, 4)]]
+['segmento', 19, 'carga', 20, 'costo', 0, 'componentes', [(69, 5)]]
+['segmento', 20, 'carga', 17, 'costo', 6, 'componentes', [(30, 1)]]
+['segmento', 21, 'carga', 26, 'costo', 70, 'componentes', [(31, 3), (31, 2), (31, 1)]]
+['segmento', 22, 'carga', 32, 'costo', 1012, 'componentes', [(31, 4)]]
+['segmento', 23, 'carga', 34, 'costo', 1742, 'componentes', [(38, 4)]]
+deseada: 20, máxima: 22, mínima: 18
+0.136517047882 segundos
+
+radio: 
+2 77 2 6
+---------
+mínimo local
+costo 51242
+['segmento', 1, 'carga', 11, 'costo', 72, 'componentes', [(26, 4)]]
+['segmento', 2, 'carga', 21, 'costo', 1, 'componentes', [(26, 5)]]
+['segmento', 3, 'carga', 18, 'costo', 2, 'componentes', [(40, 1)]]
+['segmento', 4, 'carga', 14, 'costo', 30, 'componentes', [(40, 3)]]
+['segmento', 5, 'carga', 16, 'costo', 12, 'componentes', [(27, 2)]]
+['segmento', 6, 'carga', 18, 'costo', 2, 'componentes', [(41, 5), (41, 4)]]
+['segmento', 7, 'carga', 13, 'costo', 42, 'componentes', [(26, 1)]]
+['segmento', 8, 'carga', 22, 'costo', 2, 'componentes', [(26, 2)]]
+['segmento', 9, 'carga', 20, 'costo', 0, 'componentes', [(28, 3)]]
+['segmento', 10, 'carga', 16, 'costo', 12, 'componentes', [(28, 2), (40, 4)]]
+['segmento', 11, 'carga', 21, 'costo', 1, 'componentes', [(28, 1)]]
+['segmento', 12, 'carga', 14, 'costo', 30, 'componentes', [(40, 2)]]
+['segmento', 13, 'carga', 16, 'costo', 12, 'componentes', [67]]
+['segmento', 14, 'carga', 22, 'costo', 2, 'componentes', [(27, 1), (27, 3)]]
+['segmento', 15, 'carga', 16, 'costo', 12, 'componentes', [(41, 1)]]
+['segmento', 16, 'carga', 11, 'costo', 72, 'componentes', [(41, 3), (41, 2)]]
+['segmento', 17, 'carga', 59, 'costo', 50692, 'componentes', [(25, 1)]]
+['segmento', 18, 'carga', 7, 'costo', 156, 'componentes', [(25, 3)]]
+['segmento', 19, 'carga', 20, 'costo', 0, 'componentes', [42]]
+['segmento', 20, 'carga', 20, 'costo', 0, 'componentes', [(27, 4)]]
+['segmento', 21, 'carga', 10, 'costo', 90, 'componentes', [(28, 4)]]
+deseada: 20, máxima: 22, mínima: 18
+0.0527241230011 segundos
+
+radio: 
+2 77 2 7
+---------
+mínimo local
+costo 67747
+['segmento', 1, 'carga', 20, 'costo', 0, 'componentes', [64, (65, 4), (65, 5)]]
+['segmento', 2, 'carga', 19, 'costo', 1, 'componentes', [(63, 2), (63, 1)]]
+['segmento', 3, 'carga', 22, 'costo', 2, 'componentes', [(58, 5), (58, 4)]]
+['segmento', 4, 'carga', 22, 'costo', 2, 'componentes', [(62, 2)]]
+['segmento', 5, 'carga', 18, 'costo', 2, 'componentes', [(65, 3), (62, 1)]]
+['segmento', 6, 'carga', 22, 'costo', 2, 'componentes', [(58, 1), (63, 3)]]
+['segmento', 7, 'carga', 11, 'costo', 72, 'componentes', [(81, 4)]]
+['segmento', 8, 'carga', 26, 'costo', 70, 'componentes', [(81, 3), (81, 2), (81, 1)]]
+['segmento', 9, 'carga', 13, 'costo', 42, 'componentes', [(62, 4)]]
+['segmento', 10, 'carga', 19, 'costo', 1, 'componentes', [57]]
+['segmento', 11, 'carga', 23, 'costo', 4, 'componentes', [(58, 3), (58, 2)]]
+['segmento', 12, 'carga', 42, 'costo', 8022, 'componentes', [(62, 3)]]
+['segmento', 13, 'carga', 61, 'costo', 59360, 'componentes', [(65, 1)]]
+['segmento', 14, 'carga', 14, 'costo', 30, 'componentes', [66]]
+['segmento', 15, 'carga', 27, 'costo', 132, 'componentes', [(65, 2)]]
+['segmento', 16, 'carga', 19, 'costo', 1, 'componentes', [61]]
+['segmento', 17, 'carga', 23, 'costo', 4, 'componentes', [(63, 4)]]
+deseada: 20, máxima: 22, mínima: 18
+0.0690529346466 segundos
+
+radio: 
+2 77 2 8
+---------
+mínimo local
+costo 29972
+['segmento', 1, 'carga', 19, 'costo', 1, 'componentes', [(53, 5), 52]]
+['segmento', 2, 'carga', 20, 'costo', 0, 'componentes', [(51, 2), (51, 3)]]
+['segmento', 3, 'carga', 19, 'costo', 1, 'componentes', [(51, 5), (51, 1)]]
+['segmento', 4, 'carga', 20, 'costo', 0, 'componentes', [(56, 5), (56, 4)]]
+['segmento', 5, 'carga', 25, 'costo', 32, 'componentes', [(60, 1), (60, 2)]]
+['segmento', 6, 'carga', 25, 'costo', 32, 'componentes', [(55, 1), (60, 3), (60, 4)]]
+['segmento', 7, 'carga', 20, 'costo', 0, 'componentes', [(55, 3), (54, 1)]]
+['segmento', 8, 'carga', 19, 'costo', 1, 'componentes', [(54, 3), (53, 1)]]
+['segmento', 9, 'carga', 14, 'costo', 30, 'componentes', [(53, 3), (53, 4)]]
+['segmento', 10, 'carga', 14, 'costo', 30, 'componentes', [(56, 1), (56, 2)]]
+['segmento', 11, 'carga', 17, 'costo', 6, 'componentes', [(51, 4)]]
+['segmento', 12, 'carga', 18, 'costo', 2, 'componentes', [(53, 2)]]
+['segmento', 13, 'carga', 18, 'costo', 2, 'componentes', [(54, 2)]]
+['segmento', 14, 'carga', 17, 'costo', 6, 'componentes', [(54, 4)]]
+['segmento', 15, 'carga', 53, 'costo', 29824, 'componentes', [(55, 2)]]
+['segmento', 16, 'carga', 23, 'costo', 4, 'componentes', [(55, 4)]]
+['segmento', 17, 'carga', 19, 'costo', 1, 'componentes', [(56, 3)]]
+deseada: 20, máxima: 22, mínima: 18
+0.118497848511 segundos
+
+radio: 
+2 77 2 9
+---------
+mínimo local
+costo 934
+['segmento', 1, 'carga', 22, 'costo', 2, 'componentes', [(97, 1), (97, 2)]]
+['segmento', 2, 'carga', 14, 'costo', 30, 'componentes', [96, (87, 2), (97, 4)]]
+['segmento', 3, 'carga', 19, 'costo', 1, 'componentes', [(87, 6), (87, 5), (87, 4), (87, 3), (87, 1)]]
+['segmento', 4, 'carga', 11, 'costo', 72, 'componentes', [(86, 1)]]
+['segmento', 5, 'carga', 25, 'costo', 32, 'componentes', [(86, 3), (86, 4)]]
+['segmento', 6, 'carga', 30, 'costo', 522, 'componentes', [(93, 2)]]
+['segmento', 7, 'carga', 26, 'costo', 70, 'componentes', [(93, 1), (93, 4), (93, 3)]]
+['segmento', 8, 'carga', 11, 'costo', 72, 'componentes', [92]]
+['segmento', 9, 'carga', 26, 'costo', 70, 'componentes', [(93, 5)]]
+['segmento', 10, 'carga', 18, 'costo', 2, 'componentes', [(94, 3)]]
+['segmento', 11, 'carga', 21, 'costo', 1, 'componentes', [(94, 2), (94, 1)]]
+['segmento', 12, 'carga', 16, 'costo', 12, 'componentes', [88]]
+['segmento', 13, 'carga', 23, 'costo', 4, 'componentes', [(97, 3)]]
+['segmento', 14, 'carga', 24, 'costo', 12, 'componentes', [(86, 2)]]
+['segmento', 15, 'carga', 25, 'costo', 32, 'componentes', [(97, 5)]]
+deseada: 20, máxima: 22, mínima: 18
+0.082839012146 segundos
+
+radio: 
+2 77 2 10
+---------
+mínimo local
+costo 37769
+['segmento', 1, 'carga', 26, 'costo', 70, 'componentes', [82, (101, 4), (101, 5)]]
+['segmento', 2, 'carga', 23, 'costo', 4, 'componentes', [(100, 3), (100, 1)]]
+['segmento', 3, 'carga', 22, 'costo', 2, 'componentes', [(101, 3), (101, 1), (101, 2)]]
+['segmento', 4, 'carga', 20, 'costo', 0, 'componentes', [(99, 3), (99, 4)]]
+['segmento', 5, 'carga', 20, 'costo', 0, 'componentes', [(85, 3), (85, 4)]]
+['segmento', 6, 'carga', 18, 'costo', 2, 'componentes', [(85, 1), (84, 3)]]
+['segmento', 7, 'carga', 18, 'costo', 2, 'componentes', [(83, 3), (83, 1)]]
+['segmento', 8, 'carga', 15, 'costo', 20, 'componentes', [(98, 3), (98, 1)]]
+['segmento', 9, 'carga', 22, 'costo', 2, 'componentes', [(83, 2)]]
+['segmento', 10, 'carga', 32, 'costo', 1012, 'componentes', [(83, 4)]]
+['segmento', 11, 'carga', 30, 'costo', 522, 'componentes', [(84, 1)]]
+['segmento', 12, 'carga', 15, 'costo', 20, 'componentes', [(84, 2)]]
+['segmento', 13, 'carga', 11, 'costo', 72, 'componentes', [(84, 4)]]
+['segmento', 14, 'carga', 24, 'costo', 12, 'componentes', [(85, 2)]]
+['segmento', 15, 'carga', 15, 'costo', 20, 'componentes', [(98, 2)]]
+['segmento', 16, 'carga', 15, 'costo', 20, 'componentes', [(98, 4)]]
+['segmento', 17, 'carga', 16, 'costo', 12, 'componentes', [(99, 1)]]
+['segmento', 18, 'carga', 23, 'costo', 4, 'componentes', [(99, 2)]]
+['segmento', 19, 'carga', 55, 'costo', 35972, 'componentes', [(100, 2)]]
+['segmento', 20, 'carga', 19, 'costo', 1, 'componentes', [(100, 4)]]
+deseada: 20, máxima: 22, mínima: 18
+0.177319049835 segundos
+
+radio: 
+2 77 2 11
+---------
+mínimo local
+costo 63014
+['segmento', 1, 'carga', 14, 'costo', 30, 'componentes', [(77, 1), (76, 2)]]
+['segmento', 2, 'carga', 20, 'costo', 0, 'componentes', [(76, 3), (76, 1)]]
+['segmento', 3, 'carga', 16, 'costo', 12, 'componentes', [111, 109, 110, 108, (107, 1)]]
+['segmento', 4, 'carga', 18, 'costo', 2, 'componentes', [(107, 4), (107, 3)]]
+['segmento', 5, 'carga', 26, 'costo', 70, 'componentes', [(80, 3), (80, 1)]]
+['segmento', 6, 'carga', 13, 'costo', 42, 'componentes', [(105, 2), (105, 3)]]
+['segmento', 7, 'carga', 12, 'costo', 56, 'componentes', [(77, 4), (77, 5)]]
+['segmento', 8, 'carga', 7, 'costo', 156, 'componentes', [(104, 2), (104, 3)]]
+['segmento', 9, 'carga', 16, 'costo', 12, 'componentes', [(77, 2)]]
+['segmento', 10, 'carga', 20, 'costo', 0, 'componentes', [(77, 3)]]
+['segmento', 11, 'carga', 8, 'costo', 132, 'componentes', [(79, 1)]]
+['segmento', 12, 'carga', 29, 'costo', 352, 'componentes', [(79, 2)]]
+['segmento', 13, 'carga', 41, 'costo', 6880, 'componentes', [(79, 3)]]
+['segmento', 14, 'carga', 9, 'costo', 110, 'componentes', [(79, 4)]]
+['segmento', 15, 'carga', 26, 'costo', 70, 'componentes', [(80, 2)]]
+['segmento', 16, 'carga', 17, 'costo', 6, 'componentes', [(80, 4)]]
+['segmento', 17, 'carga', 60, 'costo', 54912, 'componentes', [(104, 1)]]
+['segmento', 18, 'carga', 8, 'costo', 132, 'componentes', [(104, 5)]]
+['segmento', 19, 'carga', 17, 'costo', 6, 'componentes', [(105, 1)]]
+['segmento', 20, 'carga', 25, 'costo', 32, 'componentes', [(105, 4)]]
+['segmento', 21, 'carga', 22, 'costo', 2, 'componentes', [(107, 2)]]
+deseada: 20, máxima: 22, mínima: 18
+0.125939846039 segundos
+
+radio: 
+2 77 3 1
+---------
+mínimo local
+costo 12940
+['segmento', 1, 'carga', 24, 'costo', 12, 'componentes', [(23, 3), (23, 4)]]
+['segmento', 2, 'carga', 18, 'costo', 2, 'componentes', [(2, 2), (2, 1)]]
+['segmento', 3, 'carga', 28, 'costo', 224, 'componentes', [(24, 2)]]
+['segmento', 4, 'carga', 16, 'costo', 12, 'componentes', [(24, 3), (24, 1)]]
+['segmento', 5, 'carga', 5, 'costo', 210, 'componentes', [(21, 1)]]
+['segmento', 6, 'carga', 33, 'costo', 1344, 'componentes', [(21, 3)]]
+['segmento', 7, 'carga', 14, 'costo', 30, 'componentes', [(10, 3)]]
+['segmento', 8, 'carga', 23, 'costo', 4, 'componentes', [(10, 4)]]
+['segmento', 9, 'carga', 13, 'costo', 42, 'componentes', [(10, 2), (10, 1)]]
+['segmento', 10, 'carga', 37, 'costo', 3392, 'componentes', [(2, 3)]]
+['segmento', 11, 'carga', 9, 'costo', 110, 'componentes', [1]]
+['segmento', 12, 'carga', 17, 'costo', 6, 'componentes', [(23, 1), (23, 2)]]
+['segmento', 13, 'carga', 28, 'costo', 224, 'componentes', [(21, 2)]]
+['segmento', 14, 'carga', 2, 'costo', 306, 'componentes', [(2, 4)]]
+['segmento', 15, 'carga', 11, 'costo', 72, 'componentes', [(21, 4)]]
+['segmento', 16, 'carga', 26, 'costo', 70, 'componentes', [(22, 1), (22, 3), (22, 2)]]
+['segmento', 17, 'carga', 41, 'costo', 6880, 'componentes', [(24, 4)]]
+deseada: 20, máxima: 22, mínima: 18
+0.0496828556061 segundos
+
+radio: 
+2 77 3 2
+---------
+mínimo local
+costo 54088
+['segmento', 1, 'carga', 21, 'costo', 1, 'componentes', [(9, 1), (8, 3), (8, 4), (8, 1)]]
+['segmento', 2, 'carga', 25, 'costo', 32, 'componentes', [(8, 2)]]
+['segmento', 3, 'carga', 45, 'costo', 12192, 'componentes', [(9, 2)]]
+['segmento', 4, 'carga', 6, 'costo', 182, 'componentes', [(9, 3)]]
+['segmento', 5, 'carga', 24, 'costo', 12, 'componentes', [(3, 2)]]
+['segmento', 6, 'carga', 35, 'costo', 2212, 'componentes', [(3, 1)]]
+['segmento', 7, 'carga', 8, 'costo', 132, 'componentes', [(3, 3)]]
+['segmento', 8, 'carga', 17, 'costo', 6, 'componentes', [(4, 2)]]
+['segmento', 9, 'carga', 19, 'costo', 1, 'componentes', [(4, 1), (4, 4)]]
+['segmento', 10, 'carga', 39, 'costo', 4932, 'componentes', [(3, 4)]]
+['segmento', 11, 'carga', 38, 'costo', 4114, 'componentes', [(4, 3)]]
+['segmento', 12, 'carga', 51, 'costo', 24420, 'componentes', [(9, 4)]]
+['segmento', 13, 'carga', 40, 'costo', 5852, 'componentes', [(4, 5)]]
+deseada: 20, máxima: 22, mínima: 18
+0.0220727920532 segundos
+
+radio: 
+2 77 3 3
