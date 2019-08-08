@@ -1,21 +1,9 @@
-from segmentacion.listados
-;
+/*
+hace join con la cartografía para recuperar los lados que no estan en el listado por no tener viviendas
+además de otros controles
+TODO: revisar cuales campos son necesarios, ya que la cosulta es una reutilización de otra reutilización de consultas
 
-----------------------
-
-delete segmentacion.conteos
-where shape = 'e0357'
-;
-insert into segmentacion.conteos (shape, prov, depto, codloc, frac, radio, mza, lado, conteo)
-select 'e0357' as shape,
-prov::integer, dpto::integer as depto, codloc::integer, frac::integer, radio::integer, mza::integer, lado::integer, 
-count(case when trim(cod_tipo_vivredef) in ('', 'CO', 'N', 'CA/', 'LO') then Null
-    else 1 end) as conteo
-from e0357d
-where id is not Null
-group by prov, dpto, codloc, frac, radio, mza, lado
-order by prov, dpto, codloc, frac, radio, mza, lado
-;
+*/
 
 ------------------------
 
@@ -24,17 +12,26 @@ DROP TABLE IF EXISTS segmentacion.conteos;
 --where shape =
 
 WITH listado_sin_vacios AS (
-    SELECT id, prov::integer, nom_provincia, dpto::integer, nom_dpto, codaglo, codloc::integer, nom_loc, codent, nom_ent, frac::integer, radio::integer, mza::integer,
+    SELECT 
+    -------------------- campos del listado
+    id, prov::integer, nom_provincia, dpto::integer, nom_dpto, codaglo, codloc::integer, nom_loc, codent, nom_ent, frac::integer, radio::integer, mza::integer,
     lado::integer,
 nro_inicial, nro_final, orden_recorrido_viv, nro_listado, ccalle, ncalle, nro_catastral, nrocatastralredef, piso, pisoredef, casa,
 dpto_habitacion, sector, edificio, entrada, cod_tipo_viv, cod_tipo_vivredef, cod_subt_vivloc, descripcion, descripcion_lado,
 cod_postal, orden_recorrido_mza, estado, esta_supervisado,
-creadoen, chequeadoen, editadoen, borradoen, creado, chequeado, editado, borrado, actualizador, supervisor, usuario, tipo_base, tipo_tarea FROM e0357d
+creadoen, chequeadoen, editadoen, borradoen, creado, chequeado, editado, borrado, actualizador, supervisor, usuario, tipo_base, tipo_tarea 
+    FROM 
+    -------------------- listado --------------------------
+    e0357d
+    -------------------------------------------------------
     WHERE prov!='' AND dpto!=''  AND codloc!='' and frac!='' and radio!='' and mza !='' and lado!=''
 )
 , e00 as (
     SELECT codigo10, nomencla, codigo20, ancho, anchomed, tipo, nombre, ladoi, ladod, desdei, desded, hastai, hastad, mzai, mzad,
-    codloc20, nomencla10, nomenclai, nomenclad, geom as wkb_geometry,'e0357a'::text cover FROM shapes.e0357a
+    codloc20, nomencla10, nomenclai, nomenclad, geom as wkb_geometry,
+    -------------------- nombre de covertura y tabla de shape
+    'e0357a'::text cover FROM shapes.e0357a
+    ---------------------------------------------------------
 )
 ,lados_de_manzana as (
     select codigo20,mzai||'-'||ladoi as lado_id, mzai as mza, ladoi as lado, avg(anchomed) as anchomed,
@@ -119,6 +116,7 @@ order by sum
 
 python SegmentaManzanasLados.py e0357 06 357
 python SegmentaManzanasLados_manu.py shapes.e0357a 06 357 8 12 10 1
+python SegmentaManzanasLados_manu.py tabla_shape prov depto min max deseado max_viv_mza_a_partir
 
 ----------------------------------
 /usr/pgsql-9.5/bin/pgsql2shp -u segmentador -P rodatnemges -f shapes/e0357a censo2020 shapes."e0357a"
