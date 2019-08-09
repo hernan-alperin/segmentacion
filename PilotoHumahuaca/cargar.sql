@@ -11,6 +11,12 @@ where trim(nom_dpto) = 'Humahuaca'
 DROP TABLE IF EXISTS segmentacion.conteos;
 --delete from segmentacion.conteos
 --where shape =
+alter table segmentacion.conteos owner to segmentador;
+alter schema e0359 owner to segmentador;
+alter table e0359.arc owner to segmentador;
+alter table e0359.arc add column segi integer;
+alter table e0359.arc add column segd integer;
+
 
 WITH listado_sin_vacios AS (
     SELECT 
@@ -81,30 +87,6 @@ ORDER BY count(CASE WHEN trim(cod_tipo_vivredef)='' THEN NULL ELSE cod_tipo_vivr
 
 
 ---------------------------------
-
-delete
-from segmentacion.adyacencias
-where prov::integer = 38 and depto::integer = 28
-;
-
-insert into segmentacion.adyacencias (shape, prov, depto, frac, radio, mza, lado, mza_ady, lado_ady)
-select 'e0359.arc' as shape, substr(mzai,1,2)::integer as prov, substr(mzai,3,3)::integer as depto
-    , substr(mzai,9,2)::integer as frac, substr(mzai,11,2)::integer as radio
-    , substr(mzai,13,3)::integer as mza, ladoi as lado, substr(mzad,13,3)::integer as mza_ady, ladod as lado_ady
-from e0359.arc
-where substr(mzai,1,12) = substr(mzad,1,12) -- mismo radio
-    and mzad != '' and mzad is not Null and mzai != '' and mzai is not Null
-    -- and ladod != 0 and ladod is not Null and ladoi != 0 and ladoi is not Null
-union
-select 'e0357a' as shape, substr(mzad,1,2)::integer as prov, substr(mzad,3,3)::integer as depto
-    , substr(mzad,9,2)::integer as frac, substr(mzad,11,2)::integer as radio
-    , substr(mzad,13,3)::integer as mza, ladod as lado, substr(mzai,13,3)::integer as mza_ady, ladoi as lado_ady
-from e0359.arc
-where substr(mzai,1,12) = substr(mzad,1,12) -- mismo radio
-    and mzai != '' and mzai is not Null and mzad != '' and mzad is not Null
-    -- and ladod != 0 and ladod is not Null and ladoi != 0 and ladoi is not Null
-;
-
 
 select frac, radio, mza, sum(conteo)
 from segmentacion.conteos
