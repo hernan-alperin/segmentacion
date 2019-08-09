@@ -1,3 +1,13 @@
+select *
+from e0359.listado
+where trim(nom_dpto) = 'Humahuaca'
+;
+
+
+
+
+---------------------------------------------------
+
 DROP TABLE IF EXISTS segmentacion.conteos;
 --delete from segmentacion.conteos
 --where shape =
@@ -13,15 +23,16 @@ cod_postal, orden_recorrido_mza, estado, esta_supervisado,
 creadoen, chequeadoen, editadoen, borradoen, creado, chequeado, editado, borrado, actualizador, supervisor, usuario, tipo_base, tipo_tarea 
     FROM 
     -------------------- listado --------------------------
-    e0357d
+    e0359.listado
     -------------------------------------------------------
     WHERE prov!='' AND dpto!=''  AND codloc!='' and frac!='' and radio!='' and mza !='' and lado!=''
+    and trim(nom_dpto) = 'Humahuaca'
 )
 , e00 as (
     SELECT codigo10, nomencla, codigo20, ancho, anchomed, tipo, nombre, ladoi, ladod, desdei, desded, hastai, hastad, mzai, mzad,
-    codloc20, nomencla10, nomenclai, nomenclad, geom as wkb_geometry,
+    codloc20, nomencla10, nomenclai, nomenclad, wkb_geometry,
     -------------------- nombre de covertura y tabla de shape
-    'e0357a'::text cover FROM shapes.e0357a
+    'e0359'::text cover FROM e0359.arc
     ---------------------------------------------------------
 )
 ,lados_de_manzana as (
@@ -56,7 +67,7 @@ lado_manzana AS (
 )
 
 -- Conteo x lado de manzna
-SELECT row_number() OVER () gid,'e0357a'::text shape, prov,dpto depto,codloc,frac,radio,mza,lado,
+SELECT row_number() OVER () gid,'e0359.arc'::text shape, prov,dpto depto,codloc,frac,radio,mza,lado,
 count(CASE WHEN trim(cod_tipo_vivredef) in ('', 'CO', 'N', 'CA/', 'LO')
  THEN NULL ELSE cod_tipo_vivredef END) conteo
 
@@ -73,14 +84,14 @@ ORDER BY count(CASE WHEN trim(cod_tipo_vivredef)='' THEN NULL ELSE cod_tipo_vivr
 
 delete
 from segmentacion.adyacencias
-where prov::integer = 06 and depto::integer = 357
+where prov::integer = 38 and depto::integer = 28
 ;
 
 insert into segmentacion.adyacencias (shape, prov, depto, frac, radio, mza, lado, mza_ady, lado_ady)
-select 'e0357a' as shape, substr(mzai,1,2)::integer as prov, substr(mzai,3,3)::integer as depto
+select 'e0359.arc' as shape, substr(mzai,1,2)::integer as prov, substr(mzai,3,3)::integer as depto
     , substr(mzai,9,2)::integer as frac, substr(mzai,11,2)::integer as radio
     , substr(mzai,13,3)::integer as mza, ladoi as lado, substr(mzad,13,3)::integer as mza_ady, ladod as lado_ady
-from shapes."e0357a"
+from e0359.arc
 where substr(mzai,1,12) = substr(mzad,1,12) -- mismo radio
     and mzad != '' and mzad is not Null and mzai != '' and mzai is not Null
     -- and ladod != 0 and ladod is not Null and ladoi != 0 and ladoi is not Null
@@ -88,7 +99,7 @@ union
 select 'e0357a' as shape, substr(mzad,1,2)::integer as prov, substr(mzad,3,3)::integer as depto
     , substr(mzad,9,2)::integer as frac, substr(mzad,11,2)::integer as radio
     , substr(mzad,13,3)::integer as mza, ladod as lado, substr(mzai,13,3)::integer as mza_ady, ladoi as lado_ady
-from shapes."e0357a"
+from e0359.arc
 where substr(mzai,1,12) = substr(mzad,1,12) -- mismo radio
     and mzai != '' and mzai is not Null and mzad != '' and mzad is not Null
     -- and ladod != 0 and ladod is not Null and ladoi != 0 and ladoi is not Null
