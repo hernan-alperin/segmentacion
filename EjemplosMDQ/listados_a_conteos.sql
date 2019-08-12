@@ -7,10 +7,12 @@ TODO: revisar cuales campos son necesarios, ya que la cosulta es una reutilizaci
 
 ------------------------
 
-DROP TABLE IF EXISTS segmentacion.conteos;
---delete from segmentacion.conteos
---where shape =
+--DROP TABLE IF EXISTS segmentacion.conteos
+delete from segmentacion.conteos
+where shape = 'e0357a'
+;
 
+insert into segmentacion.conteos
 WITH listado_sin_vacios AS (
     SELECT 
     -------------------- campos del listado
@@ -70,7 +72,7 @@ count(CASE WHEN trim(cod_tipo_vivredef) in ('', 'CO', 'N', 'CA/', 'LO')
  THEN NULL ELSE cod_tipo_vivredef END) conteo
 
 --,st_line_interpolate_point(ST_OffsetCurve(((geom)),-8),0.5) geom
-INTO segmentacion.conteos
+--INTO segmentacion.conteos
 FROM listado_carto
 GROUP BY prov,dpto,codloc,frac,radio,mza,lado, geom
 ORDER BY count(CASE WHEN trim(cod_tipo_vivredef)='' THEN NULL ELSE cod_tipo_vivredef END) desc
