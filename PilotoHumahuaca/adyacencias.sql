@@ -191,3 +191,33 @@ from adyacencias
 
                                    
                                    
+select * 
+from segmentacion.adyacencias
+where prov = 38 and depto = 28 and frac = 4 and radio = 1
+and (mza = 1 or mza = 12)
+order by mza
+;
+                                   
+/*
+   shape   | prov | depto | codloc | frac | radio | mza | lado | mza_ady | lado_ady
+-----------+------+-------+--------+------+-------+-----+------+---------+----------
+ e0359.arc |   38 |    28 |      4 |    4 |     1 |   1 |    1 |       2 |
+ e0359.arc |   38 |    28 |      4 |    4 |     1 |   1 |    1 |       2 |
+ e0359.arc |   38 |    28 |      4 |    4 |     1 |   1 |    1 |       4 |
+ e0359.arc |   38 |    28 |        |    4 |     1 |   1 |    2 |       4 |        4
+ e0359.arc |   38 |    28 |        |    4 |     1 |   1 |    3 |       2 |        1
+ e0357a    |   38 |    28 |        |    4 |     1 |   1 |    4 |      19 |        2
+ e0359.arc |   38 |    28 |      4 |    4 |     1 |  12 |    2 |       1 |
+ e0359.arc |   38 |    28 |        |    4 |     1 |  12 |    3 |      11 |        1
+ e0359.arc |   38 |    28 |        |    4 |     1 |  12 |    2 |      13 |        4
+ e0359.arc |   38 |    28 |      4 |    4 |     1 |  12 |    1 |       1 |
+ e0359.arc |   38 |    28 |      4 |    4 |     1 |  12 |    1 |       1 |
+ e0357a    |   38 |    28 |        |    4 |     1 |  12 |    4 |       9 |        2
+(12 filas)
+
+muy raro... borramos los nulls pero chequear qué pasa
+*/
+                                   
+delete from segmentacion.adyacencias
+where lado_ady is Null
+;
