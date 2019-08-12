@@ -1,6 +1,6 @@
 select mza, lado, count(CASE WHEN trim(cod_tipo_vivredef)='' THEN NULL ELSE cod_tipo_vivredef END) 
 from e0359.listado 
-where radio = '15' and prov = '38' and dpto = '028' and frac = '04'
+where radio = '3' and prov = '38' and dpto = '028' and frac = '04'
 --and trim(cod_tipo_vivredef) not in ('', 'CO', 'N', 'CA/', 'LO') 
 group by prov, dpto, frac, radio, mza, lado
 order by prov, dpto, frac, radio, mza, lado
