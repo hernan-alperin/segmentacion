@@ -8,6 +8,8 @@ order by prov, dpto, frac, radio, mza, lado
 
 -------------------------------------
 
+alter table e0359.arc drop column conteoi;
+alter table e0359.arc drop column conteod;
 alter table e0359.arc add column conteoi integer;
 alter table e0359.arc add column conteod integer;
 
@@ -18,10 +20,10 @@ select $1 ~ ''^(-)?[0-9]+$'' as result
 update e0359.arc a
 set conteoi = count
 from 
-
-(with listado_pulido as (select * from e0359.listado where isdigits(lado) and isdigits(mza))
-select mzai, ladoi, prov, dpto, frac, radio, mza, lado, count(CASE WHEN trim(cod_tipo_vivredef)='' THEN NULL ELSE cod_tipo_vivredef END)
-from listado_pulido
+(
+select mzai, ladoi, prov, dpto, frac, radio, mza, lado, 
+ count(CASE WHEN trim(cod_tipo_vivredef) in ('', 'CO', 'N', 'CA/', 'LO') THEN NULL ELSE cod_tipo_vivredef END)
+from e0359.listado
 join 
 e0359.arc
 on
@@ -29,7 +31,6 @@ on
   and case when mzai = '' then 0 else substr(mzai, 11, 2)::integer end = radio::integer
   and case when mzai = '' then 0 else substr(mzai, 9, 2)::integer end = frac::integer
 where prov = '38' and dpto = '028'
-and trim(cod_tipo_vivredef) not in ('', 'CO', 'N', 'CA/', 'LO') 
 group by mzai, ladoi, mzad, ladod, prov, dpto, frac, radio, mza, lado
 order by prov, dpto, frac, radio, mza, lado
 )
@@ -44,9 +45,9 @@ set conteod = count
 from 
 
 (
-with listado_pulido as (select * from e0359.listado where isdigits(lado) and isdigits(mza))
-select mzad, ladod, prov, dpto, frac, radio, mza, lado, count(CASE WHEN trim(cod_tipo_vivredef)='' THEN NULL ELSE cod_tipo_vivredef END)
-from listado_pulido
+select mzad, ladod, prov, dpto, frac, radio, mza, lado, 
+  count(CASE WHEN trim(cod_tipo_vivredef) in ('', 'CO', 'N', 'CA/', 'LO') THEN NULL ELSE cod_tipo_vivredef END)
+from e0359.listado
 join 
 e0359.arc
 on
@@ -54,7 +55,6 @@ on
   and case when mzad = '' then 0 else substr(mzad, 11, 2)::integer end = radio::integer
   and case when mzad = '' then 0 else substr(mzad, 9, 2)::integer end = frac::integer
 where prov = '38' and dpto = '028'
-and trim(cod_tipo_vivredef) not in ('', 'CO', 'N', 'CA/', 'LO') 
 group by mzad, ladod, prov, dpto, frac, radio, mza, lado
 order by prov, dpto, frac, radio, mza, lado
 )
@@ -62,5 +62,3 @@ as b
 where a.mzad = b.mzad and a.ladod = b.ladod
 
 ;
-
-
