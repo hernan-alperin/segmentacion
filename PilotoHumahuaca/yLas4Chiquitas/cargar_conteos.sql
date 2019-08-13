@@ -5,16 +5,15 @@ grant usage on schema listados to segmentador;
 grant select on listados.listado_humauaca_chiquitas to segmentador;
 commit;
 
-create function cargar(shape text) 
+create or replace function indec.cargar_conteos(schema text, tabla text) 
 returns integer as
 $$
 begin
-delete from segmentacion.conteos
-where shape = '$1.arc';
-execute 'grant usage on schema ' || shape || ' to segmentador';
-execute 'grant all on ' || schema || '.arc to segmentador';
-execute 'alter table ' || schema || '.e0359.arc add column segi integer';
-execute 'alter table ' || schema || '.e0359.arc add column segd integer';
+execute 'delete from segmentacion.conteos where shape = ' || schema || '.' || tabla || '';
+execute 'grant usage on schema ' || schema || ' to segmentador';
+execute 'grant all on ' || schema || '.' || tabla || ' to segmentador';
+execute 'alter table ' || schema || '.' || tabla || ' add column segi integer';
+execute 'alter table ' || schema || '.' || tabla || ' add column segd integer';
 execute '
 WITH listado_sin_vacios AS (
     SELECT 
@@ -30,7 +29,8 @@ WITH listado_sin_vacios AS (
     SELECT codigo10, nomencla, codigo20, ancho, anchomed, tipo, nombre, ladoi, ladod, desdei, desded, hastai, hastad, mzai, mzad,
     codloc20, nomencla10, nomenclai, nomenclad, wkb_geometry,
     -------------------- nombre de covertura y tabla de shape
-    ''$1''::text cover FROM ' || $1 || '.arc
+    ' || schema || '.' || tabla '::text as cover 
+    FROM ' || tabla || '
     ---------------------------------------------------------
 )
 , lados_de_manzana as (
@@ -67,7 +67,7 @@ lado_manzana AS (
     LEFT JOIN listado_sin_vacios USING (prov,dpto,codloc,frac,radio,mza,lado)
 )
 -- Conteo x lado de manzna
-SELECT row_number() OVER () gid,''$1.arc''::text shape, prov, dpto depto, codloc,
+SELECT row_number() OVER () gid,' || shape || '.' || tabla || '::text shape, prov, dpto depto, codloc,
     frac, radio, mza, lado,
     count(CASE 
           WHEN trim(cod_tipo_vivredef) in ('''', ''CO'', ''N'', ''CA/'', ''LO'')
