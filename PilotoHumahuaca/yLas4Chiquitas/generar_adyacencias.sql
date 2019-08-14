@@ -27,8 +27,8 @@ or tabla = 'e5759.arc'
 or tabla = 'e5760.arc'
 ;
 
---drop table carto.lados_de_manzana cascade;
---create table carto.lados_de_manzana as
+drop table if exists carto.lados_de_manzana cascade;
+create table carto.lados_de_manzana as
 --
 with pedacitos_de_lado as (-- mza como PPDDDLLLFFRRMMM select mzad as mza, ladod as lado, avg(anchomed) as anchomed,
     select tabla, mzad as mza, ladod as lado,
@@ -52,7 +52,8 @@ with pedacitos_de_lado as (-- mza como PPDDDLLLFFRRMMM select mzad as mza, ladod
     order by mza, lado
     ),
     lados_orientados as (
-    select tabla, mza as nomencla, 
+    select tabla, substr(mza,1,2)::integer as prov, substr(mza,3,3)::integer as depto,
+        substr(mza,6,3)::integer as codloc,
         substr(mza,9,2)::integer as frac, substr(mza,11,2)::integer as radio, 
         substr(mza,13,3)::integer as mza, lado,
         tipos, codigos, calles,
@@ -62,13 +63,18 @@ with pedacitos_de_lado as (-- mza como PPDDDLLLFFRRMMM select mzad as mza, ladod
     order by tabla, mza, lado
     )
 --
-insert into carto.lados_de_manzana 
+--insert into carto.lados_de_manzana 
 --
 select row_number() over() as id, *,
     ST_StartPoint(lado_geom) as nodo_i_geom, ST_EndPoint(lado_geom) as nodo_j_geom
 from lados_orientados
-order by mza, lado
+order by tabla, prov, depto, codloc, mza, lado
 ;
 
-                     
--
+create view carto.conteos_por_lado_de_manzana as
+select tabla, prov, depto, codloc, frac, radio, mza, lado, conteo
+from segmentacion.conteos
+join
+carto.lados_de_manzana
+using (tabla, prov, depto, codloc, frac, radio, mza, lado)
+;
