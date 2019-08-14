@@ -75,7 +75,7 @@ lado_manzana AS (
     LEFT JOIN listado_sin_vacios USING (prov,dpto,codloc,frac,radio,mza,lado)
 )
 -- Conteo x lado de manzna
-insert INTO segmentacion.conteos
+insert INTO segmentacion.conteos (id,tabla,prov,depto,codloc,frac,radio,mza,lado,conteo) 
 SELECT row_number() OVER () id, ''' || schema || '.' || tabla || '''::text as tabla, prov, dpto depto, codloc,
     frac, radio, mza, lado,
     count(CASE
