@@ -16,7 +16,7 @@ CREATE OR REPLACE FUNCTION indec.cargar_conteos(schema text, tabla text)
 AS $function$
 
 begin
-execute 'delete from segmentacion.conteos where shape = ''' || schema || '.' || tabla || '''';
+execute 'delete from segmentacion.conteos where tabla = ''' || schema || '.' || tabla || '''';
 execute 'grant usage on schema ' || schema || ' to segmentador';
 execute 'grant all on ' || schema || '.' || tabla || ' to segmentador';
 execute '
@@ -76,7 +76,7 @@ lado_manzana AS (
 )
 -- Conteo x lado de manzna
 insert INTO segmentacion.conteos
-SELECT row_number() OVER () id, ''' || schema || '.' || tabla || '''::text as shape, prov, dpto depto, codloc,
+SELECT row_number() OVER () id, ''' || schema || '.' || tabla || '''::text as tabla, prov, dpto depto, codloc,
     frac, radio, mza, lado,
     count(CASE
           WHEN trim(cod_tipo_vivredef) in ('''', ''CO'', ''N'', ''CA/'', ''LO'')
