@@ -48,6 +48,7 @@ class Componente:
     def agregar_adyacencia(self, ady):
         self.adyacentes.append(ady)
 
+
 class Componentes(list):
 
     def __str__(self):
@@ -62,6 +63,15 @@ class Componentes(list):
     def min_id(self):
         return min(self.ids())
 
+    def sacar_componente(self, este):
+        pass
+
+    def transferir_componente(self, este, estos):
+        pass
+
+    def unir_componentes(self, estos):
+        pass
+    
     def segmentos(self):
         sgms = Segmentos()
         for c in self:
