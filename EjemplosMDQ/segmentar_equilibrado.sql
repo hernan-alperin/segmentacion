@@ -38,7 +38,6 @@ with deseado as (select
         select depto, frac, radio, mza, lado, numero, piso, min(id) as min_id
         from listados.mdq
         group by depto, frac, radio, mza, lado, numero, piso
-        order by depto, frac, radio, mza, lado, numero, min_id
     ),    
     pisos_abiertos as (
         select id, depto, frac, radio, mza, lado, numero, piso, apt, min_id,
