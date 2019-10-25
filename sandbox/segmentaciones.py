@@ -71,55 +71,55 @@ class Componentes(list):
             clausura = Componentes([este]) # contiene al menos a este
             i = 0
             while i < len(self): # i es el puntero lo que que falta expandir
-            # i se incrementa de a 1 expandiendo de a 1 las adyacencias
-            # hasta que la variable clausura no se expande más,
-            # queda en un puntos fijo, i.e. es una clausura
-            adyacentes_i = [ese for ese in adyacentes[clausura[i]] if ese in self]
-            # los adyacentes a la i-ésimo elemento de la clausura que están en la coleccion
-            nuevos = [ese for ese in adyacentes_i if ese not in clausura] # no agragados aún
-            clausura.extend(nuevos) # se agregan al final las adyacencias no agregadas
-            i = i + 1
-        return clausura
+                # i se incrementa de a 1 expandiendo de a 1 las adyacencias
+                # hasta que la variable clausura no se expande más,
+                # queda en un puntos fijo, i.e. es una clausura
+                adyacentes_i = [ese for ese in adyacentes[clausura[i]] if ese in self]
+                # los adyacentes a la i-ésimo elemento de la clausura que están en la coleccion
+                nuevos = [ese for ese in adyacentes_i if ese not in clausura] # no agragados aún
+                clausura.extend(nuevos) # se agregan al final las adyacencias no agregadas
+                i = i + 1
+            return clausura
             
     def conectados(self):
-    # True si coleccion es conexo, no hay partes separadas,
-    if not self: # es vacio
-        return True
-    else:
-        este = self[0] # este es cualquiera, se elije el primero
-        return len(self.clausura_conexa(este)) == self.len()
+        # True si coleccion es conexo, no hay partes separadas,
+        if not self: # es vacio
+            return True
+        else:
+            este = self[0] # este es cualquiera, se elije el primero
+            return len(self.clausura_conexa(este)) == self.len()
 
     
     def sacar_componente(self, este):
-    # devuelve las partes de Componentes conexas originales resultado de remover la manzana m del segmento
-    if este not in self:
-        return []
-    else:
-        esos = Componentes(self) # copia para no modificar el original
-        esos.remove(este)
-        partes = Componentes()
-        while esos: # es no vacia
-            ese = esos[0] # se elige uno cualquiera, se usa el 1ro
-            clausura_de_ese_en_esos = clausura_conexa(ese, esos)
-            for aquel in clausura_de_ese_en_esos:
-                if aquel not in esos: # (?) cómo puede ser?????
-            #        pass
-                    raise Exception("elemento " + str(aquel) + " no está en " + str(esos)
-                        + "\nclausura_de_ese_en_esos " + str(clausura_de_ese_en_esos))
-                else:  # para que no se rompa acá....
-                    esos.remove(aquel) # en esos queda el resto no conexo a aquel
-            partes.append(clausura_de_ese_en_esos)
-        return partes
+        # devuelve las partes de Componentes conexas originales resultado de remover la manzana m del segmento
+        if este not in self:
+            return []
+        else:
+            esos = Componentes(self) # copia para no modificar el original
+            esos.remove(este)
+            partes = Componentes()
+            while esos: # es no vacia
+                ese = esos[0] # se elige uno cualquiera, se usa el 1ro
+                clausura_de_ese_en_esos = clausura_conexa(ese, esos)
+                for aquel in clausura_de_ese_en_esos:
+                    if aquel not in esos: # (?) cómo puede ser?????
+                #        pass
+                        raise Exception("elemento " + str(aquel) + " no está en " + str(esos)
+                            + "\nclausura_de_ese_en_esos " + str(clausura_de_ese_en_esos))
+                    else:  # para que no se rompa acá....
+                        esos.remove(aquel) # en esos queda el resto no conexo a aquel
+                partes.append(clausura_de_ese_en_esos)
+            return partes
 
     def transferir_componente(self, este, esos):
-    # transferir este del segmento origen al los Componentes esos
-    # devuelve una lista con 2 elementos ... los nuevos estos y esos
-    if not conectados(esos + [este]): # no puedo transferir
-        return False
-    elif len(estos) == 1: # no queda resto, se fusiona origen con destino
-        return self.extend(esos)
-    else:
-        return self.sacar_component(este).extend(esos.append(este))
+        # transferir este del segmento origen al los Componentes esos
+        # devuelve una lista con 2 elementos ... los nuevos estos y esos
+        if not conectados(esos + [este]): # no puedo transferir
+            return False
+        elif len(estos) == 1: # no queda resto, se fusiona origen con destino
+            return self.extend(esos)
+        else:
+            return self.sacar_component(este).extend(esos.append(este))
     
     def unir_componentes(self, esos):
     # fusión estos Componentes con esos
