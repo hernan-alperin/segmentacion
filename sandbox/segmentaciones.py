@@ -54,6 +54,17 @@ class Componente:
 
 class Componentes(list):
 
+    """
+    TODO:
+    definir 
+    lo_mismo
+    igual
+    identico
+    """
+
+    # def __init__(self):
+    #   ordenar por id    
+
     def __str__(self):
         s = ''
         for c in self:
