@@ -49,7 +49,7 @@ class TestComponentesMethods(unittest.TestCase):
     def test_clausura_conexa(self):
         c0 = Componente(0, 0)
         assert self.componentes.clausura_conexa(c0) == Componentes()
-        assert self.componentes.clausura_conexa(self.c1) == Componentes(self.c1)
+        assert self.componentes.clausura_conexa(self.c1) == Componentes([self.c1])
 
 if __name__ == '__main__':
     unittest.main()

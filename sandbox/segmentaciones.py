@@ -48,6 +48,9 @@ class Componente:
     def agregar_adyacencia(self, ady):
         self.adyacentes.append(ady)
 
+    def adyacencias(self):
+        return self.adyacentes
+
 
 class Componentes(list):
 
@@ -70,11 +73,11 @@ class Componentes(list):
         else:
             clausura = Componentes([este]) # contiene al menos a este
             i = 0
-            while i < len(self): # i es el puntero lo que que falta expandir
+            while i < len(clausura): # i es el puntero lo que que falta expandir
                 # i se incrementa de a 1 expandiendo de a 1 las adyacencias
                 # hasta que la variable clausura no se expande más,
                 # queda en un puntos fijo, i.e. es una clausura
-                adyacentes_i = [ese for ese in adyacentes[clausura[i]] if ese in self]
+                adyacentes_i = [ese for ese in clausura[i].adyacencias() if ese in self]
                 # los adyacentes a la i-ésimo elemento de la clausura que están en la coleccion
                 nuevos = [ese for ese in adyacentes_i if ese not in clausura] # no agragados aún
                 clausura.extend(nuevos) # se agregan al final las adyacencias no agregadas
