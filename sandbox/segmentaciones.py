@@ -72,7 +72,7 @@ class Componentes(list):
         return s
 
     def ids(self):
-        return [c.id for c in self]
+        return set(c.id for c in self)
 
     def min_id(self):
         return min(self.ids())

@@ -30,10 +30,9 @@ componentes = Componentes([c1, c2, c3, c4, c5])
 class TestComponentesMethods(unittest.TestCase):
 
     def test_ids(self):
-#        self.assertEqual(componentes.ids(), [1, 2, 3, 4, 5]) # standard unittest
-        assert componentes.ids() == [1, 2, 3, 4, 5]
-        assert componentes.ids() != [1, 2, 3, 4, 6]
-        assert componentes.ids() != [1, 2, 3, 4]
+        assert componentes.ids() == set([1, 2, 3, 4, 5])
+        assert componentes.ids() != set([1, 2, 3, 4, 6])
+        assert componentes.ids() != set([1, 2, 3, 4])
 
     def test_min_id(self):
         assert componentes.min_id() == 1
@@ -48,10 +47,10 @@ class TestComponentesMethods(unittest.TestCase):
 
     def test_clausura_conexa(self):
         c0 = Componente(0, 0)
-        assert componentes.clausura_conexa(c0) == Componentes()
-        assert componentes.clausura_conexa(c1) == Componentes([c1])
-        assert componentes.clausura_conexa(c4) == Componentes([c4, c5])
-        assert componentes.clausura_conexa(c2) == componentes
+        assert componentes.clausura_conexa(c0).ids() == Componentes().ids()
+        assert componentes.clausura_conexa(c1).ids() == Componentes([c1]).ids()
+        assert componentes.clausura_conexa(c4).ids() == Componentes([c4, c5]).ids()
+        assert componentes.clausura_conexa(c2).ids() == componentes.ids()
 
 if __name__ == '__main__':
     unittest.main()
