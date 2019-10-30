@@ -37,10 +37,11 @@ class Componente:
     # elemento unitario o indivisible para el caso de segmentación
     # puede ser un lado o una manzana
 
-    def __init__(self, id, vivs):
+    def __init__(self, id, vivs=0, longitud=0):
         self.adyacentes = []
         self.id = id
         self.vivs = vivs
+        self.longitud = longitud
 
     def __str__(self):
         return str((self.id, self.vivs))
@@ -96,12 +97,13 @@ class Componentes(list):
             return clausura
             
     def conectados(self):
-        # True si coleccion es conexo, no hay partes separadas,
+        # True si desde el primero se puede llagar a totos los otros
+        # a través de adyacencias
         if not self: # es vacio
             return True
         else:
-            este = self[0] # este es cualquiera, se elije el primero
-            return len(self.clausura_conexa(este)) == self.len()
+            este = self[0] # el primero está conectado con el resto
+            return len(self.clausura_conexa(este)) == len(self)
 
     
     def sacar_componente(self, este):

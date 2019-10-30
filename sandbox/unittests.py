@@ -52,5 +52,9 @@ class TestComponentesMethods(unittest.TestCase):
         assert componentes.clausura_conexa(c4).ids() == Componentes([c4, c5]).ids()
         assert componentes.clausura_conexa(c2).ids() == componentes.ids()
 
+    def test_conectados(self):
+        assert Componentes([c4, c5]).conectados()
+        assert ~Componentes([c1, c5]).conectados()
+
 if __name__ == '__main__':
     unittest.main()
