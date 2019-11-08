@@ -37,14 +37,14 @@ class Componente:
     # elemento unitario o indivisible para el caso de segmentación
     # puede ser un lado o una manzana
 
-    def __init__(self, id, vivs=0, longitud=0):
+    def __init__(self, c_id, vivs=0, longitud=0):
         self.adyacentes = []
-        self.id = id
+        self.c_id = c_id
         self.vivs = vivs
         self.longitud = longitud
 
     def __str__(self):
-        return str((self.id, self.vivs))
+        return str((self.c_id, self.vivs))
 
     def agregar_adyacencia(self, ady):
         self.adyacentes.append(ady)
@@ -52,7 +52,17 @@ class Componente:
     def adyacencias(self):
         return self.adyacentes
 
+class TypedList(list):
+    def __init__(self, type):
+        self.type = type
 
+    def append(self, item):
+        if not isinstance(item, self.type):
+            raise (TypeError, 'item is not of type %s' % self.type)
+        super(TypedList, self).append(item)  #append the item to itself (the list)
+
+
+#class Componentes(TypedList):
 class Componentes(list):
 
     """
@@ -63,22 +73,22 @@ class Componentes(list):
     identico
     """
 
-    # def __init__(self):
-    #   ordenar por id    
+#    def __init__(self):
+#        self.type = Componente
 
     def __str__(self):
-        s = ''
+        s = '['
         for c in self:
-            s += str(c) + ' '
-        return s
+            s += str(c) + ', '
+        return s[:-2] + ']'
 
     def ids(self):
-        return set(c.id for c in self)
+        return set(c.c_id for c in self)
 
     def min_id(self):
         return min(self.ids())
 
-    def clausura_conexa (self, este):
+    def clausura_conexa(self, este):
         # devuelve todos los Componentes alcanzables desde este usando adyacencias
         if este not in self:
             return Componentes() # vacio, caso seguro
@@ -91,10 +101,10 @@ class Componentes(list):
                 # queda en un puntos fijo, i.e. es una clausura
                 adyacentes_i = [ese for ese in clausura[i].adyacencias() if ese in self]
                 # los adyacentes a la i-ésimo elemento de la clausura que están en la coleccion
-                nuevos = [ese for ese in adyacentes_i if ese not in clausura] # no agragados aún
+                nuevos = Componentes([ese for ese in adyacentes_i if ese not in clausura]) # no agragados aún
                 clausura.extend(nuevos) # se agregan al final las adyacencias no agregadas
                 i = i + 1
-            return clausura
+            return Componentes(sorted(clausura, key=lambda c: c.c_id))
             
     def conectados(self):
         # True si desde el primero se puede llagar a totos los otros
@@ -116,7 +126,7 @@ class Componentes(list):
             partes = Componentes()
             while esos: # es no vacia
                 ese = esos[0] # se elige uno cualquiera, se usa el 1ro
-                clausura_de_ese_en_esos = clausura_conexa(ese, esos)
+                clausura_de_ese_en_esos = esos.clausura_conexa(ese)
                 for aquel in clausura_de_ese_en_esos:
                     if aquel not in esos: # (?) cómo puede ser?????
                 #        pass
@@ -125,22 +135,28 @@ class Componentes(list):
                     else:  # para que no se rompa acá....
                         esos.remove(aquel) # en esos queda el resto no conexo a aquel
                 partes.append(clausura_de_ese_en_esos)
-            return partes
+            return sorted(partes, key=lambda cs: cs.min_id())
 
     def transferir_componente(self, este, esos):
         # transferir este del segmento origen al los Componentes esos
-        # devuelve una lista con 2 elementos ... los nuevos estos y esos
-        if not conectados(esos + [este]): # no puedo transferir
+        # devuelve una lista con a lo sumo 2 elementos ... los nuevos estos y esos
+        if este not in self: # no se puede transferir un elemento que no esté
             return False
-        elif len(estos) == 1: # no queda resto, se fusiona origen con destino
-            return self.extend(esos)
+        elif not Componentes([este] + esos).conectados(): # no se puede transferir si no es adyacente
+            return False
+        elif len(self) == 1: # no queda resto, se fusiona origen con destino
+            return [Componentes(sorted(esos + [este], key=lambda c: c.c_id))]
         else:
-            return self.sacar_component(este).extend(esos.append(este))
+            estos = self.sacar_componente(este)
+            aquellos = Componentes(sorted(esos + [este], key=lambda c: c.c_id))
+            return sorted(estos + [aquellos], key=lambda cs: cs.min_id())
     
     def unir_componentes(self, esos):
     # fusión estos Componentes con esos
-        if self.conectados(esos):
-            return self.extend(esos)
+        if Componentes(self + esos).conectados():
+            return Componentes(self + esos)
+        else:
+            return False
     
     def segmentos(self):
         sgms = Segmentos()
@@ -162,7 +178,7 @@ class Componentes(list):
         return sgms
 
     def ordenar(self):
-        self.sort(key=lambda x: x.id)
+        self.sort(key=lambda x: x.c_id)
         return
 
     def recorridos(self, 
