@@ -52,17 +52,19 @@ class Componente:
     def adyacencias(self):
         return self.adyacentes
 
-class TypedList(list):
-    def __init__(self, type):
-        self.type = type
+    def get_type(self):
+        pass
 
-    def append(self, item):
-        if not isinstance(item, self.type):
-            raise (TypeError, 'item is not of type %s' % self.type)
-        super(TypedList, self).append(item)  #append the item to itself (the list)
+class Lado(Componente):
 
+    def get_manzana(self):
+        pass
 
-#class Componentes(TypedList):
+class Manzana(Componente):
+
+    def get_lados(self):
+        pass
+
 class Componentes(list):
 
     """
@@ -72,9 +74,6 @@ class Componentes(list):
     igual
     identico
     """
-
-#    def __init__(self):
-#        self.type = Componente
 
     def __str__(self):
         s = '['
@@ -104,7 +103,7 @@ class Componentes(list):
                 nuevos = Componentes([ese for ese in adyacentes_i if ese not in clausura]) # no agragados aún
                 clausura.extend(nuevos) # se agregan al final las adyacencias no agregadas
                 i = i + 1
-            return Componentes(sorted(clausura, key=lambda c: c.c_id))
+            return Componentes(clausura).ordenado()
             
     def conectados(self):
         # True si desde el primero se puede llagar a totos los otros
@@ -135,7 +134,7 @@ class Componentes(list):
                     else:  # para que no se rompa acá....
                         esos.remove(aquel) # en esos queda el resto no conexo a aquel
                 partes.append(clausura_de_ese_en_esos)
-            return sorted(partes, key=lambda cs: cs.min_id())
+            return Segmentos(partes).ordenados()
 
     def transferir_componente(self, este, esos):
         # transferir este del segmento origen al los Componentes esos
@@ -145,11 +144,11 @@ class Componentes(list):
         elif not Componentes([este] + esos).conectados(): # no se puede transferir si no es adyacente
             return False
         elif len(self) == 1: # no queda resto, se fusiona origen con destino
-            return [Componentes(sorted(esos + [este], key=lambda c: c.c_id))]
+            return Segmentos([Componentes(esos + [este]).ordenado()])
         else:
             estos = self.sacar_componente(este)
-            aquellos = Componentes(sorted(esos + [este], key=lambda c: c.c_id))
-            return sorted(estos + [aquellos], key=lambda cs: cs.min_id())
+            aquellos = Componentes(esos + [este]).ordenado()
+            return Segmentos(estos + [aquellos]).ordenados()
     
     def unir_componentes(self, esos):
     # fusión estos Componentes con esos
@@ -159,6 +158,7 @@ class Componentes(list):
             return False
     
     def segmentos(self):
+        # todos los segmento posibles respetando adyacencias
         sgms = Segmentos()
         for c in self:
             sgms.append(Segmento([c]))
@@ -180,6 +180,12 @@ class Componentes(list):
     def ordenar(self):
         self.sort(key=lambda x: x.c_id)
         return
+
+    def ordenado(self):
+        # devuelve una copia del segmento con sus componentes ordenados por id
+        copia = Segmento(self)
+        copia.sort(key=lambda x: x.c_id)
+        return copia
 
     def recorridos(self, 
         hasta=max(1.5*segmentacion_deseada, segmentacion_deseada + 4),
@@ -222,10 +228,13 @@ class Componentes(list):
 class Segmento(Componentes):
 
     def carga(self):
-        return sum(c.vivs for c in self) - segmentacion_deseada 
+        return sum(c.vivs for c in self)
+
+    def longitud(self):
+        return sum(c.longitud for c in self)    
 
     def costo(self):
-        return abs(self.carga())
+        return abs(self.carga()) - segmentacion_deseada
 
     def __str__(self):
         s = '['
@@ -238,14 +247,8 @@ class Segmento(Componentes):
         # devuelve su lista de componentes
         return Componentes(super().componentes())
 
-    def id(self):
+    def s_id(self):
         return self.min_id()
-
-    def ordenado(self):
-        # devuelve una copia del segmento con sus componentes ordenados por id
-        copia = Segmento(self)
-        copia.sort(key=lambda x: x.id)
-        return copia
 
     def equivalente(self, otro):
         # devuelve verdadero si tiene los mismos componentes
@@ -306,13 +309,18 @@ class Segmentos(list):
                 return False
         return True
 
+    def ordenados(self):
+        # devuelve una copia con los segmentos ordenada por min_id
+        ordenados = Segmentos(self)
+        ordenados.sort(key=lambda s: s.min_id())
+        return ordenados
+
+
 class Segmentacion(Segmentos):
 
     def ordenada(self):
-        # devuelve una copia con los segmentos ordenada por min_id
-        ordenada = Segmentacion(self)
-        ordenada.sort(key=lambda s: s.min_id())
-        return ordenada
+        # devuelve una copia con la segmentacion ordenada por min_id
+        return self.ordenados()
 
     def canonica(self):
         # devuelve una forma unica de representar segmentacion
@@ -326,6 +334,46 @@ class Segmentacion(Segmentos):
 
     def equivalente(self, otra):
         return super().equivalentes(otra)
+
+    # definicón del vecindario de una segmentacíon para definir y recorrer la red de segementaciones
+    # vecindario devuelve array de vecinos usando extraer y transferir
+    def vecindario(self):
+        # devuelve list de vecinos
+        vecindario = Segmentaciones()
+        for segmento in self:
+            # extraer_componente
+            otros = list(self) # hace una copia
+            otros.remove(segmento) # el resto no considerado de la segmentación
+            if len(segmento) == 2: # segmento binario se parte, no se analizan los 2 casos, ya que son el mismo
+                este = segmento[0]; ese = segmento[1]
+                vecino = Segmentacion([[este], [ese]] + otros)
+                vecindario.append(vecino)
+            elif len(segmento) > 2:
+                for este in segmento:
+                    vecino = Segmentacion([[este]] + segmento.extraer_componente(este) + otros)
+                    vecindario.append(vecino)
+            # transferir_componente
+            if len(self) >= 2: # se puede hacer una transferencia o fusion
+                for i, este in enumerate(self):
+                    sin_este = list(self) # copia para preservar la original
+                    sin_este.remove(este) # elimino de la copia de la segmentacion a este segmento
+                    for j, ese in enumerate(sin_este): # busco otro segmento
+                        otros = list(sin_este) # copia de para eliminar a ese
+                        otros.remove(ese) # copia de segmentacion sin este ni ese
+                        if len(este) == 1 and len(ese) == 1 and i < j:
+                            pass # si no se repiten cuando este y ese se permuten
+                        else:
+                            for cada in este:
+                                transferencia = este.transferir_componente(cada, ese)
+                                if transferencia: # se pudo hacer
+                                    vecino = Segmentacion(transferencia + otros)
+                                    vecindario.append(vecino)
+                        # unir_componentes de 2 segmentos evitando repeticiones
+                        #(cuando alguno es un solo elemento la fusion es considerada en la transferencia)
+                        vecino = Segmentacion([este.unir_componentes(ese)] + otros)
+                        vecindario.append(vecino) # analizar fusiones
+        return vecindario
+
 
 class Segmentaciones(list):
 
@@ -346,7 +394,10 @@ class Segmentaciones(list):
         if self:
             return self[-1]
         return None
-                  
+        
+
+
+          
 reloj = Procesando()
 
 def segmenta(segmentacion, componentes, soluciones):
