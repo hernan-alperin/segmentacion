@@ -32,7 +32,7 @@ with
       case 
         when cardinality(array_agg(lado)) = 1 then 'lado '
         else 'lados ' end                                            
-                                                  ), '}',''), ',', ', ') 
+                                                  ), '}',''), ',', ' ') 
     as descripcion
   from listado_segmentos
   where (prov, depto, frac, radio, seg, mza) not in (
