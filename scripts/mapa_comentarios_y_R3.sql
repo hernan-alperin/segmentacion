@@ -20,11 +20,23 @@ with
 select prov, depto, frac, radio, seg, mza, 'manzana completa' as lado
 from mzas_completas
 union
-select prov, depto, frac, radio, seg, mza, lado
+select prov, depto, frac, radio, seg, mza, 
+  replace(
+    replace(
+      replace(
+        array_agg(lado)::text, 
+        '{', 'lados '
+         ),
+      '}',''
+    ),
+    ',', ', '
+  )
 from e0359.listado_segmentos
 where (prov, depto, frac, radio, seg, mza) not in (
-  select prov, depto, frac, radio, seg, mza from mzas_completas
+  select prov, depto, frac, radio, seg, mza 
+  from mzas_completas
 )
+group by prov, depto, frac, radio, seg, mza
 order by prov, depto, frac, radio, seg, mza, lado
 ;
 
