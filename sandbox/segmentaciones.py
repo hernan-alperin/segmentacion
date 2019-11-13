@@ -106,16 +106,11 @@ class Componentes(list):
             return Componentes(clausura).ordenado()
             
     def conectados(self):
-        # True si desde el primero se puede llagar a totos los otros
+        # True si desde el primero se puede llagar a todos los otros
         # a través de adyacencias
-        if not self: # es vacio
-            return True
-        else:
-            este = self[0] # el primero está conectado con el resto
-            return len(self.clausura_conexa(este)) == len(self)
-
+        return any([len(self.clausura_conexa(uno)) == len(self) for uno in self])
     
-    def sacar_componente(self, este):
+    def extraer_componente(self, este):
         # devuelve las partes de Componentes conexas originales resultado de remover la manzana m del segmento
         if este not in self:
             return []
@@ -146,12 +141,13 @@ class Componentes(list):
         elif len(self) == 1: # no queda resto, se fusiona origen con destino
             return Segmentos([Componentes(esos + [este]).ordenado()])
         else:
-            estos = self.sacar_componente(este)
+            estos = self.extraer_componente(este)
+            print(estos)
             aquellos = Componentes(esos + [este]).ordenado()
             return Segmentos(estos + [aquellos]).ordenados()
     
     def unir_componentes(self, esos):
-    # fusión estos Componentes con esos
+    # fusión Componentes con esos si algun elemento es adyacente con otro de esos, o viceversa
         if Componentes(self + esos).conectados():
             return Componentes(self + esos)
         else:
@@ -215,7 +211,7 @@ class Componentes(list):
         return self
 
     def manzanas(self):
-        return len(list(set([c.id/10 for c in self.componentes()])))
+        return len(list(set([c.c_id/10 for c in self.componentes()])))
 
     def mejor_costo_teorico(self):
         return (1.1*abs(mod(sum(c.vivs for c in self) - (segmentacion_deseada/2),
@@ -226,6 +222,7 @@ class Componentes(list):
 
 
 class Segmento(Componentes):
+    # de alguna forma Componentes deben estar conexos
 
     def carga(self):
         return sum(c.vivs for c in self)
@@ -239,7 +236,7 @@ class Segmento(Componentes):
     def __str__(self):
         s = '['
         for c in self:
-            s += str(c.id) + ' '
+            s += str(c.c_id) + ' '
         s += '] ' + str(self.carga())
         return s
 
@@ -253,6 +250,15 @@ class Segmento(Componentes):
     def equivalente(self, otro):
         # devuelve verdadero si tiene los mismos componentes
         return set(self.componentes()) == set(otro.componentes())
+
+    def extraer_componente(self, este):
+        return super().extraer_componente(este) 
+
+    def tranferir_componente(self, este, esos):
+        return super().tranferir_componente(este, esos)
+
+    def unir_segmentos(self, otro):
+        return super().unir_segmentos(otro)
 
 class Segmentos(list):
 
@@ -317,6 +323,13 @@ class Segmentos(list):
 
 
 class Segmentacion(Segmentos):
+
+    def __str__(self):
+        ss = '['
+        for sgms in self:
+            ss += ' ' + str(sgms) + ' '
+        ss += ('] Costo: ' + str(self.costo()))
+        return ss
 
     def ordenada(self):
         # devuelve una copia con la segmentacion ordenada por min_id
@@ -394,8 +407,13 @@ class Segmentaciones(list):
         if self:
             return self[-1]
         return None
-        
 
+    def __str__(self):
+        ss = '['
+        for sgms in self:
+            ss += ' ' + str(sgms) + ' '
+        ss += ('] Costo: ' + str(self.costo()))
+        return ss
 
           
 reloj = Procesando()

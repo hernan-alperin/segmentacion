@@ -1,6 +1,14 @@
+# -*- coding: utf-8 -*-
 from segmentaciones import *
 from random import *
 import unittest
+import logging
+logging.basicConfig(filename='unittest.log',
+                    format='%(asctime)s %(levelname)s:%(message)s',
+                    datefmt='%d/%m/%Y %I:%M:%S %p',
+                    level=logging.DEBUG
+                    )
+
 
 """
 
@@ -26,6 +34,13 @@ c2.agregar_adyacencia(c4)
 c4.agregar_adyacencia(c5)
 
 componentes = Componentes([c1, c2, c3, c4, c5])
+
+seg_123 = Segmento([c1, c2, c3])
+seg_45 = Segmento([c4, c5])
+sgmt = Segmentacion([seg_123, seg_45])
+
+logging.info(sgmt)
+logging.info(sgmt.vecindario())
 
 class TestComponentesMethods(unittest.TestCase):
 
@@ -60,14 +75,14 @@ class TestComponentesMethods(unittest.TestCase):
         assert ~Componentes([c1, c5]).conectados()
         assert Componentes([c4]).conectados()
 
-    def test_sacar_componente(self):
-        assert Componentes([c4, c5]).sacar_componente(c1) == []
-        assert Componentes([c4, c5]).sacar_componente(c4) == [Componentes([c5])]
-        assert (Componentes([c2, c4, c5]).sacar_componente(c4)
+    def test_extraer_componente(self):
+        assert Componentes([c4, c5]).extraer_componente(c1) == []
+        assert Componentes([c4, c5]).extraer_componente(c4) == [Componentes([c5])]
+        assert (Componentes([c2, c4, c5]).extraer_componente(c4)
                 == [Componentes([c2]), Componentes([c5])])
-        assert (Componentes([c2, c4, c1, c3]).sacar_componente(c2)
+        assert (Componentes([c2, c4, c1, c3]).extraer_componente(c2)
                 == [Componentes([c1]), Componentes([c3]), Componentes([c4])])
-        assert (Componentes([c2, c4, c1, c3]).sacar_componente(c2)
+        assert (Componentes([c2, c4, c1, c3]).extraer_componente(c2)
                 == sorted([Componentes([c4]), Componentes([c1]), Componentes([c3])], key=lambda cs: cs.min_id())
                 )
 
@@ -98,7 +113,7 @@ class TestComponentesMethods(unittest.TestCase):
 
         assert (Componentes([c2, c4]).transferir_componente(c4, Componentes([c5]))
                 == sorted(
-                    Componentes([c2, c4]).sacar_componente(c4)
+                    Componentes([c2, c4]).extraer_componente(c4)
                     + [Componentes(sorted(Componentes([c5] + [c4]), key=lambda c: c.c_id))]
                     , key=lambda cs: cs.min_id())
                 )
@@ -109,10 +124,11 @@ class TestComponentesMethods(unittest.TestCase):
                 == Componentes([c2, c1])
                 )
         assert (Componentes([c1]).unir_componentes(Componentes([c2]))
-                != Componentes([c1, c2])
-                ) ## se respeta la adyacencia asimétrica: c1 -!-> c2 (no es adyacente)
+                == Componentes([c1, c2])
+                ) ## para Componentes no es necesaria la adyacencia asimétrica: c1 -!-> c2 (no es adyacente)
 
 
 
 if __name__ == '__main__':
     unittest.main()
+
