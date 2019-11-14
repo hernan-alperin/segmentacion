@@ -92,3 +92,64 @@ order by orden
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+with 
+  listado_segmentos as (
+   select * 
+-----------------------------------------------------------------  
+  from e0359.listado_segmentos
+-----------------------------------------------------------------
+  ),
+  lados_por_mza as (
+  select prov, depto, frac, radio, mza, count(*) as cant_lados
+  from listado_segmentos
+  group by prov, depto, frac, radio, mza
+  ),
+  mzas_en_segmentos as (
+  select prov, depto, frac, radio, mza, seg, count(*) as cant_lados_en_seg
+  from listado_segmentos
+  group by prov, depto, frac, radio, mza, seg
+  ),
+  mzas_completas as (
+  select * 
+  from mzas_en_segmentos
+  natural join 
+  lados_por_mza
+  where cant_lados = cant_lados_en_seg
+  ),
+  mzas_incompletas as (
+  select prov, depto, frac, radio, seg, mza, lado
+  from listado_segmentos
+  where (prov, depto, frac, radio, seg, mza) not in (
+    select prov, depto, frac, radio, seg, mza
+    from mzas_completas
+    )
+  ),
+  secuencia as (
+  select prov, depto, frac, radio, seg, mza, generate_series(1, cant_lados_en_seg) as serie, cant_lados, cant_lados_en_seg
+  from mzas_incompletas natural join lados_por_mza natural join mzas_en_segmentos
+  group by prov, depto, frac, radio, mza, seg, cant_lados, cant_lados_en_seg
+  )
+select prov, depto, frac, radio, seg, mza, min(lado) as primero, cant_lados, cant_lados_en_seg
+from mzas_incompletas natural join secuencia
+where lado::integer > serie or 
+group by prov, depto, frac, radio, seg, mza, cant_lados, cant_lados_en_seg
+order by prov, depto, frac, radio, seg, mza
+;
+
+
+
+
+
+
