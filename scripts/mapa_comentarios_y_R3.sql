@@ -1,3 +1,4 @@
+copy (
 
 with 
   listado_segmentos as (
@@ -46,5 +47,7 @@ select prov, depto, frac, radio, seg, string_agg(descripcion,', ')
 from descripcion_mza
 group by prov, depto, frac, radio, seg
 order by prov, depto, frac, radio, seg
-;
+--;
 
+) to '/tmp/2Vero.csv' with csv header
+;
