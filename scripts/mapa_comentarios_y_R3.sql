@@ -1,5 +1,5 @@
-copy (
-
+-- copy (
+create or replace view e0359.descripcion as (
 with 
   listado_segmentos as (
    select * 
@@ -43,11 +43,52 @@ with
   group by prov, depto, frac, radio, seg, mza
   order by prov, depto, frac, radio, seg, descripcion
   )
-select prov, depto, frac, radio, seg, string_agg(descripcion,', ')
+select prov, depto, frac, radio, seg, string_agg(descripcion,', ') as descripcion
 from descripcion_mza
 group by prov, depto, frac, radio, seg
 order by prov, depto, frac, radio, seg
+)
 --;
 
-) to '/tmp/2Vero.csv' with csv header
+--) to '/tmp/2Vero.csv' with csv header
 ;
+
+
+---- esto es para ordenar el recorrido de los lados
+
+drop table recorrido;
+create table recorrido as 
+select generate_series(1,7) as i
+;
+
+delete from recorrido
+where i = 3 or i = 4 or i = 5
+;
+
+alter table recorrido add column id serial primary key;
+
+select * from recorrido;
+
+with primero as (
+  select min(i) as primero
+  from recorrido
+  where i != id
+  ),
+  maximo as (
+  select max(i) as maximo
+  from recorrido
+  )
+select i, case
+  when i != id then i - primero + 1
+  else i + maximo - primero + 1
+  end as orden
+from recorrido, primero, maximo
+order by orden
+;
+
+
+
+
+
+
+
