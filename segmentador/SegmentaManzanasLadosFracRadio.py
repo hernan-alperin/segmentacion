@@ -230,12 +230,13 @@ import time
 #_prov = 54
 #_depto = 105 # ahora vienen en arg
 
+conexion = ["censo2020", "segmentador", "rodatnemges", "172.26.67.239", "5432"]
 conn = psycopg2.connect(
-            database = "censo2020",
-            user = "segmentador",
-            password = "rodatnemges",
-            host = "172.26.67.239",
-            port = "5432")
+            database = conexion[0],
+            user = conexion[1],
+            password = conexion[2],
+            host = conexion[3],
+            port = conexion[4])
 
 # obtener prov, depto, frac que estan en segmentacion.conteos
 cur = conn.cursor()
@@ -506,4 +507,36 @@ for prov, depto, frac, radio in radios:
 #    else:
 #        print "radio Null"
 
+# guarda ejecucion
+import os
+pwd = os.path.dirname(os.path.realpath(__file__))
+#print(pwd)
+import socket
+host = socket.gethostname()
+import getpass
+user = getpass.getuser()
+user_host = user + '@' + host
+comando = " ".join(sys.argv[:])
+print('[' + user_host + ']$ python' + pwd + '/' + comando)
+print(":".join(conexion))
+
+sql = ("delete from corrida "
+     + sql_where_pdfr(_prov, _depto, _frac, _radio)
+     + "\n;")
+#print "", sql
+cur.execute(sql)
+
+sql = ("insert into corrida (comando, user_host, pwd, conexion, prov, depto, frac, radio) values"
+     + " ('" + str(comando) 
+     + "', '" + str(user_host)
+     + "', '" + str(pwd)
+     + "', '" + str(":".join(conexion))
+     + "', " + str(_prov)
+     + " , " + str(_depto)
+     + " , " + str(_frac)
+     + " , " + str(_radio)
+     + ")\n;")
+#print "", sql
+cur.execute(sql)
+conn.commit()
 conn.close()
