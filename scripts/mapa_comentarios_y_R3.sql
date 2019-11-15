@@ -143,7 +143,7 @@ with
   )
 select prov, depto, frac, radio, seg, mza, min(lado) as primero, cant_lados, cant_lados_en_seg
 from mzas_incompletas natural join secuencia
-where lado::integer > serie or 
+where lado::integer > serie
 group by prov, depto, frac, radio, seg, mza, cant_lados, cant_lados_en_seg
 order by prov, depto, frac, radio, seg, mza
 ;
