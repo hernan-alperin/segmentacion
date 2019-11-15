@@ -2,7 +2,8 @@
 título: descripcion.sql
 descripción: 
 genera descripcion para segmentos, xej:
- prov | depto | frac | radio | seg |        descripcion
+[halperin@arswebdev043 scripts]$ psql -h 172.26.67.239 -U halpe censo2020 -c 'select * from e0359.descripcion_segmentos limit 10'
+prov | depto | frac | radio | seg |        descripcion
 ------+-------+------+-------+-----+-------------------------------------------------------------------------------------------------------------------------
  38   | 028   | 04   | 01    | 01  | manzana 001 completa, manzana 002 lados 03 04 01, manzana 019 completa, manzana 020 completa, manzana 021 completa
  38   | 028   | 04   | 01    | 02  | manzana 002 lado 02, manzana 003 lados 03 04, manzana 022 completa
@@ -11,6 +12,9 @@ genera descripcion para segmentos, xej:
 .
 .
 .
+para exportar para Vero
+[halperin@arswebdev043 scripts]$ psql -h 172.26.67.239 -U halpe censo2020 -c "copy (select * from e0359.descripcion_segmentos) to '/tmp/recorridos.csv' csv header"
+
 autor: -h
 fecha: 2019-11-15
 */
