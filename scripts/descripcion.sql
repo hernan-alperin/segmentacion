@@ -48,36 +48,43 @@ with
   from junta
   where lado is Null
   group by prov, depto, frac, radio, seg, mza, lado
-  )
-select prov, depto, frac, radio, seg, mza, lado
-from no_estan
-natural join
-lados_de_mzas_incompletas
-natural join
-lados_por_mza
-order by prov, depto, frac, radio, seg, mza, lado, 
+  ), 
+  lados_ordenados as (
+  select prov, depto, frac, radio, seg, mza, lado, 
   case
-  when lado::integer > max_no_esta then lado::integer - max_no_esta
-  when min_no_esta > lado::integer then cant_lados - max_no_esta + lado::integer
+  when lado::integer > max_no_esta then lado::integer - max_no_esta -- el hueco está abajo
+  when min_no_esta > lado::integer then cant_lados - max_no_esta + lado::integer -- el hueco está arriba
+  when min_no_esta = 1 and max_no_esta = cant_lados then lado::integer -- hay hueco a ambos lados, no empieza en 1 
   end
+  as orden
+  from no_estan
+  natural join
+  lados_de_mzas_incompletas
+  natural join
+  lados_por_mza
+  natural join
+  mzas_en_segmentos)
+--select * from lados_ordenados
+--order by prov, depto, frac, radio, seg, mza, orden
 
-/*
-  descripcion_mza as (
+  , descripcion_mza as (
   select prov, depto, frac, radio, seg, 'manzana '||mza||' completa' as descripcion
   from mzas_completas
   union
   select prov, depto, frac, radio, seg,
-    'manzana '||mza||' '|| replace(replace(replace(array_agg(lado)::text, '{',
+    'manzana '||mza||' '|| replace(replace(replace(array_agg(lado order by orden)::text, '{',
       case
         when cardinality(array_agg(lado)) = 1 then 'lado '
         else 'lados ' end
                                                   ), '}',''), ',', ' ')
     as descripcion
-  from listado_segmentos
+  from lados_ordenados
+/*  from listado_segmentos
   where (prov, depto, frac, radio, seg, mza) not in (
     select prov, depto, frac, radio, seg, mza
     from mzas_completas
     )
+*/  
   group by prov, depto, frac, radio, seg, mza
   order by prov, depto, frac, radio, seg, descripcion
   )
@@ -85,7 +92,7 @@ select prov, depto, frac, radio, seg, string_agg(descripcion,', ') as descripcio
 from descripcion_mza
 group by prov, depto, frac, radio, seg
 order by prov, depto, frac, radio, seg
-*/
+
 ;
 
 
