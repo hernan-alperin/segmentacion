@@ -10,6 +10,7 @@ fecha: 2019-07-13
 autor: -h
 """
 from operator import *
+import logging
 
 segmentacion_deseada = 40
 
@@ -328,7 +329,7 @@ class Segmentacion(Segmentos):
         ss = '['
         for sgms in self:
             ss += ' ' + str(sgms) + ' '
-        ss += ('] Costo: ' + str(self.costo()))
+        ss += (']')
         return ss
 
     def ordenada(self):
@@ -365,6 +366,7 @@ class Segmentacion(Segmentos):
                 for este in segmento:
                     vecino = Segmentacion([[este]] + segmento.extraer_componente(este) + otros)
                     vecindario.append(vecino)
+            logging.info('segmento: ' + str(segmento) + ' -> vecino :' + str(vecino))
             # transferir_componente
             if len(self) >= 2: # se puede hacer una transferencia o fusion
                 for i, este in enumerate(self):

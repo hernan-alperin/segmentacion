@@ -1,3 +1,22 @@
+/*
+título: descripcion.sql
+descripción: 
+genera descripcion para segmentos, xej:
+ prov | depto | frac | radio | seg |        descripcion
+------+-------+------+-------+-----+-------------------------------------------------------------------------------------------------------------------------
+ 38   | 028   | 04   | 01    | 01  | manzana 001 completa, manzana 002 lados 03 04 01, manzana 019 completa, manzana 020 completa, manzana 021 completa
+ 38   | 028   | 04   | 01    | 02  | manzana 002 lado 02, manzana 003 lados 03 04, manzana 022 completa
+ 38   | 028   | 04   | 01    | 03  | manzana 003 lados 01 02, manzana 004 lados 03 04, manzana 006 lados 03 04
+ 38   | 028   | 04   | 01    | 04  | manzana 004 lados 01 02, manzana 005 lados 03 04, manzana 006 lado 01
+.
+.
+.
+autor: -h
+fecha: 2019-11-15
+*/
+
+
+create or replace view e0359.descripcion_segmentos as (
 with
   listado_segmentos as (
    select *
@@ -63,11 +82,8 @@ with
   natural join
   lados_por_mza
   natural join
-  mzas_en_segmentos)
---select * from lados_ordenados
---order by prov, depto, frac, radio, seg, mza, orden
-
-  , descripcion_mza as (
+  mzas_en_segmentos), 
+  descripcion_mza as (
   select prov, depto, frac, radio, seg, 'manzana '||mza||' completa' as descripcion
   from mzas_completas
   union
@@ -79,12 +95,6 @@ with
                                                   ), '}',''), ',', ' ')
     as descripcion
   from lados_ordenados
-/*  from listado_segmentos
-  where (prov, depto, frac, radio, seg, mza) not in (
-    select prov, depto, frac, radio, seg, mza
-    from mzas_completas
-    )
-*/  
   group by prov, depto, frac, radio, seg, mza
   order by prov, depto, frac, radio, seg, descripcion
   )
@@ -92,7 +102,7 @@ select prov, depto, frac, radio, seg, string_agg(descripcion,', ') as descripcio
 from descripcion_mza
 group by prov, depto, frac, radio, seg
 order by prov, depto, frac, radio, seg
-
+)
 ;
 
 
