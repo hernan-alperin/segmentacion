@@ -12,6 +12,9 @@ prov | depto | frac | radio | seg |        descripcion
 .
 .
 .
+para exportar para Vero
+[halperin@arswebdev043 scripts]$ psql -h 172.26.67.239 -U halpe censo2020 -c "copy (select * from e0359.descripcion_segmentos) to '/tmp/recorridos.csv' csv header"
+
 autor: -h
 fecha: 2019-11-15
 */
