@@ -1,4 +1,6 @@
 \set shape e0595
+--\set geom wkb_geometry
+\set geom geom
 \echo :shape
 \echo :'shape'
 
@@ -20,7 +22,7 @@ as with pedacitos_de_lado as (-- mza como PPDDDLLLFFRRMMMselect mzad as mza, lad
         array_agg(distinct tipo) as tipos,
         array_agg(distinct codigo20) as codigos,
         array_agg(distinct nombre) as calles,
-        ST_Union(geom) as geom_pedacito -- ST_Union por ser MultiLineString
+        ST_Union(:geom) as geom_pedacito -- ST_Union por ser MultiLineString
     from arc
     where mzad is not Null and mzad != '' and ladod != 0
     group by mzad, ladod
@@ -29,7 +31,7 @@ as with pedacitos_de_lado as (-- mza como PPDDDLLLFFRRMMMselect mzad as mza, lad
         array_agg(distinct tipo) as tipos,
         array_agg(distinct codigo20) as codigos,
         array_agg(distinct nombre) as calles,
-        ST_Union(ST_Reverse(geom)) as geom_pedacito -- invierte los de mzai
+        ST_Union(ST_Reverse(:geom)) as geom_pedacito -- invierte los de mzai
         -- para respetar sentido hombro derecho
     from arc
     where mzai is not Null and mzai != '' and ladoi != 0
