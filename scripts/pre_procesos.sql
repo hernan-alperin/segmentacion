@@ -173,6 +173,7 @@ where mza ~ '^[0-9\.]+$'
 GROUP BY prov,dpto,codloc,frac,radio,mza,lado,vivs_lado
 ;
 
+-------------------------------- estandarizar usando :shape ------------------
 ALTER TABLE lados_de_manzana
     ADD COLUMN prov integer DEFAULT 58;
 ALTER TABLE lados_de_manzana
@@ -186,10 +187,26 @@ ALTER TABLE lados_de_manzana
     ADD COLUMN ppdddlllffrrmmm character varying;
 UPDATE lados_de_manzana 
     SET ppdddlllffrrmmm = '58063020'||LPAD(frac::text,2,'0'::text)||LPAD(radio::text,2,'0')||LPAD(mza::text,3,'0');
--- ver mzas de :shape
-
-
 UPDATE lados_de_manzana SET tabla=:'shape' || '.arc';
+-- capturar datos de :shape ---------------------------------------------------
+
+update lados_de_manzana
+set (prov, depto, codloc) = (shape.prov, shape.depto, shape.codloc) from (
+select distinct substr(mzai,1,2)::integer as prov, 
+    substr(mzai,3,3)::integer as depto,
+    substr(mzai,6,3)::integer as codloc
+from :shape.arc
+where mzai is not Null and mzai != ''
+) as shape
+;
+
+update lados_de_manzana
+set ppdddlllffrrmmm = LPAD(prov::text,2,'0'::text) || LPAD(depto::text,3,'0'::text) ||
+    LPAD(codloc::text,3,'0'::text) ||
+    LPAD(frac::text,2,'0'::text) || LPAD(radio::text,2,'0') || LPAD(mza::text,3,'0')
+;
+
+-------------------------------------------------------------------------------
 
                  
 drop view if exists lados_adyacentes; 
