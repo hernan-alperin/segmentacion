@@ -4,6 +4,10 @@
 
 SET SEARCH_PATH=:'shape','public';
 
+drop view if exists lados_adyacentes;
+drop view if exists doblar;
+drop view if exists lado_de_enfrente_para_volver;
+drop view if exists lado_para_cruzar;
 drop table if exists lados_de_manzana;
 -- tabla con los ejes unidos, lados duplicado y dirigidos por
 -- mzad, ladod en sentido y mzai, ladoi en sentido contrario
@@ -48,11 +52,12 @@ from lados_orientados
 order by mza, lado
 ;
 
+/*
 select *
 from lados_de_manzana
 order by id
 limit 10;
-
+*/
 /*
 select prov, dpto, codloc, frac, radio, mza, lado, count( NULLIF(trim(cod_tipo_v),''))
 from listado
@@ -68,8 +73,19 @@ order by prov, dpto, codloc, frac, radio, mza, lado
 alter table e0595.arc drop column conteoi;
 alter table e0595.arc drop column conteod;
 */
-alter table arc add column conteoi integer;
-alter table arc add column conteod integer;
+--  Postgres 9.6  alter table arc add column if not exists conteoi integer;
+DO $$ 
+    BEGIN
+        BEGIN
+            ALTER TABLE arc ADD COLUMN conteoi integer;
+            alter table arc add column conteod integer;
+        EXCEPTION
+            WHEN duplicate_column THEN RAISE NOTICE 'columnas extras ya existen';
+        END;
+    END;
+$$
+;
+
 /*
 create function isdigits(text) returns boolean as '
 select $1 ~ ''^(-)?[0-9]+$'' as result
@@ -144,20 +160,23 @@ CREATE OR REPLACE VIEW conteos_manzanas AS
   GROUP BY listado.prov, listado.dpto, listado.codloc, listado.frac, listado.radio, listado.mza;
 
 ----
-DELETE FROM segmentacion.conteos WHERE tabla='e0595.arc'::text; -- ver como generalizar e0595
+DELETE FROM segmentacion.conteos WHERE tabla=:'shape'||'.arc'::text; 
 INSERT INTO 
 segmentacion.conteos
 SELECT --row_number() OVER () gid,
-'e0595.arc'::text shape, prov::integer,dpto::integer depto,codloc::integer,frac::integer,radio::integer,mza::integer,lado::integer,
+:'shape' || '.arc'::text shape, 
+--'e0595.arc'::text shape,
+prov::integer,dpto::integer depto,codloc::integer,frac::integer,radio::integer,mza::integer,lado::integer,
 vivs_lado conteo
 FROM conteos_lados
+where mza ~ '^[0-9\.]+$'
 GROUP BY prov,dpto,codloc,frac,radio,mza,lado,vivs_lado
 ;
 
 ALTER TABLE lados_de_manzana
     ADD COLUMN prov integer DEFAULT 58;
 ALTER TABLE lados_de_manzana
-    ADD COLUMN tabla character varying DEFAULT 'e0595';
+    ADD COLUMN tabla character varying DEFAULT :'shape';
 ALTER TABLE lados_de_manzana
     ADD COLUMN depto integer DEFAULT 63;  
 
@@ -167,10 +186,10 @@ ALTER TABLE lados_de_manzana
     ADD COLUMN ppdddlllffrrmmm character varying;
 UPDATE lados_de_manzana 
     SET ppdddlllffrrmmm = '58063020'||LPAD(frac::text,2,'0'::text)||LPAD(radio::text,2,'0')||LPAD(mza::text,3,'0');
+-- ver mzas de :shape
 
-ALTER TABLE arc
-    ADD COLUMN tabla character varying DEFAULT 'e0595.arc'; 
-UPDATE lados_de_manzana SET tabla='e0595.arc';
+
+UPDATE lados_de_manzana SET tabla=:'shape' || '.arc';
 
                  
 drop view if exists lados_adyacentes; 
@@ -280,7 +299,7 @@ select *, 'cruzar'::text as accion from lado_para_cruzar
 -- alter table segmentacion.adyacencias add column tipo text;
 
 delete from segmentacion.adyacencias
-where shape = 'e0595.arc'
+where shape = :'shape' || '.arc'
 ;
 
 insert into segmentacion.adyacencias

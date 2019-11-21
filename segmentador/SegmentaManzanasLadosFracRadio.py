@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 from decimal import *
-print sys.argv[1:]
+print (sys.argv[1:])
 _table = sys.argv[1]
 _prov = int(sys.argv[2])
 _depto = int(sys.argv[3])
@@ -245,8 +245,8 @@ sql = ("select distinct prov::integer, depto::integer, frac::integer, radio::int
        " order by prov::integer, depto::integer, frac::integer, radio::integer;")
 cur.execute(sql)
 radios = cur.fetchall()
-#print _prov, _depto
-#print radios
+#print (_prov, _depto)
+#print (radios)
 
 def sql_where_pdfr(prov, depto, frac, radio):
     return ("\nwhere prov::integer = " + str(prov)
@@ -274,8 +274,8 @@ for prov, depto, frac, radio in radios:
 #  if (radio and not(prov == 38 and depto == 28 and radio == 1)): # (sacar radio 1 que es un lio)
     if (radio and prov == _prov and depto == _depto and frac == _frac and radio == _radio): # las del _table
         print
-        print "radio: "
-        print prov, depto, frac, radio
+        print ("radio: ")
+        print (prov, depto, frac, radio)
         cur = conn.cursor()
         sql = ("select mza, sum(conteo)::int from segmentacion.conteos"
             + sql_where_pdfr(prov, depto, frac, radio)
@@ -305,16 +305,20 @@ for prov, depto, frac, radio in radios:
         cur.execute(sql)
         mza_ultimo_lado = cur.fetchall()
 
+
+        # eliminar rutas o av
+        excluir = " and tipo != 'CALLE'"
+
         sql = ("select mza, mza_ady from segmentacion.adyacencias"
             + sql_where_pdfr(prov, depto, frac, radio)
-            + "\n and mza != mza_ady"
+            + "\n and mza != mza_ady" + excluir
             + "\ngroup by mza, mza_ady;")
         cur.execute(sql)
         adyacencias_mzas_mzas = cur.fetchall()
 
         sql = ("select mza, mza_ady, lado_ady from segmentacion.adyacencias"
             + sql_where_pdfr(prov, depto, frac, radio)
-            + "\n and mza != mza_ady"
+            + "\n and mza != mza_ady" + excluir
             + ";")
         cur.execute(sql)
         result = cur.fetchall()
@@ -322,7 +326,7 @@ for prov, depto, frac, radio in radios:
 
         sql = ("select mza, lado, mza_ady from segmentacion.adyacencias"
             + sql_where_pdfr(prov, depto, frac, radio)
-            + "\n and mza != mza_ady"
+            + "\n and mza != mza_ady" + excluir
             + ";")
         cur.execute(sql)
         result = cur.fetchall()
@@ -330,7 +334,7 @@ for prov, depto, frac, radio in radios:
 
         sql = ("select mza, lado, mza_ady, lado_ady from segmentacion.adyacencias"
             + sql_where_pdfr(prov, depto, frac, radio)
-            + "\n and mza != mza_ady"
+            + "\n and mza != mza_ady" + excluir
             + ";")
         cur.execute(sql)
         result = cur.fetchall()
@@ -385,13 +389,13 @@ for prov, depto, frac, radio in radios:
 
         if adyacencias:
             start = time.time()
-#            print adyacencias
+#            print (adyacencias)
 
             # crea los dictionary
             componentes_en_adyacencias = list(set([cpte for cpte, cpte_ady in adyacencias]))
             todos_los_componentes = list(set(componentes + componentes_en_adyacencias))
 
-            # print "no están en listado", manzanas_sin_viviendas
+            # print ("no están en listado", manzanas_sin_viviendas)
             # hay que ponerle 0 viviendas
             viviendas = dict()
             for cpte in componentes:
@@ -400,7 +404,7 @@ for prov, depto, frac, radio in radios:
                 viviendas[cpte] = int(conteo)
 
             componentes_no_en_adyacencias = list(set(todos_los_componentes) - set(componentes_en_adyacencias))
-            # print "no están en cobertura", manzanas_no_en_adyacencias
+            # print ("no están en cobertura", manzanas_no_en_adyacencias)
             # hay que ponerle nula la lista de adyacencias
             adyacentes = dict()
             for cpte in todos_los_componentes:
@@ -408,7 +412,7 @@ for prov, depto, frac, radio in radios:
             for cpte, adyacente in adyacencias:
                 adyacentes[cpte] = adyacentes[cpte] + [adyacente]
 #            for manzana in sorted(adyacentes.iterkeys()):
-#                print manzana, adyacentes[manzana]
+#                print (manzana, adyacentes[manzana])
 
             # optimización
 
@@ -448,31 +452,31 @@ for prov, depto, frac, radio in radios:
                     
             #muestra warnings
             if componentes_no_en_adyacencias:
-                print "Cuidado: "
+                print ("Cuidado: ")
                 print
-                print "no están en adyacencias, cobertura con errores, quizás?", componentes_no_en_adyacencias
-                print "no se les asignó componentes adyacentes y quedaron aisladas"
+                print ("no están en adyacencias, cobertura con errores, quizás?", componentes_no_en_adyacencias)
+                print ("no se les asignó componentes adyacentes y quedaron aisladas")
                 print
 
             # muestra solución
             mejor_solucion.sort(key = seg_id)
-            print "---------"
-            print "mínimo local"
-            print "costo", costo_minimo
+            print ("---------")
+            print ("mínimo local")
+            print ("costo", costo_minimo)
             for s, segmento in enumerate(mejor_solucion):
-                print ["segmento", s+1, 
+                print (["segmento", s+1, 
                    "carga", carga(segmento), 
                    "costo", costo(segmento), 
-                   "componentes", segmento]
+                   "componentes", segmento])
 
-            print "deseada: %d, máxima: %d, mínima: %d" % (cantidad_de_viviendas_deseada_por_segmento,
+            print ("deseada: %d, máxima: %d, mínima: %d" % (cantidad_de_viviendas_deseada_por_segmento,
                 cantidad_de_viviendas_maxima_deseada_por_segmento, 
-                cantidad_de_viviendas_minima_deseada_por_segmento)
+                cantidad_de_viviendas_minima_deseada_por_segmento))
 
 
 
             end = time.time()
-            print str(end - start) + " segundos"
+            print (str(end - start) + " segundos")
 
             # actualiza los valores de segmento en la tabla de polygons para representar graficamente
             segmentos = {}
@@ -491,21 +495,21 @@ for prov, depto, frac, radio in radios:
                     + sql_where_PPDDDLLLMMM(prov, depto, frac, radio, cpte, 'i')
                     + " AND mzai is not null AND mzai != ''"
                     + "\n;")
-                #print "", sql
+                #print ("", sql)
                 cur.execute(sql)
                 sql = ("update " + _table   
                     + " set segd = " + str(segmentos[cpte])
                     + sql_where_PPDDDLLLMMM(prov, depto, frac, radio, cpte, 'd')
                     + " AND mzad is not null AND mzad != ''"
                     + "\n;")
-                #print " ", sql
+                #print (" ", sql)
                 cur.execute(sql)
             conn.commit()
 #            raw_input("Press Enter to continue...")
         else:
-            print "sin adyacencias"
+            print ("sin adyacencias")
 #    else:
-#        print "radio Null"
+#        print ("radio Null")
 
 # guarda ejecucion
 import os
@@ -523,7 +527,7 @@ print(":".join(conexion))
 sql = ("delete from corrida "
      + sql_where_pdfr(_prov, _depto, _frac, _radio)
      + "\n;")
-#print "", sql
+#print ("", sql)
 cur.execute(sql)
 
 sql = ("insert into corrida (comando, user_host, pwd, conexion, prov, depto, frac, radio) values"
@@ -536,7 +540,7 @@ sql = ("insert into corrida (comando, user_host, pwd, conexion, prov, depto, fra
      + " , " + str(_frac)
      + " , " + str(_radio)
      + ")\n;")
-#print "", sql
+#print ("", sql)
 cur.execute(sql)
 conn.commit()
 conn.close()
