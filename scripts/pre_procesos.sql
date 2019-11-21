@@ -1,4 +1,5 @@
 SET SEARCH_PATH='e0595','public';
+
 drop table if exists lados_de_manzana;
 -- tabla con los ejes unidos, lados duplicado y dirigidos por
 -- mzad, ladod en sentido y mzai, ladoi en sentido contrario
@@ -49,7 +50,7 @@ order by id
 limit 10;
 
 select prov, dpto, codloc, frac, radio, mza, lado, count( NULLIF(trim(cod_tipo_v),''))
-from e0595.listado
+from listado
 --where radio = '3' and prov = '38' and dpto = '028' and frac = '04'
 --and trim(cod_tipo_vivredef) not in ('', 'CO', 'N', 'CA/', 'LO')
 group by prov, dpto, codloc, frac, radio, mza, lado
@@ -61,21 +62,20 @@ order by prov, dpto, codloc, frac, radio, mza, lado
 alter table e0595.arc drop column conteoi;
 alter table e0595.arc drop column conteod;
 */
-alter table e0595.arc add column conteoi integer;
-alter table e0595.arc add column conteod integer;
+alter table arc add column conteoi integer;
+alter table arc add column conteod integer;
 /*
 create function isdigits(text) returns boolean as '
 select $1 ~ ''^(-)?[0-9]+$'' as result
 ' language sql;
 */
-update e0595.arc a
+update arc a
 set conteoi = conteo
 from
 (
 select mzai, ladoi, prov, depto, frac, radio, mza, lado, conteo
 from segmentacion.conteos
-join
-e0595.arc
+join arc
 on
   case when mzai = '' then 0 else substr(mzai, 13, 3)::integer end = mza::integer and ladoi = lado::integer
   and case when mzai = '' then 0 else substr(mzai, 11, 2)::integer end = radio::integer
@@ -89,19 +89,16 @@ order by prov, depto, frac, radio, mza, lado
 )
 as b
 where a.mzai = b.mzai and a.ladoi = b.ladoi
-
 ;
 
-
-update e0595.arc a
+update arc a
 set conteod = conteo
 from
 
 (
 select mzad, ladod, prov, depto, codloc, frac, radio, mza, lado, conteo
 from segmentacion.conteos
-join
-e0595.arc
+join arc
 on
   case when mzad = '' then 0 else substr(mzad, 13, 3)::integer end = mza::integer and ladod = lado::integer
   and case when mzad = '' then 0 else substr(mzad, 11, 2)::integer end = radio::integer
@@ -126,7 +123,7 @@ CREATE OR REPLACE VIEW conteos_lados AS
     (listado.mza)::character varying(4) mza,
     (listado.lado)::character varying(3) lado,
     count(NULLIF(btrim(listado.cod_tipo_v::text), ''::text)) AS vivs_lado
-   FROM e0595.listado
+   FROM listado
   GROUP BY listado.prov, listado.dpto, listado.codloc, listado.frac, listado.radio, listado.mza, listado.lado;
 
 CREATE OR REPLACE VIEW conteos_manzanas AS
@@ -137,41 +134,40 @@ CREATE OR REPLACE VIEW conteos_manzanas AS
     (listado.radio)::character varying(2) radio,
     (listado.mza)::character varying(4) mza,
     count(NULLIF(btrim(listado.cod_tipo_v::text), ''::text)) AS vivs_mza
-   FROM e0595.listado
+   FROM listado
   GROUP BY listado.prov, listado.dpto, listado.codloc, listado.frac, listado.radio, listado.mza;
 
-
-
-
-DELETE FROM segmentacion.conteos WHERE tabla='e0595.arc'::text;
+----
+DELETE FROM segmentacion.conteos WHERE tabla='e0595.arc'::text; -- ver como generalizar e0595
 INSERT INTO 
 segmentacion.conteos
 SELECT --row_number() OVER () gid,
 'e0595.arc'::text shape, prov::integer,dpto::integer depto,codloc::integer,frac::integer,radio::integer,mza::integer,lado::integer,
 vivs_lado conteo
-FROM e0595.conteos_lados
+FROM conteos_lados
 GROUP BY prov,dpto,codloc,frac,radio,mza,lado,vivs_lado
 ;
 
-ALTER TABLE e0595.lados_de_manzana
+ALTER TABLE lados_de_manzana
     ADD COLUMN prov integer DEFAULT 58;
-
-ALTER TABLE e0595.lados_de_manzana
+ALTER TABLE lados_de_manzana
     ADD COLUMN tabla character varying DEFAULT 'e0595';
-ALTER TABLE e0595.lados_de_manzana
+ALTER TABLE lados_de_manzana
     ADD COLUMN depto integer DEFAULT 63;  
 
-
-ALTER TABLE e0595.lados_de_manzana
+ALTER TABLE lados_de_manzana
     ADD COLUMN codloc integer DEFAULT 020;    
-ALTER TABLE e0595.lados_de_manzana
+ALTER TABLE lados_de_manzana
     ADD COLUMN ppdddlllffrrmmm character varying;
-UPDATE e0595.lados_de_manzana SET ppdddlllffrrmmm = '58063020'||LPAD(frac::text,2,'0'::text)||LPAD(radio::text,2,'0')||LPAD(mza::text,3,'0');
+UPDATE lados_de_manzana 
+    SET ppdddlllffrrmmm = '58063020'||LPAD(frac::text,2,'0'::text)||LPAD(radio::text,2,'0')||LPAD(mza::text,3,'0');
 
-ALTER TABLE e0595.arc
+ALTER TABLE arc
     ADD COLUMN tabla character varying DEFAULT 'e0595.arc'; 
-UPDATE e0595.lados_de_manzana SET tabla='e0595.arc';
+UPDATE lados_de_manzana SET tabla='e0595.arc';
 
+                 
+drop view if exists lados_adyacentes; 
 
 ---- doblar ----------------------------------------------------------
 drop view if exists doblar;
@@ -192,7 +188,7 @@ with max_lado as (
     where lado != 0
     )
 select tabla, ppdddlllffrrmmm as mza_i, de_lado as lado_i, 
-    ppdddlllffrrmmm as mza_j, a.lado as lado_j
+    ppdddlllffrrmmm as mza_j, a.lado as lado_j, Null::text as tipo
 from doblar d
 join lados_de_manzana a
 using(tabla, ppdddlllffrrmmm, lado)
@@ -203,15 +199,18 @@ order by ppdddlllffrrmmm, lado_i, lado_j, tabla
 --  adyacencias entre manzanas ------------------------------------
 --  para calcular los lados de cruzar y volver
 
-drop view if exists manzanas_adyacentes cascade;
+drop view if exists lado_de_enfrente_para_volver;
+drop view if exists lado_para_cruzar;
+                 
+drop view if exists manzanas_adyacentes;
 create view manzanas_adyacentes as
-select tabla, mzad as mza_i, mzai as mza_j
+select tabla, mzad as mza_i, mzai as mza_j, tipo
 from arc
 where substr(mzad,1,12) = substr(mzai,1,12) -- mismo PPDDDLLLFFRR
 and mzad is not Null and mzad != '' and ladod != 0
 and mzai is not Null and mzai != '' and ladod != 0
 union -- hacer simétrica
-select tabla, mzai, mzad
+select tabla, mzai, mzad, tipo
 from arc
 where substr(mzad,1,12) = substr(mzai,1,12) -- mismo PPDDDLLLFFRR
 and mzad is not Null and mzad != '' and ladod != 0
@@ -226,7 +225,7 @@ and mzai is not Null and mzai != '' and ladod != 0
 drop view if exists lado_de_enfrente_para_volver;
 create view lado_de_enfrente_para_volver as
 select i.tabla, i.ppdddlllffrrmmm as mza_i, i.lado as lado_i,
-    j.ppdddlllffrrmmm as mza_j, j.lado as lado_j
+    j.ppdddlllffrrmmm as mza_j, j.lado as lado_j, tipo
 from lados_de_manzana i
 join lados_de_manzana j
 on i.nodo_j_geom = j.nodo_i_geom -- el lado_i termina donde el lado_j empieza
@@ -248,7 +247,7 @@ order by mza_i, mza_j, lado_i, lado_j
 drop view if exists lado_para_cruzar;
 create view lado_para_cruzar as
 select i.tabla, i.ppdddlllffrrmmm as mza_i, i.lado as lado_i,
-    j.ppdddlllffrrmmm as mza_j, j.lado as lado_j
+    j.ppdddlllffrrmmm as mza_j, j.lado as lado_j, tipo
 from lados_de_manzana i
 join lados_de_manzana j
 on i.nodo_j_geom = j.nodo_i_geom 
@@ -272,6 +271,12 @@ select *, 'cruzar'::text as accion from lado_para_cruzar
 ;
 
 -----------------------------------------------------------------------
+-- alter table segmentacion.adyacencias add column tipo text;
+
+delete from segmentacion.adyacencias
+where shape = 'e0595.arc'
+;
+
 insert into segmentacion.adyacencias
 select tabla as shape, substr(mza_i,1,2)::integer as prov, 
     substr(mza_i,3,3)::integer as depto,
@@ -279,6 +284,14 @@ select tabla as shape, substr(mza_i,1,2)::integer as prov,
     substr(mza_i,9,2)::integer as frac, 
     substr(mza_i,11,2)::integer as radio, 
     substr(mza_i,13,3)::integer as mza, lado_i,
-    substr(mza_j,13,3)::integer as mza_ady, lado_j as lado_ady
+    substr(mza_j,13,3)::integer as mza_ady, lado_j as lado_ady,
+    tipo
 from lados_adyacentes
 ; 
+
+select *
+from segmentacion.adyacencias
+where shape = 'e0595.arc'
+order by prov, depto, frac, radio, mza, lado, tipo
+;
+                                   
