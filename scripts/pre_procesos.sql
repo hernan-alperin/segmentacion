@@ -1,4 +1,8 @@
-SET SEARCH_PATH='e0595','public';
+\set shape e0595
+\echo :shape
+\echo :'shape'
+
+SET SEARCH_PATH=:'shape','public';
 
 drop table if exists lados_de_manzana;
 -- tabla con los ejes unidos, lados duplicado y dirigidos por
