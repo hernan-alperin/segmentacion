@@ -53,6 +53,7 @@ from lados_de_manzana
 order by id
 limit 10;
 
+/*
 select prov, dpto, codloc, frac, radio, mza, lado, count( NULLIF(trim(cod_tipo_v),''))
 from listado
 --where radio = '3' and prov = '38' and dpto = '028' and frac = '04'
@@ -60,6 +61,7 @@ from listado
 group by prov, dpto, codloc, frac, radio, mza, lado
 order by prov, dpto, codloc, frac, radio, mza, lado
 ;
+*/
 
 -------------------------------------
 /*
@@ -293,9 +295,11 @@ select tabla as shape, substr(mza_i,1,2)::integer as prov,
 from lados_adyacentes
 ; 
 
+/*
 select *
 from segmentacion.adyacencias
 where shape = 'e0595.arc'
 order by prov, depto, frac, radio, mza, lado, tipo
 ;
+*/
                                    
