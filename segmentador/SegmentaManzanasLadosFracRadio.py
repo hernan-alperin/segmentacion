@@ -382,8 +382,8 @@ for prov, depto, frac, radio in radios:
                         for (mza, lado), (mza_ady, lado_ady) in lados_contiguos])
         # se agregan los lados correspondientes a esas manzanas
 
-        print >> sys.stderr, "componentes"
-        print >> sys.stderr, componentes
+        #print >> sys.stderr, "componentes"
+        #print >> sys.stderr, componentes
 
 #---- hasta acá
 
@@ -395,8 +395,6 @@ for prov, depto, frac, radio in radios:
             componentes_en_adyacencias = list(set([cpte for cpte, cpte_ady in adyacencias]))
             todos_los_componentes = list(set(componentes + componentes_en_adyacencias))
 
-            # print ("no están en listado", manzanas_sin_viviendas)
-            # hay que ponerle 0 viviendas
             viviendas = dict()
             for cpte in componentes:
                 viviendas[cpte] = 0
@@ -435,7 +433,9 @@ for prov, depto, frac, radio in radios:
                 # algoritmo greedy
                 vecinos = list(vecindario(solucion))
                 costo_actual = costo_segmentacion(solucion)
-                costos_vecinos = map(costo_segmentacion, vecinos)
+                # costos_vecinos = map(costo_segmentacion, vecinos)
+                costos_vecinos = [costo_segmentacion(vecino) for vecino in vecinos]
+
                 if not costos_vecinos:
                     print ('Costos vecinos vacios')
                 else:
@@ -445,7 +445,8 @@ for prov, depto, frac, radio in radios:
   #                    print >> sys.stderr, mejor_costo
                       vecinos = list(vecindario(solucion))
                       costo_actual = mejor_costo 
-                      costos_vecinos = map(costo_segmentacion, vecinos)
+                      # costos_vecinos = map(costo_segmentacion, vecinos)
+                      costos_vecinos = [costo_segmentacion(vecino) for vecino in vecinos]
                 if costo_actual < costo_minimo:
                     costo_minimo = costo_actual
                     mejor_solucion = solucion
