@@ -307,7 +307,7 @@ for prov, depto, frac, radio in radios:
 
 
         # eliminar rutas o av
-        excluir = " and tipo != 'CALLE'"
+        excluir = " and not (tipo like 'RUTA%' or tipo like 'CURSO DE AGUA%' or tipo like 'LINEA FERREA%')"
 
         sql = ("select mza, mza_ady from segmentacion.adyacencias"
             + sql_where_pdfr(prov, depto, frac, radio)
@@ -522,7 +522,7 @@ import getpass
 user = getpass.getuser()
 user_host = user + '@' + host
 comando = " ".join(sys.argv[:])
-print('[' + user_host + ']$ python' + pwd + '/' + comando)
+print('[' + user_host + ']$ python ' + pwd + '/' + comando)
 print(":".join(conexion))
 
 sql = ("delete from corrida "
