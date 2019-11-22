@@ -19,7 +19,7 @@ autor: -h
 fecha: 2019-11-15
 */
 
-
+drop view e0359.descripcion_segmentos;
 create or replace view e0359.descripcion_segmentos as (
 with
   listado_segmentos as (
@@ -29,14 +29,14 @@ with
 -----------------------------------------------------------------
   ),
   lados_por_mza as (
-  select prov, depto, frac, radio, mza, count(*) as cant_lados
+  select prov, depto, codloc, frac, radio, mza, count(*) as cant_lados
   from listado_segmentos
-  group by prov, depto, frac, radio, mza
+  group by prov, depto, codloc, frac, radio, mza
   ),
   mzas_en_segmentos as (
-  select prov, depto, frac, radio, mza, seg, count(*) as cant_lados_en_seg
+  select prov, depto, codloc, frac, radio, mza, seg, count(*) as cant_lados_en_seg
   from listado_segmentos
-  group by prov, depto, frac, radio, mza, seg
+  group by prov, depto, codloc, frac, radio, mza, seg
   ),
   mzas_completas as (
   select *
@@ -46,18 +46,18 @@ with
   where cant_lados = cant_lados_en_seg
   ),
   lados_de_mzas_incompletas as (
-  select prov, depto, frac, radio, seg, mza, lado, lado::integer as i
+  select prov, depto, codloc, frac, radio, seg, mza, lado, lado::integer as i
   from listado_segmentos
-  where (prov, depto, frac, radio, seg, mza) not in (
-    select prov, depto, frac, radio, seg, mza
+  where (prov, depto, codloc, frac, radio, seg, mza) not in (
+    select prov, depto, codloc, frac, radio, seg, mza
     from mzas_completas
     )
   ),
   serie as (
-  select prov, depto, frac, radio, seg, mza, generate_series(1, cant_lados) as i
+  select prov, depto, codloc, frac, radio, seg, mza, generate_series(1, cant_lados) as i
   from lados_de_mzas_incompletas
   natural join lados_por_mza
-  group by prov, depto, frac, radio, seg, mza, cant_lados
+  group by prov, depto, codloc, frac, radio, seg, mza, cant_lados
   ),
   junta as (
   select *
@@ -66,14 +66,14 @@ with
   serie   
   ),
   no_estan as (
-  select prov, depto, frac, radio, seg, mza,
+  select prov, depto, codloc, frac, radio, seg, mza,
     max(i) as max_no_esta, min(i) as min_no_esta
   from junta
   where lado is Null
-  group by prov, depto, frac, radio, seg, mza, lado
+  group by prov, depto, codloc, frac, radio, seg, mza, lado
   ), 
   lados_ordenados as (
-  select prov, depto, frac, radio, seg, mza, lado, 
+  select prov, depto, codloc, frac, radio, seg, mza, lado, 
   case
   when lado::integer > max_no_esta then lado::integer - max_no_esta -- el hueco está abajo
   when min_no_esta > lado::integer then cant_lados - max_no_esta + lado::integer -- el hueco está arriba
@@ -88,10 +88,10 @@ with
   natural join
   mzas_en_segmentos), 
   descripcion_mza as (
-  select prov, depto, frac, radio, seg, 'manzana '||mza||' completa' as descripcion
+  select prov, depto, codloc, frac, radio, seg, 'manzana '||mza||' completa' as descripcion
   from mzas_completas
   union
-  select prov, depto, frac, radio, seg,
+  select prov, depto, codloc, frac, radio, seg,
     'manzana '||mza||' '|| replace(replace(replace(array_agg(lado order by orden)::text, '{',
       case
         when cardinality(array_agg(lado)) = 1 then 'lado '
@@ -99,13 +99,17 @@ with
                                                   ), '}',''), ',', ' ')
     as descripcion
   from lados_ordenados
-  group by prov, depto, frac, radio, seg, mza
-  order by prov, depto, frac, radio, seg, descripcion
+  group by prov, depto, codloc, frac, radio, seg, mza
+  order by prov, depto, codloc, frac, radio, seg, descripcion
   )
-select prov, depto, frac, radio, seg, string_agg(descripcion,', ') as descripcion
+select lpad(prov::text,2,'0'::text) as prov, lpad(depto::text,3,'0'::text) as depto,
+    lpad(codloc::text,3,'0'::text) as codloc,
+    lpad(frac::text,2,'0'::text) as frac, lpad(radio::text,2,'0'::text) as radio, 
+    lpad(seg::text,2,'0'::text) as seg, 
+    string_agg(descripcion,', ') as descripcion
 from descripcion_mza
-group by prov, depto, frac, radio, seg
-order by prov, depto, frac, radio, seg
+group by prov, depto, codloc, frac, radio, seg
+order by prov, depto, codloc, frac, radio, seg
 )
 ;
 
