@@ -102,10 +102,7 @@ with
   group by prov, depto, codloc, frac, radio, seg, mza
   order by prov, depto, codloc, frac, radio, seg, descripcion
   )
-select lpad(prov::text,2,'0'::text) as prov, lpad(depto::text,3,'0'::text) as depto,
-    lpad(codloc::text,3,'0'::text) as codloc,
-    lpad(frac::text,2,'0'::text) as frac, lpad(radio::text,2,'0'::text) as radio, 
-    lpad(seg::text,2,'0'::text) as seg, 
+select prov, depto, codloc, frac, radio, seg, 
     string_agg(descripcion,', ') as descripcion
 from descripcion_mza
 group by prov, depto, codloc, frac, radio, seg
