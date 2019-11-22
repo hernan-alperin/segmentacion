@@ -49,10 +49,12 @@ as with pedacitos_de_lado as (-- mza como PPDDDLLLFFRRMMMselect mzad as mza, lad
     order by mza, lado
     )
 select row_number() over() as id, *,
-    ST_StartPoint(lado_geom) as nodo_i_geom, ST_EndPoint(lado_geom) as nodo_j_geom
+    ST_StartPoint(lado_geom) as nodo_i_geom, ST_EndPoint(lado_geom) as nodo_j_geom,
+    st_length(lado_geom) as longitud
 from lados_orientados
 order by mza, lado
 ;
+
 
 /*
 select *
