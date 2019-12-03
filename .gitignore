@@ -94,3 +94,8 @@ ENV/
 # info de Cartotagrafía INDEC (not OPEN _yet_)
 EjemplosComunasCABA/shapes
 EjemplosMDQ/marpla/
+EjemplosMDQ/
+PuertoMadero/
+
+# datos
+*.csv

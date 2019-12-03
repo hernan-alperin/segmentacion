@@ -17,6 +17,7 @@ para exportar para Vero
 
 autor: -h
 fecha: 2019-11-15
+TODO: pasar a function (schema) plpgsql que devuelve view/table
 */
 
 drop view e0359.descripcion_segmentos;

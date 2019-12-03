@@ -1,3 +1,9 @@
+/*
+TODO: 
+1. poner los sets en parámentros de una function
+2. ordenar los procesos
+
+*/
 \set shape e0595
 --\set geom wkb_geometry
 \set geom geom
