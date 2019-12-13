@@ -11,6 +11,7 @@ fecha: 2019-11-20
 -- aparentemente
 -- en segmentaciones.eq_sgm_radio hecho con /EjemplosMDQ/segmentar_equilibrado.sql
 
+create view puerto_madero.r3 as
 with segmentos_ids as (
   select *
   from segmentaciones.eq_sgm_radio
