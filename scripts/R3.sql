@@ -18,35 +18,36 @@ with segmentos_ids as (
   on id = listado_id
   ),
   desde_ids as (
-  select depto, frac, radio, mza, segmento_id, lado, min(id) as desde
+  select depto, frac, radio, mza, segmento_id, lado, min(id) as desde_id
   from segmentos_ids
   group by depto, frac, radio, mza, segmento_id, lado
   order by depto, frac, radio, mza, segmento_id, lado
   ),
   hasta_ids as (
-  select depto, frac, radio, mza, segmento_id, lado, max(id) as hasta
+  select depto, frac, radio, mza, segmento_id, lado, max(id) as hasta_id
   from segmentos_ids
   group by depto, frac, radio, mza, segmento_id, lado
   order by depto, frac, radio, mza, segmento_id, lado
   ), 
-  desde as (select depto, frac, radio, mza, segmento_id, lado, 
+  desde as (select depto, frac, radio, mza, segmento_id, lado, desde_id,
   numero || ' ' || piso || '° ' || apt as desde
   from segmentos_ids as listado
   natural join desde_ids
-  where id = desde
+  where id = desde_id
   ),
-  hasta as (select depto, frac, radio, mza, segmento_id, lado, 
+  hasta as (select depto, frac, radio, mza, segmento_id, lado, hasta_id,
   numero || ' ' || piso || '° ' || apt as hasta
   from segmentos_ids as listado
   natural join hasta_ids
-  where id = hasta
+  where id = hasta_id
   ),
   segmentos_en_manzana as (select *
   from desde
   natural join hasta
   )
 select distinct segmento_id as segmento, mza as manzana, lado, 
-  callecodigo || ' - ' || callenombre || ' desde ' || desde || ' hasta ' || hasta as descripcion
+  callecodigo || ' - ' || callenombre || ' desde ' || desde || ' hasta ' || hasta as descripcion,
+  hasta_id - desde_id + 1 as viviendas
 from segmentos_en_manzana as s
 join puerto_madero.listado as l
 on l.fraccionnumero::integer = s.frac
