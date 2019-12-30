@@ -31,7 +31,7 @@ def clausura_conexa(este, esos):
             nuevos = [ese for ese in adyacentes_i if ese not in clausura] # no agragados aún
             clausura.extend(nuevos) # se agregan al final las adyacencias no agregadas
             i = i + 1
-        return clausura
+        return list(set(clausura))
 
 def conectados(estos):
     # True si coleccion es conexo, no hay partes separadas, 
@@ -307,12 +307,13 @@ for prov, depto, frac, radio in radios:
 
 
         # eliminar rutas o av
-        excluir = " and not (tipo like 'RUTA%' or tipo like 'CURSO DE AGUA%' or tipo like 'LINEA FERREA%')"
+        excluir = " " #" and not (tipo like 'RUTA%' or tipo like 'CURSO DE AGUA%' or tipo like 'LINEA FERREA%')"
 
         sql = ("select mza, mza_ady from segmentacion.adyacencias"
             + sql_where_pdfr(prov, depto, frac, radio)
             + "\n and mza != mza_ady" + excluir
             + "\ngroup by mza, mza_ady;")
+#        print(sql)
         cur.execute(sql)
         adyacencias_mzas_mzas = cur.fetchall()
 
